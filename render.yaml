@@ -1,0 +1,31 @@
+# Render Infrastructure as Code
+# See: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: voscene
+    runtime: python
+    region: singapore   # closest to Thailand
+    plan: free          # free tier (spins down after 15min idle)
+    pythonVersion: "3.11"
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: APP_NAME
+        value: Voscene
+      - key: APP_URL
+        sync: false  # set in dashboard (e.g. https://voscene.onrender.com)
+      - key: SECRET_KEY
+        generateValue: true  # Render auto-generates secure 32-char string
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        value: sqlite:///./data.db
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false  # set in dashboard (CHANGE FROM "changeme"!)
+      - key: GROQ_API_KEY
+        sync: false  # set in dashboard
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile

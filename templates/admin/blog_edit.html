@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% block title %}{% if post %}แก้ไขบทความ{% else %}บทความใหม่{% endif %}{% endblock %}
+{% block page_title %}{% if post %}แก้ไขบทความ{% else %}บทความใหม่{% endif %}{% endblock %}
+
+{% block header_actions %}
+<a href="/admin/blog" class="text-sm text-blue-600 hover:underline">← กลับ</a>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="/admin/blog/save" class="grid lg:grid-cols-3 gap-6">
+    {% if post %}<input type="hidden" name="id" value="{{ post.id }}">{% endif %}
+
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1.5">หัวข้อ <span class="text-red-500">*</span></label>
+                <input type="text" name="title" value="{{ post.title if post else '' }}" required class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-lg">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1.5">Slug (URL) <span class="text-red-500">*</span></label>
+                <input type="text" name="slug" value="{{ post.slug if post else '' }}" required pattern="[a-z0-9-]+" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 font-mono text-sm" placeholder="my-post-title">
+                <p class="text-xs text-slate-500 mt-1">ใช้ตัวพิมพ์เล็ก ตัวเลข และ - เท่านั้น เช่น "smart-conference-room"</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1.5">บทนำ (Excerpt)</label>
+                <textarea name="excerpt" rows="2" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">{{ post.excerpt if post else '' }}</textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1.5">เนื้อหา <span class="text-red-500">*</span></label>
+                <textarea name="content" rows="20" required class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 font-mono text-sm">{{ post.content if post else '' }}</textarea>
+                <p class="text-xs text-slate-500 mt-1">รองรับ plain text ขึ้นบรรทัดใหม่ได้ปกติ</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+            <h3 class="font-semibold">การเผยแพร่</h3>
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="is_published" {% if post and post.is_published %}checked{% endif %} class="w-4 h-4">
+                <span class="text-sm">เผยแพร่บทความ</span>
+            </label>
+            <button type="submit" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium">บันทึก</button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+            <h3 class="font-semibold">รูปภาพปก</h3>
+            <input type="text" name="cover_image" value="{{ post.cover_image if post else '' }}" placeholder="URL รูปภาพ" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-sm">
+            <p class="text-xs text-slate-500">ใส่ URL รูปภาพ เช่น https://...</p>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+            <h3 class="font-semibold">Tags</h3>
+            <input type="text" name="tags" value="{{ post.tags if post else '' }}" placeholder="AV, Conference Room, AI" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500 text-sm">
+            <p class="text-xs text-slate-500">คั่นด้วยคอมม่า</p>
+        </div>
+    </div>
+</form>
+
+<script>
+// Auto-generate slug from title
+const titleInput = document.querySelector('input[name="title"]');
+const slugInput = document.querySelector('input[name="slug"]');
+let slugTouched = {% if post %}true{% else %}false{% endif %};
+slugInput.addEventListener('input', () => { slugTouched = true; });
+titleInput.addEventListener('input', () => {
+    if (!slugTouched) {
+        slugInput.value = titleInput.value
+            .toLowerCase()
+            .replace(/[^a-z0-9฀-๿\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .substring(0, 80);
+    }
+});
+</script>
+{% endblock %}

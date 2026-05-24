@@ -1,0 +1,43 @@
+{% extends "public/base.html" %}
+{% block title %}บทความ — {{ settings.APP_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-20 md:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-navy">บทความ & <span class="text-electric">Case Study</span></h1>
+            <p class="text-slate-600 text-lg font-th">ความรู้เกี่ยวกับระบบ AV และ Conference Room</p>
+        </div>
+
+        {% if posts %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for post in posts %}
+            <a href="/blog/{{ post.slug }}" class="card rounded-2xl overflow-hidden transition group">
+                {% if post.cover_image %}
+                <div class="aspect-video bg-cover bg-center group-hover:scale-105 transition duration-500" style="background-image: url('{{ post.cover_image }}')"></div>
+                {% else %}
+                <div class="aspect-video grad-bg"></div>
+                {% endif %}
+                <div class="p-6">
+                    {% if post.tags %}
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        {% for tag in post.tags.split(',') %}
+                        {% if tag.strip() %}<span class="px-2 py-0.5 rounded-full bg-electric/10 text-electric text-xs">{{ tag.strip() }}</span>{% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <h2 class="font-semibold text-xl mb-2 text-navy font-th">{{ post.title }}</h2>
+                    <p class="text-slate-600 text-sm font-th">{{ post.excerpt }}</p>
+                    <div class="text-slate-400 text-xs mt-4">{{ post.created_at.strftime('%d %b %Y') }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20 text-slate-500 font-th">
+            ยังไม่มีบทความ
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

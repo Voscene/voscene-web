@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+{% block title %}Lead #{{ lead.id }}{% endblock %}
+{% block page_title %}Lead #{{ lead.id }} — {{ lead.name }}{% endblock %}
+
+{% block header_actions %}
+<a href="/admin/leads" class="text-sm text-blue-600 hover:underline">← กลับ</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <!-- AI Analysis -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                <h2 class="font-semibold">🤖 AI Analysis</h2>
+                {% if lead.ai_in_scope %}
+                <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">✓ อยู่ในขอบเขตให้บริการ</span>
+                {% else %}
+                <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">⚠ ต้องพิจารณาเพิ่ม</span>
+                {% endif %}
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">Confidence</div>
+                        <div class="font-semibold">{{ "%.0f"|format(lead.ai_confidence * 100) }}%</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">Package แนะนำ</div>
+                        <div class="font-semibold">{{ lead.ai_recommended_package or '—' }}</div>
+                    </div>
+                </div>
+                {% if lead.ai_analysis %}
+                <details>
+                    <summary class="text-sm text-blue-600 cursor-pointer">ดู JSON ดิบ</summary>
+                    <pre class="mt-2 p-3 bg-slate-50 rounded text-xs overflow-x-auto whitespace-pre-wrap">{{ lead.ai_analysis }}</pre>
+                </details>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Requirement -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-semibold">ความต้องการของลูกค้า</h2>
+            </div>
+            <div class="p-6">
+                <p class="whitespace-pre-line text-slate-700">{{ lead.requirement }}</p>
+            </div>
+        </div>
+
+        <!-- Status & Notes -->
+        <form method="post" action="/admin/leads/{{ lead.id }}/update" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-semibold">สถานะการติดตาม</h2>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1.5">สถานะ</label>
+                    <select name="status" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
+                        {% for opt in ['new_in_scope', 'new_out_scope', 'contacted', 'quoted', 'won', 'lost', 'spam'] %}
+                        <option value="{{ opt }}" {% if lead.status == opt %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1.5">บันทึกของทีมงาน</label>
+                    <textarea name="notes" rows="4" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">{{ lead.notes }}</textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">บันทึก</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-slate-200 p-6">
+            <h3 class="font-semibold mb-4">ข้อมูลผู้ติดต่อ</h3>
+            <dl class="space-y-3 text-sm">
+                <div><dt class="text-slate-500 text-xs">ชื่อ</dt><dd class="font-medium">{{ lead.name }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">บริษัท</dt><dd>{{ lead.company or '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">โทรศัพท์</dt><dd>{% if lead.phone %}<a href="tel:{{ lead.phone }}" class="text-blue-600 hover:underline">{{ lead.phone }}</a>{% else %}—{% endif %}</dd></div>
+                <div><dt class="text-slate-500 text-xs">อีเมล</dt><dd>{% if lead.email %}<a href="mailto:{{ lead.email }}" class="text-blue-600 hover:underline">{{ lead.email }}</a>{% else %}—{% endif %}</dd></div>
+                <div><dt class="text-slate-500 text-xs">ขนาดห้อง</dt><dd>{{ lead.room_size or '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">งบประมาณ</dt><dd>{{ lead.budget or '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">กรอกฟอร์มเมื่อ</dt><dd>{{ lead.created_at.strftime('%d %B %Y %H:%M') }}</dd></div>
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <div class="text-sm text-slate-500">Lead ทั้งหมด</div>
+        <div class="text-3xl font-bold mt-1">{{ total_leads }}</div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <div class="text-sm text-slate-500">อยู่ในขอบเขต (AI)</div>
+        <div class="text-3xl font-bold mt-1 text-emerald-600">{{ in_scope_leads }}</div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <div class="text-sm text-slate-500">รอติดต่อ</div>
+        <div class="text-3xl font-bold mt-1 text-amber-600">{{ new_leads }}</div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <div class="text-sm text-slate-500">บทความ ({{ published_posts }} เผยแพร่)</div>
+        <div class="text-3xl font-bold mt-1">{{ total_posts }}</div>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-semibold">Lead ล่าสุด</h2>
+        <a href="/admin/leads" class="text-sm text-blue-600 hover:underline">ดูทั้งหมด →</a>
+    </div>
+    {% if recent_leads %}
+    <table class="w-full">
+        <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+            <tr>
+                <th class="px-6 py-3 text-left">ลูกค้า</th>
+                <th class="px-6 py-3 text-left">บริษัท</th>
+                <th class="px-6 py-3 text-left">AI</th>
+                <th class="px-6 py-3 text-left">วันที่</th>
+                <th class="px-6 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for lead in recent_leads %}
+            <tr class="hover:bg-slate-50">
+                <td class="px-6 py-4 font-medium">{{ lead.name }}</td>
+                <td class="px-6 py-4 text-slate-600">{{ lead.company or '—' }}</td>
+                <td class="px-6 py-4">
+                    {% if lead.ai_in_scope %}
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">✓ ใน Scope</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">⚠ นอก Scope</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 text-slate-500 text-sm">{{ lead.created_at.strftime('%d %b %H:%M') }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="/admin/leads/{{ lead.id }}" class="text-blue-600 text-sm hover:underline">ดู</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="p-12 text-center text-slate-500">ยังไม่มี Lead</div>
+    {% endif %}
+</div>
+{% endblock %}

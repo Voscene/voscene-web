@@ -1,0 +1,136 @@
+{% extends "public/base.html" %}
+{% block title %}Editions — {{ settings.APP_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-20 md:py-28 relative overflow-hidden bg-white">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-electric/5 rounded-full blur-3xl"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">DEPLOYMENT OPTIONS</div>
+            <h1 class="font-display text-4xl md:text-6xl font-semibold mb-6 text-navy"><em class="not-italic text-electric">Editions.</em></h1>
+            <p class="text-slate-600 text-lg font-th">Three deployment tiers. Scale from single room to enterprise.</p>
+        </div>
+
+        <!-- Editions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {% for pkg in purchase_packages %}
+            <div class="relative card rounded-2xl p-8 {% if pkg.is_featured %}!border-electric ring-2 ring-electric/30 bg-gradient-to-b from-white to-electric/5{% endif %}">
+                {% if pkg.is_featured %}
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-electric text-white rounded-full text-xs font-semibold tracking-wider">MOST POPULAR</div>
+                {% endif %}
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">
+                    {% if pkg.code == 'starter' %}STARTER
+                    {% elif pkg.code == 'pro' %}PRO
+                    {% else %}ENTERPRISE{% endif %}
+                </div>
+                <h3 class="font-display text-2xl font-semibold mb-2 text-navy">{{ pkg.name }}</h3>
+                <p class="text-slate-600 text-sm mb-6 font-th italic">{{ pkg.description }}</p>
+
+                <div class="mb-6">
+                    <span class="font-display text-2xl font-semibold text-navy">{{ pkg.price }}</span>
+                    {% if pkg.price_unit %}<span class="text-slate-500 text-sm ml-1 font-th">{{ pkg.price_unit }}</span>{% endif %}
+                </div>
+
+                <a href="/#ai-consult" class="block text-center py-3 rounded-xl {% if pkg.is_featured %}bg-electric hover:bg-electric-600 text-white{% else %}border border-slate-300 hover:border-electric hover:text-electric text-navy{% endif %} transition font-medium mb-6 font-th">
+                    Book a Demo
+                </a>
+
+                <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-3">INCLUDES</div>
+                <ul class="space-y-2 text-sm font-th">
+                    {% for line in pkg.features.split('\n') %}
+                    {% if line.strip() %}
+                    <li class="flex items-start gap-2">
+                        <svg class="w-4 h-4 text-electric flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <span class="text-slate-700">{{ line }}</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- PWA Note -->
+        <div class="max-w-3xl mx-auto mt-10 px-5 py-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-xs font-th italic">
+            <strong>*</strong> PWA (Progressive Web App) installable on Android and Desktop. iOS may have limitations on push notifications and background sync per Apple Safari policy.
+        </div>
+    </div>
+</section>
+
+<!-- Add-on Kits (v1.4) -->
+{% if addon_packages %}
+<section class="py-20 md:py-28 bg-cloud border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">ADD-ON KITS</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Optional <em class="text-electric not-italic">Add-on Kits.</em></h2>
+            <p class="text-slate-600 text-lg font-th">เพิ่มเติมตามขนาดห้องและจำนวนอุปกรณ์</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {% for pkg in addon_packages %}
+            <div class="relative card rounded-2xl p-6 {% if pkg.is_featured %}!border-electric ring-2 ring-electric/30{% endif %}">
+                {% if pkg.is_featured %}
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-electric text-white rounded-full text-xs font-semibold tracking-wider">RECOMMENDED</div>
+                {% endif %}
+                <h3 class="font-display text-xl font-semibold mb-1 text-navy">{{ pkg.name }}</h3>
+                <p class="text-slate-600 text-sm mb-4 font-th italic">{{ pkg.description }}</p>
+                <div class="mb-4">
+                    <span class="font-display text-lg font-semibold text-navy">{{ pkg.price }}</span>
+                    {% if pkg.price_unit %}<span class="text-slate-500 text-sm ml-1 font-th">{{ pkg.price_unit }}</span>{% endif %}
+                </div>
+                <ul class="space-y-1.5 text-sm font-th">
+                    {% for line in pkg.features.split('\n') %}
+                    {% if line.strip() %}
+                    <li class="flex items-start gap-2">
+                        <span class="text-electric">▸</span>
+                        <span class="text-slate-700">{{ line }}</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="max-w-3xl mx-auto mt-10 px-5 py-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm font-th">
+            <strong>💡 หมายเหตุ:</strong> Voscene ใช้ industry-standard IR extender ไม่ผูกกับ vendor — สามารถใช้กับ extender ของผู้ผลิตใดก็ได้ที่รองรับ 3.5mm IR เป็นมาตรฐาน
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Partner Program -->
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="bg-navy rounded-3xl p-10 shadow-2xl shadow-navy/20 relative overflow-hidden">
+            <div class="absolute top-0 -right-20 w-64 h-64 bg-electric/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-signal/20 rounded-full blur-3xl"></div>
+            <div class="relative">
+                <div class="text-center mb-8">
+                    <span class="inline-block px-3 py-1 rounded-full bg-electric/15 text-electric-300 text-xs font-semibold tracking-wider mb-3">PARTNER PROGRAM</span>
+                    <h2 class="font-display text-3xl font-semibold mb-3 text-white">เป็น Partner กับ Voscene</h2>
+                    <p class="text-sky font-th">Authorized / Silver / Gold Tier — Margin 25-45% + Recurring Revenue</p>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="p-4">
+                        <div class="font-display text-xl font-bold mb-1 text-white">Authorized</div>
+                        <div class="text-electric-300 font-mono text-sm">25% Margin</div>
+                    </div>
+                    <div class="p-4 bg-white/5 backdrop-blur border border-white/10 rounded-xl">
+                        <div class="font-display text-xl font-bold mb-1 text-white">Silver</div>
+                        <div class="text-electric-300 font-mono text-sm">35% Margin</div>
+                    </div>
+                    <div class="p-4">
+                        <div class="font-display text-xl font-bold mb-1 text-white">Gold</div>
+                        <div class="text-electric-300 font-mono text-sm">45% Margin</div>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <a href="/contact?subject=partner" class="inline-block px-6 py-3 rounded-xl bg-electric hover:bg-electric-600 transition font-medium text-white">Become a Partner</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

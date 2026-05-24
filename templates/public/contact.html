@@ -1,0 +1,162 @@
+{% extends "public/base.html" %}
+{% block title %}ติดต่อสอบถาม — {{ settings.APP_NAME }}{% endblock %}
+
+{% block content %}
+<section class="py-20 md:py-28 relative overflow-hidden bg-white">
+    <div class="absolute top-0 -left-40 w-96 h-96 bg-electric/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 -right-40 w-96 h-96 bg-signal/10 rounded-full blur-3xl"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 text-navy">{{ c.contact_title }}</h1>
+            <p class="text-slate-600 text-lg font-th">{{ c.contact_subtitle }}</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Contact Info -->
+            <div class="space-y-4">
+                <div class="card rounded-2xl p-6">
+                    <div class="text-electric text-xs font-medium mb-1">โทรศัพท์</div>
+                    <div class="font-semibold text-lg text-navy">{{ c.contact_phone }}</div>
+                </div>
+                <div class="card rounded-2xl p-6">
+                    <div class="text-electric text-xs font-medium mb-1">อีเมล</div>
+                    <div class="font-semibold text-navy">{{ c.contact_email }}</div>
+                </div>
+                <div class="card rounded-2xl p-6">
+                    <div class="text-electric text-xs font-medium mb-1">ที่อยู่</div>
+                    <div class="font-semibold text-navy">{{ c.contact_address }}</div>
+                </div>
+                <div class="card rounded-2xl p-6">
+                    <div class="text-electric text-xs font-medium mb-1">เวลาทำการ</div>
+                    <div class="font-semibold text-navy">{{ c.contact_hours }}</div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="md:col-span-2">
+                <form id="lead-form" class="card rounded-2xl p-6 md:p-8 space-y-5">
+                    <div class="grid md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition" placeholder="ชื่อ-นามสกุล">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">บริษัท/หน่วยงาน</label>
+                            <input type="text" name="company" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition" placeholder="ชื่อบริษัท">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">โทรศัพท์</label>
+                            <input type="tel" name="phone" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition" placeholder="08x-xxx-xxxx">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">อีเมล</label>
+                            <input type="email" name="email" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition" placeholder="you@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">ขนาดห้องประชุม</label>
+                            <select name="room_size" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition">
+                                <option value="">เลือก...</option>
+                                <option>เล็ก (1-10 คน)</option>
+                                <option>กลาง (10-30 คน)</option>
+                                <option>ใหญ่ (30-50 คน)</option>
+                                <option>ห้องสัมมนา (50+ คน)</option>
+                                <option>หลายห้อง</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-navy font-th">งบประมาณ</label>
+                            <select name="budget" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition">
+                                <option value="">เลือก...</option>
+                                <option>น้อยกว่า 50,000 บาท</option>
+                                <option>50,000 - 100,000 บาท</option>
+                                <option>100,000 - 200,000 บาท</option>
+                                <option>200,000+ บาท</option>
+                                <option>เช่ารายเดือน/ปี</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-navy font-th">ความต้องการ <span class="text-red-500">*</span></label>
+                        <textarea name="requirement" required rows="5" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/20 outline-none transition" placeholder="อธิบายความต้องการ เช่น มีห้องประชุมขนาดกลาง ต้องการระบบควบคุมไฟ โปรเจคเตอร์ และเสียง ผ่านหน้าจอเดียว..."></textarea>
+                    </div>
+                    <button type="submit" id="submit-btn" class="w-full py-4 rounded-xl bg-electric hover:bg-electric-600 transition font-semibold text-lg text-white flex items-center justify-center gap-2 shadow-lg shadow-electric/30">
+                        <span id="btn-text">ส่งให้ AI วิเคราะห์ความต้องการ</span>
+                        <svg id="btn-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                    </button>
+                </form>
+
+                <!-- Result -->
+                <div id="result" class="hidden mt-6"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+const form = document.getElementById('lead-form');
+const resultDiv = document.getElementById('result');
+const btnText = document.getElementById('btn-text');
+const btnSpinner = document.getElementById('btn-spinner');
+const submitBtn = document.getElementById('submit-btn');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    btnText.textContent = 'กำลังวิเคราะห์...';
+    btnSpinner.classList.remove('hidden');
+    resultDiv.classList.add('hidden');
+
+    try {
+        const data = new FormData(form);
+        const r = await fetch('/api/lead', { method: 'POST', body: data });
+        const j = await r.json();
+
+        if (j.ok) {
+            const inScope = j.in_scope;
+            const badge = inScope
+                ? '<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">✓ อยู่ในขอบเขตให้บริการ</span>'
+                : '<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">⚠ ต้องการคุยรายละเอียดเพิ่ม</span>';
+            const borderColor = inScope ? 'border-emerald-300' : 'border-amber-300';
+            resultDiv.innerHTML = `
+                <div class="card rounded-2xl p-6 ${borderColor}">
+                    <div class="flex items-center gap-3 mb-4">
+                        ${badge}
+                        <span class="text-slate-500 text-sm">AI วิเคราะห์เสร็จแล้ว</span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-navy">สรุปความต้องการ</h3>
+                    <p class="text-slate-700 mb-4">${j.summary || '-'}</p>
+                    ${j.recommended_package ? `<div class="mb-4"><span class="text-slate-500 text-sm">Package ที่เหมาะสม: </span><span class="font-semibold text-electric">${j.recommended_package}</span></div>` : ''}
+                    <h4 class="font-semibold mb-2 text-navy">ประเมินความเหมาะสม</h4>
+                    <p class="text-slate-700 mb-4 text-sm">${j.fit_reason || '-'}</p>
+                    <div class="border-t border-slate-200 pt-4 text-sm text-slate-700">
+                        <strong class="text-navy">ขั้นตอนต่อไป:</strong> ${j.next_action || 'ทีมขายจะติดต่อกลับโดยเร็วที่สุด'}
+                    </div>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+            form.reset();
+        } else {
+            resultDiv.innerHTML = `<div class="card rounded-2xl p-6 border-red-300 text-red-700">${j.error || 'เกิดข้อผิดพลาด'}</div>`;
+            resultDiv.classList.remove('hidden');
+        }
+    } catch (err) {
+        resultDiv.innerHTML = '<div class="card rounded-2xl p-6 border-red-300 text-red-700">ไม่สามารถส่งฟอร์มได้ ลองอีกครั้ง</div>';
+        resultDiv.classList.remove('hidden');
+    } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'ส่งให้ AI วิเคราะห์ความต้องการ';
+        btnSpinner.classList.add('hidden');
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+
+// Pre-fill ถ้ามี query param ?package=xxx หรือ ?subject=partner
+const params = new URLSearchParams(location.search);
+if (params.get('package')) {
+    form.requirement.value = `สนใจ Package: ${params.get('package')}\n\n`;
+}
+if (params.get('subject') === 'partner') {
+    form.requirement.value = `สนใจสมัครเป็น Partner / Reseller\n\n`;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+{% block title %}บทความ{% endblock %}
+{% block page_title %}บทความ / Blog{% endblock %}
+
+{% block header_actions %}
+<a href="/admin/blog/new" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">+ เขียนบทความใหม่</a>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    {% if posts %}
+    <table class="w-full">
+        <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+            <tr>
+                <th class="px-6 py-3 text-left">หัวข้อ</th>
+                <th class="px-6 py-3 text-left">Slug</th>
+                <th class="px-6 py-3 text-left">สถานะ</th>
+                <th class="px-6 py-3 text-left">อัพเดต</th>
+                <th class="px-6 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for post in posts %}
+            <tr class="hover:bg-slate-50">
+                <td class="px-6 py-4">
+                    <div class="font-medium">{{ post.title }}</div>
+                    <div class="text-xs text-slate-500">{{ post.excerpt[:80] }}{% if post.excerpt|length > 80 %}...{% endif %}</div>
+                </td>
+                <td class="px-6 py-4 text-sm text-slate-600 font-mono">{{ post.slug }}</td>
+                <td class="px-6 py-4">
+                    {% if post.is_published %}
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">เผยแพร่</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-600 text-xs">ฉบับร่าง</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 text-slate-500 text-xs">{{ post.updated_at.strftime('%d %b %y %H:%M') }}</td>
+                <td class="px-6 py-4 text-right space-x-3">
+                    {% if post.is_published %}
+                    <a href="/blog/{{ post.slug }}" target="_blank" class="text-slate-600 text-sm hover:underline">ดู</a>
+                    {% endif %}
+                    <a href="/admin/blog/{{ post.id }}" class="text-blue-600 text-sm hover:underline">แก้ไข</a>
+                    <form method="post" action="/admin/blog/{{ post.id }}/delete" class="inline" onsubmit="return confirm('ลบบทความ {{ post.title }}?')">
+                        <button class="text-red-600 text-sm hover:underline">ลบ</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="p-12 text-center text-slate-500">
+        ยังไม่มีบทความ
+        <div class="mt-4">
+            <a href="/admin/blog/new" class="text-blue-600 hover:underline">+ เขียนบทความแรก</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

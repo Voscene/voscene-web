@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+{% block title %}Lead{% endblock %}
+{% block page_title %}Lead / ลูกค้า{% endblock %}
+
+{% block content %}
+<div class="flex gap-2 mb-6">
+    <a href="/admin/leads" class="px-4 py-2 rounded-lg text-sm {% if filter == 'all' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">ทั้งหมด</a>
+    <a href="/admin/leads?filter=in_scope" class="px-4 py-2 rounded-lg text-sm {% if filter == 'in_scope' %}bg-emerald-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">✓ อยู่ในขอบเขต</a>
+    <a href="/admin/leads?filter=out_scope" class="px-4 py-2 rounded-lg text-sm {% if filter == 'out_scope' %}bg-amber-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">⚠ นอกขอบเขต</a>
+    <a href="/admin/leads?filter=new" class="px-4 py-2 rounded-lg text-sm {% if filter == 'new' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รอติดต่อ</a>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    {% if leads %}
+    <table class="w-full">
+        <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+            <tr>
+                <th class="px-6 py-3 text-left">ลูกค้า</th>
+                <th class="px-6 py-3 text-left">ติดต่อ</th>
+                <th class="px-6 py-3 text-left">AI</th>
+                <th class="px-6 py-3 text-left">Package แนะนำ</th>
+                <th class="px-6 py-3 text-left">สถานะ</th>
+                <th class="px-6 py-3 text-left">วันที่</th>
+                <th class="px-6 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for lead in leads %}
+            <tr class="hover:bg-slate-50">
+                <td class="px-6 py-4">
+                    <div class="font-medium">{{ lead.name }}</div>
+                    <div class="text-xs text-slate-500">{{ lead.company or '—' }}</div>
+                </td>
+                <td class="px-6 py-4 text-sm text-slate-600">
+                    {% if lead.phone %}<div>{{ lead.phone }}</div>{% endif %}
+                    {% if lead.email %}<div class="text-xs">{{ lead.email }}</div>{% endif %}
+                </td>
+                <td class="px-6 py-4">
+                    {% if lead.ai_in_scope %}
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">✓ ใน Scope</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">⚠ นอก Scope</span>
+                    {% endif %}
+                    <div class="text-xs text-slate-400 mt-1">{{ "%.0f"|format(lead.ai_confidence * 100) }}%</div>
+                </td>
+                <td class="px-6 py-4 text-sm">{{ lead.ai_recommended_package or '—' }}</td>
+                <td class="px-6 py-4 text-sm text-slate-600">{{ lead.status }}</td>
+                <td class="px-6 py-4 text-slate-500 text-xs">{{ lead.created_at.strftime('%d %b %y %H:%M') }}</td>
+                <td class="px-6 py-4 text-right">
+                    <a href="/admin/leads/{{ lead.id }}" class="text-blue-600 text-sm hover:underline">ดู</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="p-12 text-center text-slate-500">ยังไม่มี Lead</div>
+    {% endif %}
+</div>
+{% endblock %}

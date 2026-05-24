@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ c.seo_title or settings.APP_NAME }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ c.seo_description or '' }}{% endblock %}">
+    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'IBM Plex Sans Thai', 'system-ui', 'sans-serif'],
+              display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              // Voscene Brand Palette
+              navy: { DEFAULT: '#0A1628', 50: '#e8eaef', 100: '#cdd2db', 200: '#9ba4b7', 300: '#697693', 400: '#37486f', 500: '#1a2845', 600: '#152035', 700: '#101a2c', 800: '#0b1320', 900: '#0A1628', 950: '#051120' },
+              signal: { DEFAULT: '#185FA5', 50: '#e7f0fa', 100: '#c4dbf2', 200: '#8eb7e4', 300: '#5891d2', 400: '#2e76bd', 500: '#185FA5', 600: '#134f88', 700: '#0f3f6c', 800: '#0a2f51', 900: '#061e35' },
+              electric: { DEFAULT: '#3B82F6', 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3B82F6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+              sky: { DEFAULT: '#85B7EB', 50: '#f0f6fc', 100: '#d8e8f5', 200: '#b6d4ed', 300: '#85B7EB', 400: '#5a9bdc', 500: '#387eca', 600: '#2964ad', 700: '#1f4f8a' },
+              muted: { DEFAULT: '#5B7FB5' },
+              cloud: { DEFAULT: '#F9FAFB', 100: '#F9FAFB', 200: '#F3F4F6' },
+              border: { DEFAULT: '#1F3A5F' },
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif; color: #0A1628; }
+      h1, h2, h3, h4, .font-display { font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
+      .grad-text { background: linear-gradient(135deg, #3B82F6 0%, #85B7EB 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+      .grad-bg { background: linear-gradient(135deg, #3B82F6 0%, #185FA5 100%); }
+      .card { background: #ffffff; border: 1px solid #E5E7EB; box-shadow: 0 1px 2px rgba(10,22,40,0.04); }
+      .card:hover { border-color: #BFDBFE; box-shadow: 0 4px 12px rgba(59,130,246,0.08); }
+      .font-th { font-family: 'IBM Plex Sans Thai', 'Inter', system-ui, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    </style>
+</head>
+<body class="bg-white text-navy antialiased">
+
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+            <img src="/static/images/logo-full-light.svg" alt="Voscene" class="h-9 w-auto">
+        </a>
+        <div class="hidden md:flex items-center gap-6 text-sm">
+            <a href="/" class="text-slate-600 hover:text-navy transition">หน้าแรก</a>
+            <a href="/features" class="text-slate-600 hover:text-navy transition">ฟีเจอร์</a>
+            <a href="/pricing" class="text-slate-600 hover:text-navy transition">ราคา</a>
+            <a href="/blog" class="text-slate-600 hover:text-navy transition">บทความ</a>
+            <a href="/contact" class="text-slate-600 hover:text-navy transition">ติดต่อ</a>
+            <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white text-sm">Book Demo</a>
+        </div>
+        <button class="md:hidden text-navy" onclick="document.getElementById('m-menu').classList.toggle('hidden')">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+    </div>
+    <div id="m-menu" class="hidden md:hidden border-t border-slate-200 bg-white">
+        <div class="px-4 py-3 flex flex-col gap-3 text-sm">
+            <a href="/" class="text-slate-600">หน้าแรก</a>
+            <a href="/features" class="text-slate-600">ฟีเจอร์</a>
+            <a href="/pricing" class="text-slate-600">ราคา</a>
+            <a href="/blog" class="text-slate-600">บทความ</a>
+            <a href="/contact" class="text-slate-600">ติดต่อ</a>
+            <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric text-white text-center font-semibold">Book Demo</a>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-16">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="border-t border-slate-200 bg-cloud mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="md:col-span-2">
+                <img src="/static/images/logo-full-light.svg" alt="Voscene" class="h-9 w-auto mb-3">
+                <p class="text-signal text-sm mb-2 font-display font-medium">{{ c.footer_tagline or 'The voice of smart spaces.' }}</p>
+                <p class="text-slate-500 text-xs mt-3">{{ c.footer_company or '' }}</p>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-3 text-navy">เมนู</h4>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    <li><a href="/features" class="hover:text-electric">ฟีเจอร์</a></li>
+                    <li><a href="/pricing" class="hover:text-electric">ราคา</a></li>
+                    <li><a href="/blog" class="hover:text-electric">บทความ</a></li>
+                    <li><a href="/contact" class="hover:text-electric">ติดต่อ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-3 text-navy">ติดต่อ</h4>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    <li>{{ c.contact_phone or '' }}</li>
+                    <li>{{ c.contact_email or '' }}</li>
+                    <li>{{ c.contact_hours or '' }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-200 mt-10 pt-6 text-center text-sm text-slate-500">
+            {{ c.footer_copyright or '' }}
+        </div>
+    </div>
+</footer>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

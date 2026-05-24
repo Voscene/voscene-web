@@ -1,0 +1,41 @@
+{% extends "admin/base.html" %}
+{% block title %}ตั้งค่า{% endblock %}
+{% block page_title %}ตั้งค่าระบบ{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl space-y-6">
+    {% set err = request.query_params.get('error') %}
+    {% if err %}
+    <div class="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+        {% if err == 'wrong_password' %}รหัสผ่านปัจจุบันไม่ถูกต้อง
+        {% elif err == 'too_short' %}รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร
+        {% else %}เกิดข้อผิดพลาด{% endif %}
+    </div>
+    {% endif %}
+
+    <form method="post" action="/admin/settings/password" class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+        <h2 class="font-semibold">เปลี่ยนรหัสผ่าน</h2>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">รหัสผ่านปัจจุบัน</label>
+            <input type="password" name="current_password" required class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">รหัสผ่านใหม่</label>
+            <input type="password" name="new_password" required minlength="6" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
+            <p class="text-xs text-slate-500 mt-1">อย่างน้อย 6 ตัวอักษร</p>
+        </div>
+        <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">เปลี่ยนรหัสผ่าน</button>
+    </form>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
+        <h2 class="font-semibold">ข้อมูลระบบ</h2>
+        <dl class="text-sm space-y-2">
+            <div class="flex justify-between"><dt class="text-slate-500">App URL</dt><dd class="font-mono">{{ settings.APP_URL }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Database</dt><dd class="font-mono">{{ settings.DATABASE_URL }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">AI Model</dt><dd class="font-mono">{{ settings.GROQ_MODEL }}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Groq API</dt><dd>{% if settings.GROQ_API_KEY %}<span class="text-emerald-600">เชื่อมต่อแล้ว</span>{% else %}<span class="text-red-600">ยังไม่ได้ตั้งค่า</span>{% endif %}</dd></div>
+        </dl>
+        <p class="text-xs text-slate-500 pt-2 border-t">แก้ไขค่าเหล่านี้ได้ที่ไฟล์ <code class="bg-slate-100 px-1.5 py-0.5 rounded">.env</code> บนเซิร์ฟเวอร์</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1008 @@
+{% extends "public/base.html" %}
+
+{% block content %}
+<!-- Hero — Dark Pattern with Photo Background -->
+<section class="relative overflow-hidden bg-navy">
+    <!-- Background photo with overlay -->
+    <div class="absolute inset-0 opacity-60 bg-cover bg-center" style="background-image: url('/static/images/hero-bg.jpg')"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-navy/85 via-navy/70 to-navy/50"></div>
+    <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
+        <div class="max-w-5xl">
+            <!-- ⭐ BIG BRAND DISPLAY — Logo Mark + VOSCENE Wordmark -->
+            <div class="mb-8 md:mb-10">
+                <div class="flex items-center gap-4 md:gap-6 mb-4 md:mb-5">
+                    <!-- Big Logo Mark -->
+                    <img src="/static/images/logo-mark.svg" alt="Voscene" class="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 drop-shadow-2xl">
+                    <!-- Big Wordmark -->
+                    <h1 class="font-display font-bold tracking-tight leading-none">
+                        <span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-white">VO</span><span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-electric-300">SCENE</span>
+                    </h1>
+                </div>
+                <p class="font-display italic text-xl md:text-3xl lg:text-4xl text-sky tracking-wide pl-1">The voice of smart spaces.</p>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-gradient-to-r from-electric/40 via-sky/20 to-transparent max-w-2xl mb-8"></div>
+
+            <!-- Hero Badge with pulse -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
+                </span>
+                {{ c.hero_badge }}
+            </div>
+
+            <!-- Secondary Headline (Thai context) -->
+            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl leading-snug">{{ c.hero_subtitle_th }}</h2>
+            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl font-display tracking-wide">{{ c.hero_tagline }}</p>
+            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#ai-consult" class="px-7 py-3.5 rounded-lg bg-white hover:bg-cloud transition font-semibold text-navy shadow-lg">
+                    {{ c.hero_cta_primary }} →
+                </a>
+                <a href="/features" class="px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
+                    {{ c.hero_cta_secondary }}
+                </a>
+            </div>
+
+            <!-- Trusted by -->
+            <div class="mt-16 md:mt-20 pt-8 border-t border-white/10 max-w-2xl">
+                <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>
+                <div class="flex flex-wrap gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
+                    <div>Hotel Group</div>
+                    <div>University</div>
+                    <div>Enterprise</div>
+                    <div>Government</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- USP Stats -->
+<section class="py-16 bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_1_value }}</div>
+                <div class="text-slate-600 mt-2 text-sm font-th">{{ c.stat_1_label }}</div>
+            </div>
+            <div class="text-center">
+                <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_2_value }}</div>
+                <div class="text-slate-600 mt-2 text-sm font-th">{{ c.stat_2_label }}</div>
+            </div>
+            <div class="text-center">
+                <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_3_value }}</div>
+                <div class="text-slate-600 mt-2 text-sm font-th">{{ c.stat_3_label }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission Statement with backdrop -->
+<section class="relative py-24 md:py-28 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center bg-cloud" style="background-image: url('/static/images/mission-bg.jpg')"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-white via-white/85 to-cloud"></div>
+    <div class="relative max-w-4xl mx-auto px-4 text-center">
+        <div class="text-muted text-xs font-semibold tracking-[2px] mb-6">OUR MISSION</div>
+
+        <!-- Quote-style mission (inline quotes, balanced sizes) -->
+        <p class="font-th text-3xl md:text-5xl text-navy leading-tight font-medium">
+            <span class="font-display text-electric/70 align-middle mr-1">&#8220;</span>พูด<span class="text-electric">สิ่งที่อยากทำ</span><span class="font-display text-electric/70 align-middle ml-1">&#8221;</span>
+        </p>
+
+        <p class="font-th text-3xl md:text-5xl text-slate-500 mt-6 md:mt-8 font-light">— Voscene จัดการที่เหลือให้</p>
+    </div>
+</section>
+
+<!-- Use Cases — 4 Industry Groups (Catalog V1.1) -->
+<section class="py-20 md:py-28 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">USE CASES</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Built for <em class="text-electric not-italic">every space.</em></h2>
+            <p class="text-slate-600 text-lg font-th">From boardrooms to ballrooms. From classrooms to control rooms.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+            <!-- SME -->
+            <div class="card rounded-2xl overflow-hidden group flex">
+                <div class="w-2 bg-orange-400"></div>
+                <div class="flex-1 p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-mono font-semibold">SME · BUSINESS</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">SME</h3>
+                    <p class="text-slate-600 text-sm font-th mb-4">Modern meeting rooms without enterprise complexity — voice commands replace touch panels</p>
+                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                    <ul class="text-slate-700 text-sm font-th space-y-1">
+                        <li>▸ Conference rooms</li>
+                        <li>▸ Reception displays</li>
+                        <li>▸ Training rooms</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="card rounded-2xl overflow-hidden group flex">
+                <div class="w-2 bg-emerald-500"></div>
+                <div class="flex-1 p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-xs font-mono font-semibold">EDU · EDUCATION</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Education</h3>
+                    <p class="text-slate-600 text-sm font-th mb-4">Classrooms, lecture halls, and auditoriums controlled by teachers without IT training</p>
+                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                    <ul class="text-slate-700 text-sm font-th space-y-1">
+                        <li>▸ Smart classrooms</li>
+                        <li>▸ Lecture halls</li>
+                        <li>▸ Multi-campus control</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Hospitality -->
+            <div class="card rounded-2xl overflow-hidden group flex">
+                <div class="w-2 bg-amber-500"></div>
+                <div class="flex-1 p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-xs font-mono font-semibold">HSP · HOSPITALITY</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Hospitality</h3>
+                    <p class="text-slate-600 text-sm font-th mb-4">Hotels, ballrooms, and conference centers — per-room control with central management</p>
+                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                    <ul class="text-slate-700 text-sm font-th space-y-1">
+                        <li>▸ Ballrooms</li>
+                        <li>▸ Hotel meeting rooms</li>
+                        <li>▸ Banquet halls</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Government -->
+            <div class="card rounded-2xl overflow-hidden group flex">
+                <div class="w-2 bg-navy"></div>
+                <div class="flex-1 p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-0.5 rounded bg-navy/10 text-navy text-xs font-mono font-semibold">GOV · GOVERNMENT</span>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Government</h3>
+                    <p class="text-slate-600 text-sm font-th mb-4">Boardrooms, command centers, briefing rooms — PA integration for emergency broadcast</p>
+                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                    <ul class="text-slate-700 text-sm font-th space-y-1">
+                        <li>▸ Boardrooms / Briefing rooms / Emergency PA</li>
+                        <li>▸ Court rooms with auto video tracking</li>
+                        <li>▸ Parliament-style discussion sessions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 Core Value -->
+<section class="py-20 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">CORE VALUE</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ทำไมต้องเลือก Voscene</h2>
+            <p class="text-slate-600 text-lg font-th">4 จุดเด่นที่ทำให้ระบบของเราต่างจากคู่แข่ง</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div class="card rounded-2xl p-8 border-l-4 border-l-electric">
+                <div class="text-3xl mb-3">🤖</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI-First Design</h3>
+                <p class="text-slate-600 font-th">พิมพ์หรือพูดคำสั่งภาษาธรรมชาติ ระบบแปลงเป็นคำสั่งควบคุมอุปกรณ์ทั้งหมดอัตโนมัติ รองรับหลายคำสั่งในครั้งเดียว</p>
+            </div>
+            <div class="card rounded-2xl p-8 border-l-4 border-l-signal">
+                <div class="text-3xl mb-3">🌐</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Zero Installation</h3>
+                <p class="text-slate-600 font-th">เปิด Browser พิมพ์ IP ใช้งานได้ทันที ไม่ต้องติดตั้งซอฟต์แวร์ รองรับทุก Platform รองรับ PWA ติดตั้งบนหน้าจอมือถือได้</p>
+            </div>
+            <div class="card rounded-2xl p-8 border-l-4 border-l-sky">
+                <div class="text-3xl mb-3">📡</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Real-time Multi-user</h3>
+                <p class="text-slate-600 font-th">หลาย Device เปิด UI พร้อมกันได้ เมื่อใครปรับค่า ทุก Device เห็นผลทันทีผ่าน WebSocket</p>
+            </div>
+            <div class="card rounded-2xl p-8 border-l-4 border-l-electric-400">
+                <div class="text-3xl mb-3">🔌</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Protocol</h3>
+                <p class="text-slate-600 font-th">รองรับ Protocol มาตรฐานอุตสาหกรรม ควบคุมอุปกรณ์ทุกยี่ห้อที่ใช้ Protocol เดียวกัน ไม่ผูกกับ Vendor</p>
+            </div>
+        </div>
+
+        <div class="mt-12 max-w-3xl mx-auto bg-electric/5 border border-electric/20 rounded-xl p-5 text-center">
+            <p class="text-slate-700 text-sm font-th">
+                <span class="text-electric font-semibold">หมายเหตุ:</span> {{ c.brand_note }}
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Voice Demo / Terminal -->
+<section class="py-20 bg-cloud border-y border-slate-200">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">VOICE COMMAND</div>
+            <h2 class="font-display text-3xl md:text-4xl font-semibold mb-3 text-navy">สั่งงานง่ายเหมือนคุยกับเพื่อน</h2>
+            <p class="text-slate-600 font-th">พิมพ์หรือพูดภาษาธรรมชาติ Voscene จัดการอุปกรณ์ทั้งหมดให้</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 items-center">
+            <!-- Image side -->
+            <div class="relative">
+                <div class="aspect-[4/3] rounded-2xl bg-cover bg-center shadow-xl" style="background-image: url('/static/images/voice-demo.jpg')"></div>
+                <!-- Floating command bubble overlay -->
+                <div class="absolute -bottom-6 -right-6 md:-bottom-8 md:-right-8 bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 max-w-[260px]">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
+                        </span>
+                        <span class="text-electric text-[10px] font-semibold tracking-[1.5px]">LISTENING</span>
+                    </div>
+                    <p class="text-navy text-sm font-medium font-th">"เปิดโปรเจคเตอร์ ปิดไฟห้องประชุม"</p>
+                </div>
+            </div>
+
+            <!-- Terminal side -->
+            <div class="bg-navy rounded-2xl overflow-hidden shadow-2xl border border-border">
+                <div class="bg-navy-950 px-4 py-3 border-b border-border flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500/70"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/70"></div>
+                    <span class="text-muted text-xs ml-3 font-mono">voscene — control terminal</span>
+                </div>
+                <div class="p-6 font-mono text-sm space-y-3">
+                    <div><span class="text-muted">$</span> <span class="text-white">"เปิดโปรเจคเตอร์ และปิดไฟห้องประชุม"</span></div>
+                    <div class="text-electric-400">→ Voscene AI parsed 2 commands</div>
+                    <div class="space-y-1 text-sky pl-4">
+                        <div>✓ Projector ON via PJLink</div>
+                        <div>✓ DMX Lighting → 0%</div>
+                    </div>
+                    <div class="text-emerald-400">Done in 1.2s</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comparison Table -->
+<section class="py-20 md:py-28 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">HOW WE COMPARE</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Traditional AV vs <span class="text-electric">Voscene</span></h2>
+            <p class="text-slate-600 text-lg font-th">ทำไม Voscene ถึงต่างจากระบบ AV ดั้งเดิม</p>
+        </div>
+
+        <div class="card rounded-2xl overflow-hidden">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-slate-200 bg-cloud">
+                        <th class="px-6 py-4 text-left font-display font-semibold text-navy text-sm">FEATURE</th>
+                        <th class="px-6 py-4 text-left text-slate-500 font-mono text-xs tracking-wider">TRADITIONAL AV</th>
+                        <th class="px-6 py-4 text-left text-electric font-mono text-xs tracking-wider font-bold">VOSCENE</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm font-th">
+                    <tr class="border-b border-slate-100">
+                        <td class="px-6 py-3.5 font-medium text-navy">AI Control</td>
+                        <td class="px-6 py-3.5 text-slate-500">Add-on, limited</td>
+                        <td class="px-6 py-3.5 text-navy">Native, LLM-powered</td>
+                    </tr>
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
+                        <td class="px-6 py-3.5 font-medium text-navy">Setup Time</td>
+                        <td class="px-6 py-3.5 text-slate-500">2–4 weeks</td>
+                        <td class="px-6 py-3.5 text-navy">&lt;24 hours (single-room)</td>
+                    </tr>
+                    <tr class="border-b border-slate-100">
+                        <td class="px-6 py-3.5 font-medium text-navy">Touch Panel</td>
+                        <td class="px-6 py-3.5 text-slate-500">Required, expensive</td>
+                        <td class="px-6 py-3.5 text-navy">Not needed (browser)</td>
+                    </tr>
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
+                        <td class="px-6 py-3.5 font-medium text-navy">Programming</td>
+                        <td class="px-6 py-3.5 text-slate-500">Specialist required</td>
+                        <td class="px-6 py-3.5 text-navy">In-browser settings</td>
+                    </tr>
+                    <tr class="border-b border-slate-100">
+                        <td class="px-6 py-3.5 font-medium text-navy">Thai Language</td>
+                        <td class="px-6 py-3.5 text-slate-500">Rare</td>
+                        <td class="px-6 py-3.5 text-navy">Native support</td>
+                    </tr>
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
+                        <td class="px-6 py-3.5 font-medium text-navy">Multi-protocol</td>
+                        <td class="px-6 py-3.5 text-slate-500">Vendor-locked</td>
+                        <td class="px-6 py-3.5 text-navy">Open standards</td>
+                    </tr>
+                    <tr class="border-b border-slate-100">
+                        <td class="px-6 py-3.5 font-medium text-navy">Offline Operation</td>
+                        <td class="px-6 py-3.5 text-slate-500">Varies</td>
+                        <td class="px-6 py-3.5 text-navy">Fully closed-network ready</td>
+                    </tr>
+                    <tr class="border-b border-slate-100 bg-electric/[0.03]">
+                        <td class="px-6 py-3.5 font-medium text-navy">⭐ Video Tracking</td>
+                        <td class="px-6 py-3.5 text-slate-500">Separate hardware device</td>
+                        <td class="px-6 py-3.5 text-electric font-semibold">Built-in capability</td>
+                    </tr>
+                    <tr class="border-b border-slate-100 bg-electric/[0.03]">
+                        <td class="px-6 py-3.5 font-medium text-navy">⭐ Conference Integration</td>
+                        <td class="px-6 py-3.5 text-slate-500">Custom programming</td>
+                        <td class="px-6 py-3.5 text-electric font-semibold">Standard integration</td>
+                    </tr>
+                    <tr class="bg-electric/[0.03]">
+                        <td class="px-6 py-3.5 font-medium text-navy">⭐ LINE Integration</td>
+                        <td class="px-6 py-3.5 text-slate-500">None</td>
+                        <td class="px-6 py-3.5 text-electric font-semibold">Native — control + alerts</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Features Highlight -->
+<section class="py-20 md:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">FEATURES</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ฟีเจอร์หลัก</h2>
+            <p class="text-slate-600 text-lg font-th">ครบทุกการควบคุมที่ห้องประชุมต้องการ</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 01 · CONTROLLER -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">01 · CONTROLLER</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🤖</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI Agent Controller</h3>
+                <p class="text-slate-600 text-sm font-th">พิมพ์หรือพูดคำสั่งภาษาไทย/อังกฤษ ระบบ parse เป็น device commands อัตโนมัติ multi-action chaining</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">THAI NLP</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">LLM</span>
+                </div>
+            </div>
+
+            <!-- 02 · SCENE -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">02 · SCENE</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🎬</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Scene Control</h3>
+                <p class="text-slate-600 text-sm font-th">4 main scenes ปรับแต่งเต็มที่โดยช่างเทคนิค · กดปุ่มเดียวให้ user เรียกใช้</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">4 SCENES</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">TECH-TUNABLE</span>
+                </div>
+            </div>
+
+            <!-- 03 · MATRIX -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">03 · MATRIX</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🖥</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Video Matrix</h3>
+                <p class="text-slate-600 text-sm font-th">Visual 8×8 HDMI routing — extensible to multi-brand matrix switchers</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">8×8 HDMI</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">EXTENSIBLE</span>
+                </div>
+            </div>
+
+            <!-- 04 · AUDIO -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">04 · AUDIO</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🔊</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Audio Control</h3>
+                <p class="text-slate-600 text-sm font-th">Volume slider + presets, mute/pause, VU meter, Feedback Destroyer 12 notch filters</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">VU METER</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">ANTI-FEEDBACK</span>
+                </div>
+            </div>
+
+            <!-- 05 · PROJECTOR -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">05 · PROJECTOR</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">📽</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Projector Control</h3>
+                <p class="text-slate-600 text-sm font-th">Power on/off via LAN · input source select · lamp-hours monitoring (PJLink standard)</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">PJLINK</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">EXTENSIBLE</span>
+                </div>
+            </div>
+
+            <!-- 06 · TV -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">06 · TV</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📺</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Smart TV Control</h3>
+                <p class="text-slate-600 text-sm font-th">Wake-on-LAN power on · network shutdown · WebOS / Tizen / Android TV · extensible</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">WOL</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">WEBOS</span>
+                </div>
+            </div>
+
+            <!-- 07 · LIGHTING -->
+            <div class="card rounded-2xl p-6 transition">
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">07 · LIGHTING</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">💡</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Lighting (DMX512)</h3>
+                <p class="text-slate-600 text-sm font-th">Dedicated tab · 4 light scenes + smooth fade transitions · 512 channels RGB/RGBW</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">512 CH</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">FADE</span>
+                </div>
+            </div>
+
+            <!-- 08 · CAMERA — NEW -->
+            <div class="card rounded-2xl p-6 transition relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">08 · CAMERA</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📹</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">PTZ Camera Control</h3>
+                <p class="text-slate-600 text-sm font-th">Up to 4 PTZ cameras — pan/tilt/zoom/preset recall via VISCA over IP · compatible with industry-standard cameras</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">VISCA</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">4-CAM</span>
+                </div>
+            </div>
+
+            <!-- 09 · TRACKING — NEW -->
+            <div class="card rounded-2xl p-6 transition relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">09 · TRACKING</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🎯</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Auto Video Tracking</h3>
+                <p class="text-slate-600 text-sm font-th">กล้องตาม speaker อัตโนมัติเมื่อต่อกับ discussion/conference systems · replaces dedicated tracking hardware</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">AUTO-TRACK</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">CONFERENCE</span>
+                </div>
+            </div>
+
+            <!-- 10 · IR — NEW (v1.4) -->
+            <div class="card rounded-2xl p-6 transition relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">10 · IR</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📡</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">IR Control</h3>
+                <p class="text-slate-600 text-sm font-th">ควบคุม TV/Audio/BluRay เก่าที่ไม่มี network API · Learn IR code + ส่งผ่าน 3.5mm IR OUT มาตรฐาน</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">IR LEARN</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">IR SEND</span>
+                </div>
+            </div>
+
+            <!-- 11 · PA (Roadmap) -->
+            <div class="card rounded-2xl p-6 transition relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">Roadmap</span>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">11 · PA</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">📢</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">PA Announcement</h3>
+                <p class="text-slate-600 text-sm font-th">Multi-room PA ผ่าน RTP/UDP Multicast — Zone control + Emergency broadcast</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-xs font-mono">MULTI-ROOM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="/features" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 hover:border-electric hover:text-electric transition font-medium text-navy">
+                ดูฟีเจอร์ทั้งหมด <span>→</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Platform & Management Section -->
+<section class="py-20 md:py-28 bg-cloud border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">PLATFORM & MANAGEMENT</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Built for <em class="text-electric not-italic">operators.</em></h2>
+            <p class="text-slate-600 text-lg font-th">Beyond device control — a full platform for security, monitoring, and serviceability.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-electric/15 text-electric font-display font-bold flex items-center justify-center mb-3">2</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Two-Tier PIN Security</h3>
+                <p class="text-slate-600 text-sm font-th">Separate User and Technician PINs — control panel + all APIs locked behind login</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">AUTH</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">ROLE-BASED</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-signal/15 text-signal font-display font-bold flex items-center justify-center mb-3">B</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">In-Browser Settings</h3>
+                <p class="text-slate-600 text-sm font-th">Technicians config device IPs, I/O names, scenes — no SSH, no code</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">TECH UI</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">ZERO-CODE</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 font-display font-bold flex items-center justify-center mb-3">D</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Device Health Monitor</h3>
+                <p class="text-slate-600 text-sm font-th">Live online/offline status for every device · UI reflects real equipment state</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">REAL-TIME</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">POLLING</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 font-display font-bold flex items-center justify-center mb-3">S</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Simple Mode</h3>
+                <p class="text-slate-600 text-sm font-th">Big-button screen for everyday users — power, source, volume — separate from tech UI</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">BIG BUTTONS</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-navy text-white font-display font-bold flex items-center justify-center mb-3">R</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Secure Remote Support</h3>
+                <p class="text-slate-600 text-sm font-th">On-demand encrypted tunnel · technician remote service · customer-controlled</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">ENCRYPTED</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">AUTO-EXPIRE</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-electric/15 text-electric font-display font-bold flex items-center justify-center mb-3">O</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Offline-Capable</h3>
+                <p class="text-slate-600 text-sm font-th">Runs fully on closed network · no internet needed · all assets bundled on-device</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">AIR-GAP</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">PWA</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-signal/15 text-signal font-display font-bold flex items-center justify-center mb-3">L</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Screen Lock & Backup</h3>
+                <p class="text-slate-600 text-sm font-th">Lock panel against accidental touches · one-click config backup & restore</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">LOCK</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">BACKUP</span>
+                </div>
+            </div>
+
+            <div class="card rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 font-display font-bold flex items-center justify-center mb-3">T</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Tiered Packaging</h3>
+                <p class="text-slate-600 text-sm font-th">Feature modules (AI, Remote Service) enable per package · Sell Base, AI, or Full from one build</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">MODULAR</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">EDITIONS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LINE Integration Section -->
+<section class="py-20 md:py-28 bg-navy relative overflow-hidden">
+    <div class="absolute top-0 -right-40 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-electric/10 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold tracking-wider mb-4">💬 LINE OFFICIAL ACCOUNT</span>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-white">Text to <span class="text-emerald-400">control.</span><br>Alerts in <span class="text-electric-300">real-time.</span></h2>
+            <p class="text-sky text-lg font-th">Voscene meets your team where they already are — in LINE</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Send Commands -->
+            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                <div class="mb-5">
+                    <h3 class="font-display text-xl font-semibold text-white mb-1">📤 Send Commands</h3>
+                    <p class="text-sky/70 text-sm font-th">ควบคุมผ่านข้อความ LINE — ใช้งานได้แล้ว</p>
+                </div>
+
+                <!-- Chat mockup -->
+                <div class="bg-navy-950 rounded-xl p-4 space-y-3 mb-5">
+                    <div class="flex justify-end">
+                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%]">"Turn on the projector"</div>
+                    </div>
+                    <div class="flex justify-start">
+                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%]">✓ Projector ON</div>
+                    </div>
+                    <div class="flex justify-end">
+                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%]">"Dim lights to 30%"</div>
+                    </div>
+                    <div class="flex justify-start">
+                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%]">✓ Lights dimmed</div>
+                    </div>
+                </div>
+
+                <ul class="space-y-2 text-sm text-sky/85 font-th">
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> AI-parsed Thai / English commands · instant reply</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> HMAC signature verification (anti-spoof security)</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> User allowlist — restrict to authorized senders</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Accept toggle — in-room users can pause incoming commands</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Full audit log — who/what/when/result</li>
+                </ul>
+            </div>
+
+            <!-- Get Notifications -->
+            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
+                <div class="mb-5">
+                    <h3 class="font-display text-xl font-semibold text-white mb-1">🔔 Get Notifications</h3>
+                    <p class="text-sky/70 text-sm font-th">Critical alerts pushed to LINE</p>
+                </div>
+
+                <!-- Alerts mockup -->
+                <div class="bg-navy-950 rounded-xl p-4 space-y-3 mb-5">
+                    <div class="border-l-4 border-red-500 bg-red-500/10 rounded-r-lg px-4 py-2.5">
+                        <div class="flex items-start gap-2">
+                            <span class="text-red-400 font-bold">!</span>
+                            <div>
+                                <div class="text-white font-semibold text-sm">Projector offline</div>
+                                <div class="text-sky/60 text-xs font-mono">Room A · 5 min ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-l-4 border-orange-500 bg-orange-500/10 rounded-r-lg px-4 py-2.5">
+                        <div class="flex items-start gap-2">
+                            <span class="text-orange-400">■</span>
+                            <div>
+                                <div class="text-white font-semibold text-sm">High temperature</div>
+                                <div class="text-sky/60 text-xs font-mono">Server rack 32°C</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-l-4 border-yellow-500 bg-yellow-500/10 rounded-r-lg px-4 py-2.5">
+                        <div class="flex items-start gap-2">
+                            <span class="text-yellow-400">i</span>
+                            <div>
+                                <div class="text-white font-semibold text-sm">Lamp hours warning</div>
+                                <div class="text-sky/60 text-xs font-mono">Boardroom 1850 / 2000 h</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-l-4 border-emerald-500 bg-emerald-500/10 rounded-r-lg px-4 py-2.5">
+                        <div class="flex items-start gap-2">
+                            <span class="text-emerald-400">✓</span>
+                            <div>
+                                <div class="text-white font-semibold text-sm">System backup OK</div>
+                                <div class="text-sky/60 text-xs font-mono">Auto-backup 02:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ul class="space-y-2 text-sm text-sky/85 font-th">
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Equipment health alerts</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Threshold warnings (temperature, lamp hours)</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> System events log</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Customizable per channel</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Preview -->
+<section class="py-20 md:py-28 bg-cloud border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">PRICING</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ราคาที่เหมาะกับธุรกิจคุณ</h2>
+            <p class="text-slate-600 text-lg font-th">เลือกซื้อขาด หรือเช่ารายเดือน/ปี รวม Hardware + Software + Support</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {% for pkg in purchase_packages %}
+            <div class="relative card rounded-2xl p-8 {% if pkg.is_featured %}!border-electric ring-2 ring-electric/30{% endif %}">
+                {% if pkg.is_featured %}
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-electric text-white rounded-full text-xs font-semibold">แนะนำ</div>
+                {% endif %}
+                <h3 class="font-display text-2xl font-semibold mb-2 text-navy">{{ pkg.name }}</h3>
+                <p class="text-slate-600 text-sm mb-4 font-th">{{ pkg.description }}</p>
+                <div class="mb-6">
+                    <span class="font-display text-4xl font-semibold text-navy">฿{{ pkg.price }}</span>
+                    {% if pkg.price_unit %}<span class="text-slate-500 text-sm ml-1 font-th">{{ pkg.price_unit }}</span>{% endif %}
+                </div>
+                <a href="#ai-consult" class="block text-center py-3 rounded-xl {% if pkg.is_featured %}bg-electric hover:bg-electric-600 text-white{% else %}border border-slate-300 hover:border-electric hover:text-electric text-navy{% endif %} transition font-medium mb-6 font-th">
+                    ขอใบเสนอราคา
+                </a>
+                <ul class="space-y-2 text-sm font-th">
+                    {% for line in pkg.features.split('\n') %}
+                    {% if line.strip() %}
+                    <li class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-electric flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <span class="text-slate-700">{{ line }}</span>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="/pricing" class="inline-block px-6 py-3 rounded-xl border border-slate-300 hover:border-electric hover:text-electric transition font-medium font-th text-navy">
+                ดูแพ็คเกจเช่าและรายละเอียดทั้งหมด →
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Get Started in 3 Steps -->
+<section class="py-20 md:py-28 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">GET STARTED</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">In <em class="text-electric not-italic">3 simple steps.</em></h2>
+            <p class="text-slate-600 text-lg font-th">From first call to pilot installation — Voscene เริ่มได้ง่ายกว่าที่คิด</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="relative bg-navy rounded-2xl p-8 text-center text-white overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-electric/20 rounded-full blur-3xl"></div>
+                <div class="relative">
+                    <div class="font-display text-7xl font-light text-electric-300 mb-3">1</div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Discovery Call</h3>
+                    <p class="text-sky text-sm font-th">Tell us about your space and requirements (30 min)</p>
+                </div>
+            </div>
+
+            <div class="relative bg-navy rounded-2xl p-8 text-center text-white overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-signal/20 rounded-full blur-3xl"></div>
+                <div class="relative">
+                    <div class="font-display text-7xl font-light text-electric-300 mb-3">2</div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Live Demo</h3>
+                    <p class="text-sky text-sm font-th">See Voscene in action with your specific use case</p>
+                </div>
+            </div>
+
+            <div class="relative bg-navy rounded-2xl p-8 text-center text-white overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                <div class="relative">
+                    <div class="font-display text-7xl font-light text-electric-300 mb-3">3</div>
+                    <h3 class="font-display text-xl font-semibold mb-2">Pilot Deployment</h3>
+                    <p class="text-sky text-sm font-th">Install in one room before full rollout</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Lead Analysis — 2 Step Flow -->
+<section id="ai-consult" class="py-20 md:py-28 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">🤖 AI CONSULTATION</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ปรึกษาฟรี — AI วิเคราะห์ให้ทันที</h2>
+            <p class="text-slate-600 text-lg font-th">เล่าความต้องการของคุณมาเลย AI จะวิเคราะห์และแนะนำ Package ที่เหมาะสมใน 3 วินาที</p>
+        </div>
+
+        <div class="bg-navy rounded-3xl p-6 md:p-10 shadow-2xl shadow-navy/20 relative overflow-hidden">
+            <div class="absolute top-0 -right-20 w-64 h-64 bg-electric/15 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-signal/15 rounded-full blur-3xl"></div>
+
+            <!-- STEP 1: Analyze Form -->
+            <form id="analyze-form" class="relative space-y-5">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-sky font-th">เล่าความต้องการของคุณ <span class="text-electric-300">*</span></label>
+                    <textarea name="requirement" required rows="5" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-4 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition text-base" placeholder="เช่น มีห้องประชุมขนาดกลาง 20 คน ใช้โปรเจคเตอร์ 1 เครื่อง + Smart TV 1 เครื่อง ต้องการระบบควบคุมไฟ DMX และเสียงผ่านหน้าจอเดียว อยากสั่งงานด้วยภาษาไทยได้ งบประมาณ ~150,000 บาท..."></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">ขนาดห้องประชุม <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <select name="room_size" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition">
+                            <option value="">เลือก...</option>
+                            <option>เล็ก (1-10 คน)</option>
+                            <option>กลาง (10-30 คน)</option>
+                            <option>ใหญ่ (30-50 คน)</option>
+                            <option>ห้องสัมมนา (50+ คน)</option>
+                            <option>หลายห้อง</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">งบประมาณ <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <select name="budget" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition">
+                            <option value="">เลือก...</option>
+                            <option>น้อยกว่า 50,000 บาท</option>
+                            <option>50,000 - 100,000 บาท</option>
+                            <option>100,000 - 200,000 บาท</option>
+                            <option>200,000+ บาท</option>
+                            <option>เช่ารายเดือน/ปี</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" id="analyze-btn" class="w-full py-4 rounded-xl bg-electric hover:bg-electric-600 transition font-semibold text-lg text-white flex items-center justify-center gap-2 shadow-lg shadow-electric/40">
+                        <span id="analyze-btn-text">🤖 ให้ AI วิเคราะห์ทันที</span>
+                        <svg id="analyze-btn-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                    </button>
+                    <p class="text-center text-sky/70 text-xs mt-3 font-th">✨ ฟรี · ไม่ต้องสมัครสมาชิก · ไม่ต้องให้ข้อมูลส่วนตัว</p>
+                </div>
+            </form>
+
+            <!-- STEP 2: Analysis Result + Optional Contact Form (hidden initially) -->
+            <div id="analyze-result" class="hidden relative space-y-6"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    const analyzeForm = document.getElementById('analyze-form');
+    const resultDiv = document.getElementById('analyze-result');
+    const btnText = document.getElementById('analyze-btn-text');
+    const btnSpinner = document.getElementById('analyze-btn-spinner');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    if (!analyzeForm) return;
+
+    analyzeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        analyzeBtn.disabled = true;
+        btnText.textContent = 'AI กำลังวิเคราะห์...';
+        btnSpinner.classList.remove('hidden');
+
+        try {
+            const data = new FormData(analyzeForm);
+            const r = await fetch('/api/analyze', { method: 'POST', body: data });
+            const j = await r.json();
+
+            if (!j.ok) {
+                resultDiv.innerHTML = `<div class="bg-red-500/20 border border-red-500/30 rounded-2xl p-6 text-red-200">${j.error || 'เกิดข้อผิดพลาด'}</div>`;
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+
+            const inScope = j.in_scope;
+            const badge = inScope
+                ? '<span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30">✓ อยู่ในขอบเขตให้บริการ</span>'
+                : '<span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium border border-amber-500/30">⚠ ต้องการคุยรายละเอียดเพิ่ม</span>';
+
+            resultDiv.innerHTML = `
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6">
+                    <div class="flex items-center gap-3 mb-4 flex-wrap">
+                        ${badge}
+                        <span class="text-sky/80 text-sm">Voscene AI วิเคราะห์เสร็จแล้ว</span>
+                    </div>
+                    <h3 class="font-display font-semibold text-lg mb-2 text-white">📋 สรุปความต้องการ</h3>
+                    <p class="text-sky mb-4">${j.summary || '-'}</p>
+                    ${j.recommended_package ? `<div class="mb-4 p-4 bg-electric/15 border border-electric/30 rounded-lg flex items-center justify-between flex-wrap gap-2">
+                        <div><span class="text-sky/80 text-sm">📦 Package แนะนำ:</span> <span class="font-display font-semibold text-white text-xl ml-2">${j.recommended_package}</span></div>
+                        <a href="/pricing" class="text-electric-300 text-sm hover:underline">ดูราคา →</a>
+                    </div>` : ''}
+                    <h4 class="font-display font-semibold mb-2 text-white">💡 ประเมินความเหมาะสม</h4>
+                    <p class="text-sky/90 mb-4 text-sm">${j.fit_reason || '-'}</p>
+                    <div class="border-t border-white/10 pt-4 text-sm text-sky/90">
+                        <strong class="text-white">🎯 ขั้นตอนต่อไป:</strong> ${j.next_action || 'ติดต่อทีมขายเพื่อขอข้อมูลเพิ่ม'}
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-electric/20 to-signal/20 backdrop-blur border-2 border-electric/40 rounded-2xl p-6">
+                    <div class="flex items-start gap-3 mb-4">
+                        <div class="text-3xl">📞</div>
+                        <div>
+                            <h3 class="font-display font-semibold text-xl text-white mb-1">สนใจระบบของเราใช่ไหม?</h3>
+                            <p class="text-sky text-sm font-th">ฝากชื่อ + เบอร์ติดต่อ ทีมขายจะติดต่อกลับใน 24 ชั่วโมง พร้อมส่งใบเสนอราคาให้</p>
+                        </div>
+                    </div>
+
+                    <form id="contact-form" class="grid md:grid-cols-2 gap-4 mt-4">
+                        <input type="hidden" name="lead_id" value="${j.lead_id || ''}">
+                        <input type="hidden" name="requirement" value="">
+                        <div>
+                            <input type="text" name="name" required class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="ชื่อ-นามสกุล *">
+                        </div>
+                        <div>
+                            <input type="tel" name="phone" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="เบอร์โทร 08x-xxx-xxxx">
+                        </div>
+                        <div>
+                            <input type="text" name="company" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="บริษัท/หน่วยงาน">
+                        </div>
+                        <div>
+                            <input type="email" name="email" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="อีเมล">
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" id="contact-btn" class="w-full py-3.5 rounded-xl bg-white hover:bg-cloud transition font-semibold text-navy flex items-center justify-center gap-2 shadow-lg">
+                                <span id="contact-btn-text">💬 ส่งข้อมูลให้ทีมขายติดต่อกลับ</span>
+                                <svg id="contact-btn-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="contact-success" class="hidden mt-4 p-4 bg-emerald-500/20 border border-emerald-500/40 rounded-xl text-emerald-100 text-center">
+                        ✓ บันทึกข้อมูลเรียบร้อย! ทีมขายจะติดต่อกลับใน 24 ชั่วโมง ขอบคุณครับ
+                    </div>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+
+            const reqInput = resultDiv.querySelector('input[name="requirement"]');
+            if (reqInput) reqInput.value = analyzeForm.requirement.value;
+
+            const contactForm = document.getElementById('contact-form');
+            const contactBtn = document.getElementById('contact-btn');
+            const contactBtnText = document.getElementById('contact-btn-text');
+            const contactBtnSpinner = document.getElementById('contact-btn-spinner');
+            const contactSuccess = document.getElementById('contact-success');
+
+            contactForm.addEventListener('submit', async (ev) => {
+                ev.preventDefault();
+                contactBtn.disabled = true;
+                contactBtnText.textContent = 'กำลังบันทึก...';
+                contactBtnSpinner.classList.remove('hidden');
+
+                try {
+                    const cd = new FormData(contactForm);
+                    cd.append('room_size', analyzeForm.room_size.value);
+                    cd.append('budget', analyzeForm.budget.value);
+                    const cr = await fetch('/api/lead', { method: 'POST', body: cd });
+                    const cj = await cr.json();
+                    if (cj.ok) {
+                        contactForm.classList.add('hidden');
+                        contactSuccess.classList.remove('hidden');
+                    } else {
+                        alert(cj.error || 'เกิดข้อผิดพลาด ลองอีกครั้ง');
+                    }
+                } catch (err) {
+                    alert('ไม่สามารถส่งข้อมูลได้ ลองอีกครั้ง');
+                } finally {
+                    contactBtn.disabled = false;
+                    contactBtnText.textContent = '💬 ส่งข้อมูลให้ทีมขายติดต่อกลับ';
+                    contactBtnSpinner.classList.add('hidden');
+                }
+            });
+
+            analyzeForm.classList.add('hidden');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (err) {
+            resultDiv.innerHTML = '<div class="bg-red-500/20 border border-red-500/30 rounded-2xl p-6 text-red-200">ไม่สามารถวิเคราะห์ได้ ลองอีกครั้ง</div>';
+            resultDiv.classList.remove('hidden');
+        } finally {
+            analyzeBtn.disabled = false;
+            btnText.textContent = '🤖 ให้ AI วิเคราะห์ทันที';
+            btnSpinner.classList.add('hidden');
+        }
+    });
+})();
+</script>
+
+{% if posts %}
+<section class="py-20 bg-cloud border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-display text-3xl md:text-4xl font-semibold mb-10 text-center text-navy">บทความล่าสุด</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for post in posts %}
+            <a href="/blog/{{ post.slug }}" class="card rounded-2xl overflow-hidden transition">
+                {% if post.cover_image %}
+                <div class="aspect-video bg-cover bg-center" style="background-image: url('{{ post.cover_image }}')"></div>
+                {% else %}
+                <div class="aspect-video grad-bg"></div>
+                {% endif %}
+                <div class="p-6">
+                    <h3 class="font-display font-semibold text-lg mb-2 text-navy">{{ post.title }}</h3>
+                    <p class="text-slate-600 text-sm font-th">{{ post.excerpt }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

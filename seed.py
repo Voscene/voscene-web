@@ -1,5 +1,5 @@
 """สร้างข้อมูลเริ่มต้น: admin user, default content, default packages
-Aligned with Voscene Product Catalog V1.1 (2026 Edition) + Update v1.4
+Aligned with Voscene Product Catalog V2 (2026 Edition · Volume 2.0)
 """
 from passlib.context import CryptContext
 from database import SessionLocal, init_db, User, Content, Package
@@ -67,11 +67,11 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV ตัวแรกที่ออกแบบสำหรับองค์กรไทย ควบคุมด้วยเสียง/ข้อความภาษาไทยและอังกฤษผ่าน AI ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบ AV ดั้งเดิม 60-80% รองรับ PJLink, WebSocket, RS232, DMX512, VISCA, IR — ไม่ผูกกับ Brand", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ระบบควบคุม AV ตัวแรกที่ออกแบบสำหรับองค์กรไทย ควบคุมด้วยเสียง/ข้อความภาษาไทยและอังกฤษผ่าน AI · ติดตั้งใน 24 ชั่วโมง · ราคาประหยัด 60-80% · 15 ฟีเจอร์: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, Conference, Calendar, Schedule, Multi-Room (20 rooms), Video Conferencing, PA · OAuth + LINE + OTA + AES-128 Backup · ไม่ผูกกับ Brand", "Meta Description", "seo", "textarea"),
 ]
 
 
-# Aligned with Catalog V1.1 — Editions section (Contact for pricing, no fixed numbers)
+# Aligned with Catalog V2 (Volume 2.0) — Editions section (Contact for pricing, no fixed numbers)
 DEFAULT_PACKAGES = [
     {
         "code": "starter", "name": "Voscene Starter",
@@ -84,14 +84,14 @@ DEFAULT_PACKAGES = [
         "code": "pro", "name": "Voscene Pro",
         "price": "Contact for pricing", "price_unit": "",
         "description": "For multi-room deployments · Best for hotels, universities, enterprises",
-        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking integration\nMulti-room dashboard\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
+        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (up to 20 rooms)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
         "category": "purchase", "sort_order": 2, "is_featured": True,
     },
     {
         "code": "enterprise", "name": "Voscene Enterprise",
         "price": "Custom quote", "price_unit": "",
         "description": "For large-scale operations · Best for government, large enterprises",
-        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
+        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (Roadmap)\nCustom DSP integration (Roadmap)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 
@@ -157,13 +157,29 @@ def run_seed():
                 added += 1
         print(f"[seed] content: +{added} new · ~{migrated} migrated ({len(DEFAULT_CONTENT)} total defined)")
 
-        # Default packages
+        # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
+        # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated
+        # (admin may have customized pricing).
         pkg_added = 0
+        pkg_migrated = 0
+        CORE_EDITIONS = {"starter", "pro", "enterprise"}
         for pkg_data in DEFAULT_PACKAGES:
-            if not db.query(Package).filter_by(code=pkg_data["code"]).first():
+            existing = db.query(Package).filter_by(code=pkg_data["code"]).first()
+            if not existing:
                 db.add(Package(**pkg_data))
                 pkg_added += 1
-        print(f"[seed] packages: {pkg_added} new added ({len(DEFAULT_PACKAGES)} total defined)")
+            elif pkg_data["code"] in CORE_EDITIONS:
+                # Migrate features + description for core editions if they differ from defaults
+                changed = False
+                if existing.features != pkg_data["features"]:
+                    existing.features = pkg_data["features"]
+                    changed = True
+                if existing.description != pkg_data["description"]:
+                    existing.description = pkg_data["description"]
+                    changed = True
+                if changed:
+                    pkg_migrated += 1
+        print(f"[seed] packages: +{pkg_added} new · ~{pkg_migrated} migrated ({len(DEFAULT_PACKAGES)} total defined)")
 
         db.commit()
         print("[seed] done")

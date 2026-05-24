@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div class="text-center max-w-3xl mx-auto mb-20">
             <h1 class="text-4xl md:text-6xl font-bold mb-6 text-navy">ฟีเจอร์<span class="text-electric">ครบครัน</span></h1>
-            <p class="text-slate-600 text-lg font-th">9 ฟีเจอร์หลักครอบคลุมทุกการควบคุมที่ห้องประชุมต้องการ</p>
+            <p class="text-slate-600 text-lg font-th">16 control modules ครอบคลุมทุกการควบคุมที่ห้องประชุมต้องการ — ตาม Catalog V2 (Volume 2.0)</p>
         </div>
 
         <div class="space-y-16">
@@ -206,18 +206,18 @@
                 </div>
             </div>
 
-            <!-- 9 Multi-room Dashboard (Roadmap) -->
+            <!-- 9 Multi-room Dashboard — LIVE in V2 -->
             <div class="grid md:grid-cols-2 gap-10 items-center">
                 <div>
                     <div class="flex items-center gap-2 mb-3">
                         <span class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 09 · DASHBOARD</span>
-                        <span class="px-2 py-0.5 rounded-full bg-electric/15 text-electric text-xs font-semibold">Roadmap</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">LIVE</span>
                     </div>
                     <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Multi-room Central Dashboard</h2>
-                    <p class="text-slate-600 mb-4 font-th">ควบคุมและมอนิเตอร์ทุกห้องประชุมในอาคารจากจุดเดียว</p>
+                    <p class="text-slate-600 mb-4 font-th">Federated control สูงสุด 20 ห้อง — proxy commands จาก single pane of glass สำหรับ campuses + hotels</p>
                     <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Central Control + Monitoring</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Scalable — ขยายห้องได้ไม่จำกัด</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Central Control + Monitoring (up to 20 rooms)</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Federated — proxy commands จาก single pane</li>
                         <li class="flex gap-2"><span class="text-electric">✓</span> Independent Rooms — ห้องทำงานอิสระต่อกัน</li>
                     </ul>
                 </div>
@@ -231,6 +231,117 @@
                         {% endfor %}
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional V2 Features (PTZ + Tracking + IR + Conference + Calendar + Schedule + VC Room) -->
+<section class="py-20 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-semibold tracking-wider mb-3">V2 · VOLUME 2.0</div>
+            <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">More <span class="text-electric">Control Modules</span></h2>
+            <p class="text-slate-600 font-th">ฟีเจอร์เพิ่มเติม 7 ตัวที่อยู่ใน Catalog V2 — Conference + Calendar + Schedule + Multi-Room + VC Room</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            <!-- PTZ Camera -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-signal">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">CAMERA</span>
+                    <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-semibold">V1.1</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">PTZ Camera Control</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Pan / Tilt / Zoom / Preset</li>
+                    <li>• VISCA over IP (UDP 52381/1259)</li>
+                    <li>• Up to 4 cameras per unit</li>
+                </ul>
+            </div>
+
+            <!-- Auto Tracking -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-electric">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">TRACKING</span>
+                    <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-semibold">V1.1</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">Auto Video Tracking</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Mic-driven camera follow</li>
+                    <li>• Replaces dedicated tracker</li>
+                    <li>• Conf/discussion systems</li>
+                </ul>
+            </div>
+
+            <!-- IR -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-signal">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">IR</span>
+                    <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-semibold">V1.4</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">IR Control</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Learn + Send IR codes</li>
+                    <li>• 3.5mm IR OUT (standard)</li>
+                    <li>• Legacy TV / Audio / BluRay</li>
+                </ul>
+            </div>
+
+            <!-- Conference System -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">CONFERENCE</span>
+                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">Conference System</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• TCP dome microphone arrays</li>
+                    <li>• Mic on/off + channel routing</li>
+                    <li>• Parliamentary sessions</li>
+                </ul>
+            </div>
+
+            <!-- Calendar -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">CALENDAR</span>
+                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">Calendar Integration</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• OAuth Device Flow pairing</li>
+                    <li>• Auto-trigger scenes</li>
+                    <li>• Cloud calendar access</li>
+                </ul>
+            </div>
+
+            <!-- Schedule -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">SCHEDULE</span>
+                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">Schedule Rule Engine</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Recurring weekday + HH:MM</li>
+                    <li>• Debounced execution</li>
+                    <li>• Power-saving / after-hours</li>
+                </ul>
+            </div>
+
+            <!-- Video Conferencing Room -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative md:col-span-2 lg:col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">VC ROOM</span>
+                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                </div>
+                <h3 class="font-display font-semibold mb-2 text-navy">Video Conf Room Control</h3>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• TCP protocol VC integration</li>
+                    <li>• Join / leave / mute / layout</li>
+                    <li>• Scene-triggered or voice</li>
+                </ul>
             </div>
         </div>
     </div>
@@ -251,7 +362,7 @@
                     <li>• Projector เปิด-ปิด</li>
                     <li>• Input Source เลือก</li>
                     <li>• Lamp Hours / Status</li>
-                    <li>• มาตรฐาน IEC 62386</li>
+                    <li>• MD5 authentication · 5+ brands</li>
                 </ul>
             </div>
             <div class="card rounded-xl p-5 border-l-4 border-l-signal">
@@ -260,7 +371,7 @@
                     <li>• Smart TV Control</li>
                     <li>• Wake-on-LAN Power On</li>
                     <li>• Input Source Select</li>
-                    <li>• Network Shutdown</li>
+                    <li>• WebOS / Tizen / REST+IRCC</li>
                 </ul>
             </div>
             <div class="card rounded-xl p-5 border-l-4 border-l-purple-500">
@@ -290,9 +401,74 @@
                     <li>• Bypass Failsafe</li>
                 </ul>
             </div>
+            <!-- NEW V2: VISCA-IP -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                <div class="text-emerald-600 font-semibold mb-2">VISCA-IP</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• PTZ Camera control</li>
+                    <li>• UDP 52381 / 1259</li>
+                    <li>• Up to 4 cameras per unit</li>
+                    <li>• Industry-standard PTZ</li>
+                </ul>
+            </div>
+            <!-- NEW V2: Conference TCP -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                <div class="text-emerald-600 font-semibold mb-2">Conference TCP</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Discussion / dome mic systems</li>
+                    <li>• Mic on/off · channel routing</li>
+                    <li>• Auto-tracking integration</li>
+                    <li>• Parliament-grade</li>
+                </ul>
+            </div>
+            <!-- NEW V2: Video Conf TCP -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                <div class="text-emerald-600 font-semibold mb-2">Video Conf TCP</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Room controller API</li>
+                    <li>• Join / leave / mute / layout</li>
+                    <li>• Scene-triggered actions</li>
+                </ul>
+            </div>
+            <!-- NEW V2: OAuth -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                <div class="text-emerald-600 font-semibold mb-2">OAuth 2.0 Device Flow</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Calendar / cloud integration</li>
+                    <li>• Device-pairing (no password)</li>
+                    <li>• Refresh-token rotation</li>
+                    <li>• Per-room credentials</li>
+                </ul>
+            </div>
+            <!-- IR (kept) -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-rose-500">
+                <div class="text-rose-600 font-semibold mb-2">IR (Infrared)</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Learn + Send IR codes</li>
+                    <li>• 3.5mm IR OUT standard</li>
+                    <li>• Legacy device control</li>
+                    <li>• Industry-standard extender</li>
+                </ul>
+            </div>
+            <!-- NEW V2: 1-Wire / I²C / SPI -->
+            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
+                <div class="text-emerald-600 font-semibold mb-2">1-Wire · I²C · SPI</div>
+                <ul class="text-sm text-slate-600 space-y-1 font-th">
+                    <li>• Internal sensor bus</li>
+                    <li>• Digital temp / humidity</li>
+                    <li>• OLED status displays</li>
+                    <li>• Battery / rack monitoring</li>
+                </ul>
+            </div>
+            <!-- RTP/UDP — still Roadmap -->
             <div class="card rounded-xl p-5 border-l-4 border-l-cyan-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-electric/10 text-electric text-xs">Roadmap</span>
-                <div class="text-cyan-600 font-semibold mb-2">RTP / UDP</div>
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">Roadmap</span>
+                <div class="text-cyan-600 font-semibold mb-2">RTP / UDP Multicast</div>
                 <ul class="text-sm text-slate-600 space-y-1 font-th">
                     <li>• PA Multicast Audio</li>
                     <li>• Multi-room Sync</li>
@@ -304,32 +480,43 @@
     </div>
 </section>
 
-<!-- Tech Stack -->
+<!-- Tech Stack — aligned with Catalog V2 -->
 <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
             <h2 class="text-3xl md:text-4xl font-bold font-th text-navy">Tech Stack</h2>
+            <p class="text-slate-600 mt-2 font-th">Voscene OS · Volume 2.0 specifications</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
             <div class="card rounded-xl p-6">
                 <div class="text-electric text-xs font-semibold mb-2">🖥 FRONTEND</div>
-                <div class="font-semibold mb-1 text-navy">Single HTML File · React via CDN</div>
-                <p class="text-slate-600 text-sm font-th">Responsive · Mobile-first · ไม่ต้อง Build/Compile · PWA รองรับ</p>
+                <div class="font-semibold mb-1 text-navy">React 18 via CDN (vanilla JS)</div>
+                <p class="text-slate-600 text-sm font-th">No build step · Responsive · Mobile-first · PWA installable on Android + Desktop</p>
             </div>
             <div class="card rounded-xl p-6">
                 <div class="text-signal text-xs font-semibold mb-2">⚡ BACKEND</div>
-                <div class="font-semibold mb-1 text-navy">Python FastAPI + Uvicorn</div>
-                <p class="text-slate-600 text-sm font-th">WebSocket Real-time · SQLite Database · Watchdog Auto-restart</p>
+                <div class="font-semibold mb-1 text-navy">Python 3.11+ async (FastAPI)</div>
+                <p class="text-slate-600 text-sm font-th">WebSocket bi-directional · REST API · Uvicorn ASGI · Aiosqlite WAL</p>
             </div>
             <div class="card rounded-xl p-6">
                 <div class="text-purple-600 text-xs font-semibold mb-2">🤖 AI ENGINE</div>
-                <div class="font-semibold mb-1 text-navy">Large Language Model API</div>
-                <p class="text-slate-600 text-sm font-th">Natural Language Processing · Thai/English · Multi-command Parsing</p>
+                <div class="font-semibold mb-1 text-navy">LLM API <span class="px-1.5 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-mono ml-1">BYOL</span></div>
+                <p class="text-slate-600 text-sm font-th">Customer-provided LLM subscription · Thai NLP · provider-agnostic · STT + Web Speech API fallback</p>
             </div>
             <div class="card rounded-xl p-6">
                 <div class="text-amber-600 text-xs font-semibold mb-2">🔧 HARDWARE</div>
-                <div class="font-semibold mb-1 text-navy">ARM64 Linux SBC</div>
-                <p class="text-slate-600 text-sm font-th">Compact Form Factor · ติดตั้งในตู้ Rack 2U ได้ · UPS Backup</p>
+                <div class="font-semibold mb-1 text-navy">ARM Cortex-A76 quad-core</div>
+                <p class="text-slate-600 text-sm font-th">2U rack-mount 19" · 4/8/16GB LPDDR4X · NVMe SSD · Gigabit Eth + Wi-Fi 6 · 0–45°C</p>
+            </div>
+            <div class="card rounded-xl p-6">
+                <div class="text-emerald-600 text-xs font-semibold mb-2">🔐 SECURITY</div>
+                <div class="font-semibold mb-1 text-navy">Session + 2-tier PIN + API Keys</div>
+                <p class="text-slate-600 text-sm font-th">Cookie session · USER + TECH PINs · X-API-Key per-key role · AES-128 Fernet auto-backup</p>
+            </div>
+            <div class="card rounded-xl p-6">
+                <div class="text-cyan-600 text-xs font-semibold mb-2">🔄 OPS</div>
+                <div class="font-semibold mb-1 text-navy">OTA Updates + Hardware Watchdog</div>
+                <p class="text-slate-600 text-sm font-th">Git pull + container rebuild + auto-rollback · LINE notify · External watchdog IC</p>
             </div>
         </div>
     </div>

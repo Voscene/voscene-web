@@ -4,7 +4,7 @@
 
 {% block content %}
 <form method="post" action="/admin/content/update" class="space-y-6">
-    {% set section_labels = {'hero': 'Hero — ส่วนบนสุดหน้าแรก', 'stats': 'ตัวเลขสถิติ', 'about': 'เกี่ยวกับเรา', 'contact': 'ข้อมูลติดต่อ', 'footer': 'Footer', 'seo': 'SEO / Meta Tags'} %}
+    {% set section_labels = {'hero': 'Hero — ส่วนบนสุดหน้าแรก', 'brand': 'Brand · ความหมายแบรนด์', 'stats': 'ตัวเลขสถิติ', 'about': 'เกี่ยวกับเรา', 'line': 'LINE Integration', 'contact': 'ข้อมูลติดต่อ + Social', 'footer': 'Footer', 'seo': 'SEO / Meta Tags'} %}
     {% for section, items in grouped.items() %}
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">

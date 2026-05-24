@@ -49,10 +49,12 @@ DEFAULT_CONTENT = [
     # ===== Contact =====
     ("contact_title", "Let's talk.", "หัวข้อ Contact", "contact", "text"),
     ("contact_subtitle", "Ready to transform your AV experience? — กรอกความต้องการของคุณ AI จะวิเคราะห์และแนะนำ Edition ที่เหมาะสมให้ทันที", "คำอธิบาย Contact", "contact", "textarea"),
-    ("contact_phone", "088-886-4660", "เบอร์โทร", "contact", "text"),
+    ("contact_phone", "088-886-4660", "เบอร์โทร (ใส่หลายเบอร์ได้ ขึ้นบรรทัดใหม่)", "contact", "textarea"),
     ("contact_email", "hello@voscene.com", "อีเมล", "contact", "text"),
-    ("contact_address", "Bangkok, Thailand · Serving Southeast Asia", "ที่อยู่", "contact", "text"),
+    ("contact_address", "Bangkok, Thailand · Serving Southeast Asia", "ที่อยู่ (รองรับ 2-3 บรรทัด)", "contact", "textarea"),
     ("contact_hours", "จันทร์-ศุกร์ 09:00-18:00", "เวลาทำการ", "contact", "text"),
+    ("contact_facebook", "", "Facebook URL (เช่น https://facebook.com/voscene)", "contact", "text"),
+    ("contact_line", "", "LINE Official Account URL หรือ ID (เช่น https://lin.ee/xxxxx หรือ @voscene)", "contact", "text"),
 
     # ===== Footer =====
     ("footer_company", "Central System Integration Co., Ltd.", "ชื่อบริษัท", "footer", "text"),
@@ -127,13 +129,29 @@ def run_seed():
             db.add(user)
             print(f"[seed] created admin user: {settings.ADMIN_USERNAME}")
 
-        # Default content (only adds new keys, does not override existing)
+        # Default content — adds new keys + migrates field_type/label/section of existing
         added = 0
+        migrated = 0
         for key, value, label, section, field_type in DEFAULT_CONTENT:
-            if not db.query(Content).filter_by(key=key).first():
+            existing = db.query(Content).filter_by(key=key).first()
+            if existing:
+                # Migrate metadata (preserves user-edited value)
+                changed = False
+                if existing.field_type != field_type:
+                    existing.field_type = field_type
+                    changed = True
+                if existing.label != label:
+                    existing.label = label
+                    changed = True
+                if existing.section != section:
+                    existing.section = section
+                    changed = True
+                if changed:
+                    migrated += 1
+            else:
                 db.add(Content(key=key, value=value, label=label, section=section, field_type=field_type))
                 added += 1
-        print(f"[seed] content: {added} new fields added ({len(DEFAULT_CONTENT)} total defined)")
+        print(f"[seed] content: +{added} new · ~{migrated} migrated ({len(DEFAULT_CONTENT)} total defined)")
 
         # Default packages
         pkg_added = 0

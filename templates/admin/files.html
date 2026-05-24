@@ -1,0 +1,83 @@
+{% extends "admin/base.html" %}
+{% block title %}Files / Uploads{% endblock %}
+{% block page_title %}ไฟล์ดาวน์โหลด (Brochure / Catalog){% endblock %}
+
+{% block content %}
+{% set err = request.query_params.get('error') %}
+{% if err %}
+<div class="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+    {% if err == 'invalid_type' %}❌ รองรับเฉพาะไฟล์ .pdf, .doc, .docx, .ppt, .pptx เท่านั้น
+    {% elif err == 'too_large' %}❌ ไฟล์ใหญ่เกิน 20 MB
+    {% elif err == 'upload_failed' %}❌ Upload ล้มเหลว ลองใหม่
+    {% else %}❌ เกิดข้อผิดพลาด{% endif %}
+</div>
+{% endif %}
+
+{% if request.query_params.get('deleted') %}
+<div class="mb-6 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-sm">
+    🗑 ลบไฟล์เรียบร้อย
+</div>
+{% endif %}
+
+<div class="max-w-3xl space-y-6">
+    <p class="text-slate-600 text-sm">
+        อัพโหลดไฟล์ <strong>Brochure</strong> และ <strong>Catalog</strong> เพื่อให้ปุ่มดาวน์โหลดบนหน้าแรกใช้งานได้<br>
+        รองรับ: PDF, DOC, DOCX, PPT, PPTX · ขนาดสูงสุด 20 MB
+    </p>
+
+    {% for slot, label in [('brochure', '📄 Brochure'), ('catalog', '📚 Catalog')] %}
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+            <h2 class="font-semibold text-lg">{{ label }}</h2>
+        </div>
+        <div class="p-6">
+            {% set f = files[slot] %}
+            {% if f.exists %}
+            <div class="mb-4 p-4 rounded-lg bg-emerald-50 border border-emerald-200">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                        <div class="text-sm text-slate-500">📎 ไฟล์ปัจจุบัน:</div>
+                        <div class="font-semibold text-emerald-700">{{ f.filename }}</div>
+                        <div class="text-xs text-slate-500 mt-1">{{ "%.2f"|format(f.size / 1024 / 1024) }} MB</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="/uploads/{{ f.filename }}" target="_blank" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm">เปิดดู</a>
+                        <form method="post" action="/admin/files/delete" class="inline" onsubmit="return confirm('ลบไฟล์ {{ f.filename }}?')">
+                            <input type="hidden" name="slot" value="{{ slot }}">
+                            <button type="submit" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm">ลบ</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="mb-4 p-4 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 text-sm">
+                ⏳ ยังไม่มีไฟล์ — อัพโหลดด้านล่าง
+            </div>
+            {% endif %}
+
+            <form method="post" action="/admin/files/upload" enctype="multipart/form-data" class="space-y-3">
+                <input type="hidden" name="slot" value="{{ slot }}">
+                <label class="block">
+                    <span class="block text-sm font-medium text-slate-700 mb-1.5">{{ '🔁 อัพโหลดใหม่ (เปลี่ยนไฟล์เดิม)' if f.exists else '⬆️ อัพโหลดไฟล์' }}</span>
+                    <input type="file" name="file" required accept=".pdf,.doc,.docx,.ppt,.pptx"
+                           class="w-full text-sm text-slate-500
+                                  file:mr-4 file:py-2 file:px-4
+                                  file:rounded-lg file:border-0
+                                  file:text-sm file:font-medium
+                                  file:bg-blue-50 file:text-blue-700
+                                  hover:file:bg-blue-100 cursor-pointer">
+                </label>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">
+                    บันทึก
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+        💡 <strong>หมายเหตุ:</strong> ปุ่มดาวน์โหลดในหน้าแรกจะแสดงเฉพาะเมื่อมีไฟล์ที่อัพโหลดแล้วเท่านั้น
+        ป้ายปุ่ม (เช่น "Download Brochure") แก้ได้ที่ <a href="/admin/content" class="underline">เนื้อหาหน้าเว็บ → Files</a>
+    </div>
+</div>
+{% endblock %}

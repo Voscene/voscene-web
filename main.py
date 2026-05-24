@@ -1,11 +1,21 @@
 """AV Control System — Marketing Website + Admin CMS"""
+import os
+import shutil
+from pathlib import Path
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, status
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, UploadFile, File
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import Optional
+
+# ===== File Uploads =====
+# Use persistent disk on Render, local folder for dev
+UPLOAD_DIR = Path("/var/data/uploads") if os.path.exists("/var/data") else Path("./uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+ALLOWED_UPLOAD_EXT = {".pdf", ".doc", ".docx", ".ppt", ".pptx"}
+MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20 MB
 
 from config import get_settings
 from database import get_db, Content, Package, Lead, BlogPost, User
@@ -492,6 +502,126 @@ async def admin_blog_delete(post_id: int, request: Request, db: Session = Depend
         db.delete(post)
         db.commit()
     return RedirectResponse("/admin/blog", status_code=303)
+
+
+@app.get("/uploads/{filename}")
+async def serve_upload(filename: str):
+    """Serve uploaded file (public download)"""
+    safe_name = Path(filename).name  # prevent path traversal
+    file_path = UPLOAD_DIR / safe_name
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(file_path, filename=safe_name)
+
+
+@app.get("/admin/files", response_class=HTMLResponse)
+async def admin_files(request: Request, db: Session = Depends(get_db)):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+
+    # Get current file info for each slot
+    files_info = {}
+    for slot in ("brochure", "catalog"):
+        content = db.query(Content).filter_by(key=f"{slot}_file").first()
+        filename = content.value if content else ""
+        info = {"filename": filename, "exists": False, "size": 0}
+        if filename:
+            fpath = UPLOAD_DIR / filename
+            if fpath.exists():
+                info["exists"] = True
+                info["size"] = fpath.stat().st_size
+        files_info[slot] = info
+
+    return templates.TemplateResponse("admin/files.html", {
+        "request": request, "user": user, "files": files_info, "settings": settings,
+    })
+
+
+@app.post("/admin/files/upload")
+async def admin_files_upload(
+    request: Request,
+    slot: str = Form(...),  # "brochure" or "catalog"
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+
+    if slot not in ("brochure", "catalog"):
+        return RedirectResponse("/admin/files?error=invalid_slot", status_code=303)
+
+    # Validate extension
+    ext = Path(file.filename).suffix.lower()
+    if ext not in ALLOWED_UPLOAD_EXT:
+        return RedirectResponse("/admin/files?error=invalid_type", status_code=303)
+
+    # Save with predictable filename (slot.ext) so we can serve consistently
+    safe_filename = f"{slot}{ext}"
+    file_path = UPLOAD_DIR / safe_filename
+
+    # Remove old file with different extension if exists
+    for old_ext in ALLOWED_UPLOAD_EXT:
+        old_path = UPLOAD_DIR / f"{slot}{old_ext}"
+        if old_path.exists() and old_ext != ext:
+            old_path.unlink()
+
+    # Save new file
+    size = 0
+    try:
+        with file_path.open("wb") as buffer:
+            while chunk := await file.read(1024 * 1024):  # 1MB chunks
+                size += len(chunk)
+                if size > MAX_UPLOAD_SIZE:
+                    file_path.unlink(missing_ok=True)
+                    return RedirectResponse("/admin/files?error=too_large", status_code=303)
+                buffer.write(chunk)
+    except Exception:
+        return RedirectResponse("/admin/files?error=upload_failed", status_code=303)
+
+    # Update content
+    content = db.query(Content).filter_by(key=f"{slot}_file").first()
+    if content:
+        content.value = safe_filename
+    else:
+        db.add(Content(
+            key=f"{slot}_file",
+            value=safe_filename,
+            label=f"{slot.title()} filename (auto)",
+            section="files",
+            field_type="text",
+        ))
+    db.commit()
+    return RedirectResponse("/admin/files?saved=1", status_code=303)
+
+
+@app.post("/admin/files/delete")
+async def admin_files_delete(
+    request: Request,
+    slot: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+
+    if slot not in ("brochure", "catalog"):
+        return RedirectResponse("/admin/files", status_code=303)
+
+    # Remove any file matching slot.* extension
+    for ext in ALLOWED_UPLOAD_EXT:
+        fpath = UPLOAD_DIR / f"{slot}{ext}"
+        if fpath.exists():
+            fpath.unlink()
+
+    # Clear content reference
+    content = db.query(Content).filter_by(key=f"{slot}_file").first()
+    if content:
+        content.value = ""
+        db.commit()
+
+    return RedirectResponse("/admin/files?deleted=1", status_code=303)
 
 
 @app.get("/admin/settings", response_class=HTMLResponse)

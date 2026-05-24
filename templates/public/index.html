@@ -50,6 +50,24 @@
                 </a>
             </div>
 
+            {# Download buttons (show only if files exist) #}
+            {% if c.brochure_file or c.catalog_file %}
+            <div class="flex flex-wrap gap-3 mt-6">
+                {% if c.brochure_file %}
+                <a href="/uploads/{{ c.brochure_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    {{ c.brochure_label or 'Download Brochure' }}
+                </a>
+                {% endif %}
+                {% if c.catalog_file %}
+                <a href="/uploads/{{ c.catalog_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                    {{ c.catalog_label or 'Download Catalog' }}
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
             <!-- Trusted by -->
             <div class="mt-16 md:mt-20 pt-8 border-t border-white/10 max-w-2xl">
                 <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>

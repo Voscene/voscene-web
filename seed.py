@@ -21,6 +21,10 @@ DEFAULT_CONTENT = [
     ("hero_cta_secondary", "ดูฟีเจอร์", "ปุ่มรอง", "hero", "text"),
     ("hero_mission", "\"พูดสิ่งที่อยากทำ\" — Voscene จัดการที่เหลือให้", "Mission Statement (quote-style)", "hero", "textarea"),
 
+    # ===== Downloads (labels — files managed via /admin/files) =====
+    ("brochure_label", "Download Brochure", "ป้ายปุ่ม Download Brochure", "files", "text"),
+    ("catalog_label", "Download Catalog", "ป้ายปุ่ม Download Catalog", "files", "text"),
+
     # ===== Brand meaning =====
     ("brand_meaning_title", "VOSCENE คืออะไร", "หัวข้อความหมายแบรนด์", "brand", "text"),
     ("brand_meaning_text", "VOSCENE ออกเสียงว่า \"VO-seen\" — มาจาก Voice on SCENE หมายถึง \"เสียงพร้อมแล้ว ในทุกพื้นที่\"", "ความหมายแบรนด์", "brand", "textarea"),

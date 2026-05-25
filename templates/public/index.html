@@ -9,8 +9,8 @@
     <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- Floating product photo (desktop only — sits behind/beside text on the right) -->
-    <div class="hidden lg:block absolute top-1/2 -translate-y-1/2 right-0 xl:right-8 w-[42%] xl:w-[46%] max-w-3xl pointer-events-none z-0">
+    <!-- Floating product photo (desktop only — narrower + offset so it sits past the text safe zone) -->
+    <div class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-8 xl:right-0 2xl:right-12 w-[36%] xl:w-[40%] 2xl:w-[44%] max-w-2xl xl:max-w-3xl pointer-events-none z-0">
         <div class="relative">
             <div class="absolute inset-0 bg-gradient-to-tr from-electric/30 via-transparent to-signal/20 blur-3xl"></div>
             <img src="/static/images/product-hero.png" alt="VOSCENE 2U rack-mount controller" class="relative w-full h-auto drop-shadow-2xl opacity-90">
@@ -44,10 +44,10 @@
                 {{ c.hero_badge }}
             </div>
 
-            <!-- Secondary Headline (Thai context) -->
-            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl leading-snug">{{ c.hero_subtitle_th }}</h2>
-            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl font-display tracking-wide">{{ c.hero_tagline }}</p>
-            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
+            <!-- Secondary Headline (Thai context) — constrained on lg+ to avoid overlap with product photo -->
+            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl lg:max-w-xl xl:max-w-2xl leading-snug">{{ c.hero_subtitle_th }}</h2>
+            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl lg:max-w-xl font-display tracking-wide">{{ c.hero_tagline }}</p>
+            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl lg:max-w-xl xl:max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
 
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="#ai-consult" class="px-7 py-3.5 rounded-lg bg-white hover:bg-cloud transition font-semibold text-navy shadow-lg">
@@ -92,15 +92,11 @@
 
 <!-- USP Stats -->
 <section class="py-16 bg-white border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <div class="text-center">
                 <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_1_value }}</div>
                 <div class="text-slate-600 mt-2 text-sm font-th">{{ c.stat_1_label }}</div>
-            </div>
-            <div class="text-center">
-                <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_2_value }}</div>
-                <div class="text-slate-600 mt-2 text-sm font-th">{{ c.stat_2_label }}</div>
             </div>
             <div class="text-center">
                 <div class="font-display text-5xl md:text-6xl font-semibold text-navy">{{ c.stat_3_value }}</div>
@@ -111,9 +107,17 @@
 </section>
 
 <!-- Mission Statement with backdrop -->
-<section class="relative py-24 md:py-28 overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center bg-cloud" style="background-image: url('/static/images/mission-bg.jpg')"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-white via-white/85 to-cloud"></div>
+<section class="relative py-24 md:py-28 overflow-hidden bg-cloud">
+    <!-- Optional photo backdrop (falls back gracefully if file missing) -->
+    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/static/images/mission-bg.jpg')"></div>
+    <!-- Subtle dot-grid texture so the section never feels flat -->
+    <div class="absolute inset-0 opacity-[0.18]" style="background-image: radial-gradient(circle, rgb(15 23 42 / 0.5) 1px, transparent 1.2px); background-size: 22px 22px;"></div>
+    <!-- Decorative gradient blobs -->
+    <div class="absolute top-0 -left-32 w-[400px] h-[400px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Soft white-to-cloud wash on top of pattern -->
+    <div class="absolute inset-0 bg-gradient-to-b from-white/75 via-white/55 to-cloud/80"></div>
+
     <div class="relative max-w-4xl mx-auto px-4 text-center">
         <div class="text-muted text-xs font-semibold tracking-[2px] mb-6">OUR MISSION</div>
 
@@ -122,7 +126,12 @@
             <span class="font-display text-electric/70 align-middle mr-1">&#8220;</span>พูด<span class="text-electric">สิ่งที่อยากทำ</span><span class="font-display text-electric/70 align-middle ml-1">&#8221;</span>
         </p>
 
-        <p class="font-th text-3xl md:text-5xl text-slate-500 mt-6 md:mt-8 font-light">— Voscene จัดการที่เหลือให้</p>
+        <!-- Bottom line: same navy tone as top, with Voscene highlighted -->
+        <p class="font-th text-3xl md:text-5xl text-navy mt-6 md:mt-8 font-medium">
+            <span class="text-navy/60 font-light">—</span>
+            <span class="font-display font-bold text-electric tracking-tight">Voscene</span>
+            <span class="font-light">จัดการที่เหลือให้</span>
+        </p>
     </div>
 </section>
 
@@ -228,75 +237,141 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            <!-- SME -->
+            <!-- SME — Office building illustration -->
             <div class="card rounded-2xl overflow-hidden group flex">
                 <div class="w-2 bg-orange-400"></div>
-                <div class="flex-1 p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-mono font-semibold">SME · BUSINESS</span>
+                <div class="flex-1 p-6 flex justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-mono font-semibold">SME · BUSINESS</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-semibold mb-2 text-navy">SME</h3>
+                        <p class="text-slate-600 text-sm font-th mb-4">Modern meeting rooms without enterprise complexity — voice commands replace touch panels</p>
+                        <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                        <ul class="text-slate-700 text-sm font-th space-y-1">
+                            <li>▸ Conference rooms</li>
+                            <li>▸ Reception displays</li>
+                            <li>▸ Training rooms</li>
+                        </ul>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">SME</h3>
-                    <p class="text-slate-600 text-sm font-th mb-4">Modern meeting rooms without enterprise complexity — voice commands replace touch panels</p>
-                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
-                    <ul class="text-slate-700 text-sm font-th space-y-1">
-                        <li>▸ Conference rooms</li>
-                        <li>▸ Reception displays</li>
-                        <li>▸ Training rooms</li>
-                    </ul>
+                    <div class="flex-shrink-0 self-end -mb-1 -mr-1 text-orange-300 opacity-80 group-hover:opacity-100 transition">
+                        <svg class="w-20 h-20 md:w-24 md:h-24" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="14" y="20" width="68" height="68" rx="2"/>
+                            <line x1="14" y1="40" x2="82" y2="40"/>
+                            <line x1="14" y1="60" x2="82" y2="60"/>
+                            <line x1="36" y1="20" x2="36" y2="88"/>
+                            <line x1="60" y1="20" x2="60" y2="88"/>
+                            <path d="M14 20 L48 8 L82 20" stroke-width="2"/>
+                            <rect x="42" y="74" width="12" height="14" fill="currentColor" opacity="0.4"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Education -->
+            <!-- Education — Graduation cap + book illustration -->
             <div class="card rounded-2xl overflow-hidden group flex">
                 <div class="w-2 bg-emerald-500"></div>
-                <div class="flex-1 p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-xs font-mono font-semibold">EDU · EDUCATION</span>
+                <div class="flex-1 p-6 flex justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-xs font-mono font-semibold">EDU · EDUCATION</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Education</h3>
+                        <p class="text-slate-600 text-sm font-th mb-4">Classrooms, lecture halls, and auditoriums controlled by teachers without IT training</p>
+                        <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                        <ul class="text-slate-700 text-sm font-th space-y-1">
+                            <li>▸ Smart classrooms</li>
+                            <li>▸ Lecture halls</li>
+                            <li>▸ Multi-campus control</li>
+                        </ul>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Education</h3>
-                    <p class="text-slate-600 text-sm font-th mb-4">Classrooms, lecture halls, and auditoriums controlled by teachers without IT training</p>
-                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
-                    <ul class="text-slate-700 text-sm font-th space-y-1">
-                        <li>▸ Smart classrooms</li>
-                        <li>▸ Lecture halls</li>
-                        <li>▸ Multi-campus control</li>
-                    </ul>
+                    <div class="flex-shrink-0 self-end -mb-1 -mr-1 text-emerald-400 opacity-80 group-hover:opacity-100 transition">
+                        <svg class="w-20 h-20 md:w-24 md:h-24" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- mortarboard -->
+                            <path d="M48 16 L10 34 L48 52 L86 34 Z" fill="currentColor" fill-opacity="0.15"/>
+                            <path d="M48 16 L10 34 L48 52 L86 34 Z"/>
+                            <!-- tassel -->
+                            <line x1="86" y1="34" x2="86" y2="50"/>
+                            <circle cx="86" cy="54" r="3" fill="currentColor"/>
+                            <!-- head/book base -->
+                            <path d="M24 42 L24 62 Q48 76, 72 62 L72 42"/>
+                            <!-- ground line -->
+                            <line x1="14" y1="82" x2="82" y2="82" opacity="0.4"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Hospitality -->
+            <!-- Hospitality — Hotel bell illustration -->
             <div class="card rounded-2xl overflow-hidden group flex">
                 <div class="w-2 bg-amber-500"></div>
-                <div class="flex-1 p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-xs font-mono font-semibold">HSP · HOSPITALITY</span>
+                <div class="flex-1 p-6 flex justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 text-xs font-mono font-semibold">HSP · HOSPITALITY</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Hospitality</h3>
+                        <p class="text-slate-600 text-sm font-th mb-4">Hotels, ballrooms, and conference centers — per-room control with central management</p>
+                        <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                        <ul class="text-slate-700 text-sm font-th space-y-1">
+                            <li>▸ Ballrooms</li>
+                            <li>▸ Hotel meeting rooms</li>
+                            <li>▸ Banquet halls</li>
+                        </ul>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Hospitality</h3>
-                    <p class="text-slate-600 text-sm font-th mb-4">Hotels, ballrooms, and conference centers — per-room control with central management</p>
-                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
-                    <ul class="text-slate-700 text-sm font-th space-y-1">
-                        <li>▸ Ballrooms</li>
-                        <li>▸ Hotel meeting rooms</li>
-                        <li>▸ Banquet halls</li>
-                    </ul>
+                    <div class="flex-shrink-0 self-end -mb-1 -mr-1 text-amber-400 opacity-80 group-hover:opacity-100 transition">
+                        <svg class="w-20 h-20 md:w-24 md:h-24" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- bell dome -->
+                            <path d="M16 70 Q16 36, 48 36 Q80 36, 80 70" fill="currentColor" fill-opacity="0.15"/>
+                            <path d="M16 70 Q16 36, 48 36 Q80 36, 80 70"/>
+                            <!-- base plate -->
+                            <line x1="10" y1="70" x2="86" y2="70"/>
+                            <line x1="10" y1="74" x2="86" y2="74"/>
+                            <!-- top knob -->
+                            <line x1="48" y1="28" x2="48" y2="36"/>
+                            <circle cx="48" cy="24" r="4" fill="currentColor"/>
+                            <!-- subtle inner curve -->
+                            <path d="M28 60 Q28 46, 48 46" opacity="0.4"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
-            <!-- Government -->
+            <!-- Government — Classical columns illustration -->
             <div class="card rounded-2xl overflow-hidden group flex">
                 <div class="w-2 bg-navy"></div>
-                <div class="flex-1 p-6">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="px-2 py-0.5 rounded bg-navy/10 text-navy text-xs font-mono font-semibold">GOV · GOVERNMENT</span>
+                <div class="flex-1 p-6 flex justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-0.5 rounded bg-navy/10 text-navy text-xs font-mono font-semibold">GOV · GOVERNMENT</span>
+                        </div>
+                        <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Government</h3>
+                        <p class="text-slate-600 text-sm font-th mb-4">Boardrooms, command centers, briefing rooms — PA integration for emergency broadcast</p>
+                        <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
+                        <ul class="text-slate-700 text-sm font-th space-y-1">
+                            <li>▸ Boardrooms / Briefing rooms / Emergency PA</li>
+                            <li>▸ Court rooms with auto video tracking</li>
+                            <li>▸ Parliament-style discussion sessions</li>
+                        </ul>
                     </div>
-                    <h3 class="font-display text-2xl font-semibold mb-2 text-navy">Government</h3>
-                    <p class="text-slate-600 text-sm font-th mb-4">Boardrooms, command centers, briefing rooms — PA integration for emergency broadcast</p>
-                    <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
-                    <ul class="text-slate-700 text-sm font-th space-y-1">
-                        <li>▸ Boardrooms / Briefing rooms / Emergency PA</li>
-                        <li>▸ Court rooms with auto video tracking</li>
-                        <li>▸ Parliament-style discussion sessions</li>
-                    </ul>
+                    <div class="flex-shrink-0 self-end -mb-1 -mr-1 text-navy/60 opacity-80 group-hover:opacity-100 transition">
+                        <svg class="w-20 h-20 md:w-24 md:h-24" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <!-- pediment (triangular roof) -->
+                            <path d="M8 32 L48 12 L88 32 Z" fill="currentColor" fill-opacity="0.15"/>
+                            <path d="M8 32 L48 12 L88 32 Z"/>
+                            <!-- entablature -->
+                            <line x1="8" y1="36" x2="88" y2="36"/>
+                            <!-- columns -->
+                            <line x1="18" y1="36" x2="18" y2="76"/>
+                            <line x1="34" y1="36" x2="34" y2="76"/>
+                            <line x1="48" y1="36" x2="48" y2="76"/>
+                            <line x1="62" y1="36" x2="62" y2="76"/>
+                            <line x1="78" y1="36" x2="78" y2="76"/>
+                            <!-- base steps -->
+                            <line x1="6" y1="78" x2="90" y2="78"/>
+                            <line x1="4" y1="84" x2="92" y2="84"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
@@ -445,20 +520,20 @@
                         <td class="px-6 py-3.5 text-slate-500">Varies</td>
                         <td class="px-6 py-3.5 text-navy">Fully closed-network ready</td>
                     </tr>
-                    <tr class="border-b border-slate-100 bg-electric/[0.03]">
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">⭐ Video Tracking</td>
                         <td class="px-6 py-3.5 text-slate-500">Separate hardware device</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold">Built-in capability</td>
+                        <td class="px-6 py-3.5 text-navy">Built-in capability</td>
                     </tr>
-                    <tr class="border-b border-slate-100 bg-electric/[0.03]">
+                    <tr class="border-b border-slate-100">
                         <td class="px-6 py-3.5 font-medium text-navy">⭐ Conference Integration</td>
                         <td class="px-6 py-3.5 text-slate-500">Custom programming</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold">Standard integration</td>
+                        <td class="px-6 py-3.5 text-navy">Standard integration</td>
                     </tr>
-                    <tr class="bg-electric/[0.03]">
+                    <tr class="bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">⭐ LINE Integration</td>
                         <td class="px-6 py-3.5 text-slate-500">None</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold">Native — control + alerts</td>
+                        <td class="px-6 py-3.5 text-navy">Native — control + alerts</td>
                     </tr>
                 </tbody>
             </table>
@@ -845,48 +920,48 @@
     <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
             <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold tracking-wider mb-4">💬 LINE OFFICIAL ACCOUNT</span>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-white">Text to <span class="text-emerald-400">control.</span><br>Alerts in <span class="text-electric-300">real-time.</span></h2>
-            <p class="text-sky text-lg font-th">Voscene meets your team where they already are — in LINE</p>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-white font-th">ส่งข้อความ <span class="text-emerald-400">ควบคุมได้ทันที</span><br>แจ้งเตือน <span class="text-electric-300">แบบ Real-time</span></h2>
+            <p class="text-sky text-lg font-th">Voscene ทำงานบน LINE ที่ทีมคุณคุ้นเคยอยู่แล้ว</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
             <!-- Send Commands -->
             <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
                 <div class="mb-5">
-                    <h3 class="font-display text-xl font-semibold text-white mb-1">📤 Send Commands</h3>
+                    <h3 class="font-display text-xl font-semibold text-white mb-1 font-th">📤 ส่งคำสั่งควบคุม</h3>
                     <p class="text-sky/70 text-sm font-th">ควบคุมผ่านข้อความ LINE — ใช้งานได้แล้ว</p>
                 </div>
 
                 <!-- Chat mockup -->
                 <div class="bg-navy-950 rounded-xl p-4 space-y-3 mb-5">
                     <div class="flex justify-end">
-                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%]">"Turn on the projector"</div>
+                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th">"เปิดโปรเจคเตอร์"</div>
                     </div>
                     <div class="flex justify-start">
-                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%]">✓ Projector ON</div>
+                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th">✓ เปิดโปรเจคเตอร์แล้ว</div>
                     </div>
                     <div class="flex justify-end">
-                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%]">"Dim lights to 30%"</div>
+                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th">"หรี่ไฟเหลือ 30%"</div>
                     </div>
                     <div class="flex justify-start">
-                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%]">✓ Lights dimmed</div>
+                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th">✓ หรี่ไฟแล้ว</div>
                     </div>
                 </div>
 
                 <ul class="space-y-2 text-sm text-sky/85 font-th">
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> AI-parsed Thai / English commands · instant reply</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> HMAC signature verification (anti-spoof security)</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> User allowlist — restrict to authorized senders</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Accept toggle — in-room users can pause incoming commands</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Full audit log — who/what/when/result</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> AI ตีความคำสั่งภาษาไทย/อังกฤษ · ตอบกลับทันที</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ตรวจสอบลายเซ็น HMAC · ป้องกันการปลอมแปลง</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> อนุญาตเฉพาะผู้ส่งที่กำหนด (User allowlist)</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ปุ่มหยุดรับ — ผู้ใช้ในห้องระงับคำสั่งจากภายนอกได้</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> บันทึก Audit log ครบ — ใคร/สั่งอะไร/เมื่อไหร่/ผลลัพธ์</li>
                 </ul>
             </div>
 
             <!-- Get Notifications -->
             <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
                 <div class="mb-5">
-                    <h3 class="font-display text-xl font-semibold text-white mb-1">🔔 Get Notifications</h3>
-                    <p class="text-sky/70 text-sm font-th">Critical alerts pushed to LINE</p>
+                    <h3 class="font-display text-xl font-semibold text-white mb-1 font-th">🔔 รับการแจ้งเตือน</h3>
+                    <p class="text-sky/70 text-sm font-th">แจ้งเตือนเหตุการณ์สำคัญเข้า LINE ทันที</p>
                 </div>
 
                 <!-- Alerts mockup (V2 — 5 alert types) -->
@@ -895,8 +970,8 @@
                         <div class="flex items-start gap-2">
                             <span class="text-red-400">🔥</span>
                             <div>
-                                <div class="text-white font-semibold text-sm">Battery temp critical</div>
-                                <div class="text-sky/60 text-xs font-mono">Charge cutoff active · Unit A1</div>
+                                <div class="text-white font-semibold text-sm font-th">อุณหภูมิแบตเตอรี่วิกฤต</div>
+                                <div class="text-sky/60 text-xs font-th">ตัดวงจรชาร์จอัตโนมัติ · เครื่อง A1</div>
                             </div>
                         </div>
                     </div>
@@ -904,8 +979,8 @@
                         <div class="flex items-start gap-2">
                             <span class="text-orange-400">🌡</span>
                             <div>
-                                <div class="text-white font-semibold text-sm">Rack overtemp</div>
-                                <div class="text-sky/60 text-xs font-mono">Server rack 38°C · check air conditioning</div>
+                                <div class="text-white font-semibold text-sm font-th">Rack ร้อนเกินกำหนด</div>
+                                <div class="text-sky/60 text-xs font-th">Rack 38°C · ตรวจสอบเครื่องปรับอากาศ</div>
                             </div>
                         </div>
                     </div>
@@ -913,8 +988,8 @@
                         <div class="flex items-start gap-2">
                             <span class="text-red-400 font-bold">!</span>
                             <div>
-                                <div class="text-white font-semibold text-sm">Projector offline</div>
-                                <div class="text-sky/60 text-xs font-mono">Room A · 5 min ago</div>
+                                <div class="text-white font-semibold text-sm font-th">โปรเจคเตอร์ Offline</div>
+                                <div class="text-sky/60 text-xs font-th">ห้อง A · 5 นาทีที่แล้ว</div>
                             </div>
                         </div>
                     </div>
@@ -922,8 +997,8 @@
                         <div class="flex items-start gap-2">
                             <span class="text-electric-300">📦</span>
                             <div>
-                                <div class="text-white font-semibold text-sm">New software version available</div>
-                                <div class="text-sky/60 text-xs font-mono">v40.2 · OTA ready</div>
+                                <div class="text-white font-semibold text-sm font-th">มีซอฟต์แวร์เวอร์ชันใหม่</div>
+                                <div class="text-sky/60 text-xs font-th">v40.2 · พร้อมอัปเดต OTA</div>
                             </div>
                         </div>
                     </div>
@@ -931,18 +1006,18 @@
                         <div class="flex items-start gap-2">
                             <span class="text-emerald-400">✓</span>
                             <div>
-                                <div class="text-white font-semibold text-sm">System backup OK</div>
-                                <div class="text-sky/60 text-xs font-mono">AES-128 auto-backup 02:00</div>
+                                <div class="text-white font-semibold text-sm font-th">สำรองข้อมูลสำเร็จ</div>
+                                <div class="text-sky/60 text-xs font-th">สำรองอัตโนมัติ AES-128 · 02:00 น.</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <ul class="space-y-2 text-sm text-sky/85 font-th">
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Equipment health alerts</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Threshold warnings (battery + rack temperature)</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> System events log + OTA notifications</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> Customizable per channel</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> แจ้งเตือนสถานะอุปกรณ์</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> เตือนเมื่อค่าเกินกำหนด (อุณหภูมิแบตเตอรี่ + Rack)</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> บันทึก Events ระบบ + แจ้งเตือน OTA</li>
+                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ปรับแต่งได้ตามแต่ละช่อง</li>
                 </ul>
             </div>
         </div>

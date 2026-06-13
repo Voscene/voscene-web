@@ -9,21 +9,13 @@
     <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/15 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- Floating product photo (desktop only — narrower + offset so it sits past the text safe zone) -->
-    <div class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-8 xl:right-0 2xl:right-12 w-[36%] xl:w-[40%] 2xl:w-[44%] max-w-2xl xl:max-w-3xl pointer-events-none z-0">
-        <div class="relative">
-            <div class="absolute inset-0 bg-gradient-to-tr from-electric/30 via-transparent to-signal/20 blur-3xl"></div>
-            <img src="/static/images/product-hero.png" alt="VOSCENE 2U rack-mount controller" class="relative w-full h-auto drop-shadow-2xl opacity-90">
-        </div>
-    </div>
-
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
-        <div class="max-w-5xl lg:max-w-2xl xl:max-w-3xl">
+        <div class="max-w-5xl">
             <!-- ⭐ BIG BRAND DISPLAY — Logo Mark + VOSCENE Wordmark -->
             <div class="mb-8 md:mb-10">
                 <div class="flex items-center gap-4 md:gap-6 mb-4 md:mb-5">
                     <!-- Big Logo Mark -->
-                    <img src="/static/images/logo-mark.svg" alt="Voscene" class="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 drop-shadow-2xl">
+                    <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 drop-shadow-2xl">
                     <!-- Big Wordmark -->
                     <h1 class="font-display font-bold tracking-tight leading-none">
                         <span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-white">VO</span><span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-electric-300">SCENE</span>
@@ -44,10 +36,10 @@
                 {{ c.hero_badge }}
             </div>
 
-            <!-- Secondary Headline (Thai context) — constrained on lg+ to avoid overlap with product photo -->
-            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl lg:max-w-xl xl:max-w-2xl leading-snug">{{ c.hero_subtitle_th }}</h2>
-            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl lg:max-w-xl font-display tracking-wide">{{ c.hero_tagline }}</p>
-            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl lg:max-w-xl xl:max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
+            <!-- Secondary Headline (Thai context) -->
+            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl leading-snug">{{ c.hero_subtitle_th }}</h2>
+            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl font-display tracking-wide">{{ c.hero_tagline }}</p>
+            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
 
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="/features" class="px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
@@ -129,98 +121,6 @@
     </div>
 </section>
 
-<!-- The Hardware — Product Showcase -->
-<section class="py-20 md:py-28 bg-navy relative overflow-hidden">
-    <div class="absolute top-0 -right-40 w-[700px] h-[700px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center max-w-3xl mx-auto mb-14">
-            <div class="text-sky/60 text-xs font-semibold tracking-[2px] mb-3">THE HARDWARE</div>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-white">
-                2U rack-mount. <em class="text-electric-300 not-italic">Built to last.</em>
-            </h2>
-            <p class="text-sky text-lg font-th">All-in-one AV controller — ออกแบบสำหรับห้อง AV ทุกขนาด พร้อม UPS built-in</p>
-        </div>
-
-        <!-- Hero Product Image (Angle) -->
-        <div class="relative mb-12">
-            <div class="absolute inset-0 bg-gradient-to-tr from-electric/20 via-transparent to-signal/20 rounded-3xl blur-2xl"></div>
-            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 to-navy-950 border border-white/10 shadow-2xl">
-                <img src="/static/images/product-hero-studio.png" alt="VOSCENE 2U rack-mount controller — studio angle view" class="w-full h-auto" loading="lazy">
-            </div>
-        </div>
-
-        <!-- Front + Rear Gallery -->
-        <div class="grid md:grid-cols-2 gap-6 mt-16">
-            <!-- Front Panel -->
-            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
-                <div class="relative bg-gradient-to-br from-slate-900 to-navy-950 p-6 md:p-8">
-                    <img src="/static/images/product-front.png" alt="VOSCENE front panel — status LEDs, OLED display, scene buttons" class="w-full h-auto" loading="lazy">
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 rounded bg-electric/20 text-electric-300 text-[10px] font-mono font-semibold tracking-wider">FRONT PANEL</span>
-                    </div>
-                    <h3 class="font-display text-xl font-semibold text-white mb-3">Operator-friendly controls</h3>
-                    <ul class="space-y-1.5 text-sm text-sky/85 font-th">
-                        <li class="flex gap-2"><span class="text-electric-300">▸</span> 9 Status LEDs (PWR, NET, AI, LINE, CLD, PA, FAULT)</li>
-                        <li class="flex gap-2"><span class="text-electric-300">▸</span> 1.3" OLED status display + VU meters</li>
-                        <li class="flex gap-2"><span class="text-electric-300">▸</span> 4 Scene + 4 System buttons (backlit)</li>
-                        <li class="flex gap-2"><span class="text-electric-300">▸</span> UPS battery indicator (87% shown)</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Rear Panel -->
-            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
-                <div class="relative bg-gradient-to-br from-slate-900 to-navy-950 p-6 md:p-8">
-                    <img src="/static/images/product-rear.png" alt="VOSCENE rear panel — power, LAN, HDMI, RS-232, XLR audio, GPIO" class="w-full h-auto" loading="lazy">
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 rounded bg-signal/20 text-signal text-[10px] font-mono font-semibold tracking-wider">REAR PANEL</span>
-                    </div>
-                    <h3 class="font-display text-xl font-semibold text-white mb-3">Pro-grade I/O</h3>
-                    <ul class="space-y-1.5 text-sm text-sky/85 font-th">
-                        <li class="flex gap-2"><span class="text-signal">▸</span> 2× Gigabit LAN (System + Failover)</li>
-                        <li class="flex gap-2"><span class="text-signal">▸</span> 4× RS-232 (COM 1-4) · 4× USB-A · HDMI Out · IR Out</li>
-                        <li class="flex gap-2"><span class="text-signal">▸</span> XLR Audio: 2 Mic/Line IN, 2 Stereo OUT, DMX</li>
-                        <li class="flex gap-2"><span class="text-signal">▸</span> 8-channel GPIO terminal block + UPS module</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Spec Stripe -->
-        <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            <div class="text-center bg-white/5 border border-white/10 rounded-xl py-5">
-                <div class="font-display text-2xl font-semibold text-white">2U</div>
-                <div class="text-sky/60 text-xs font-mono tracking-wider mt-1">RACK SIZE</div>
-            </div>
-            <div class="text-center bg-white/5 border border-white/10 rounded-xl py-5">
-                <div class="font-display text-2xl font-semibold text-white">0–45°C</div>
-                <div class="text-sky/60 text-xs font-mono tracking-wider mt-1">OPERATING</div>
-            </div>
-            <div class="text-center bg-white/5 border border-white/10 rounded-xl py-5">
-                <div class="font-display text-2xl font-semibold text-white">5 min</div>
-                <div class="text-sky/60 text-xs font-mono tracking-wider mt-1">UPS BACKUP</div>
-            </div>
-            <div class="text-center bg-white/5 border border-white/10 rounded-xl py-5">
-                <div class="font-display text-2xl font-semibold text-white">IEC C14</div>
-                <div class="text-sky/60 text-xs font-mono tracking-wider mt-1">POWER INPUT</div>
-            </div>
-        </div>
-
-        <div class="text-center mt-10">
-            <a href="/features" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 transition font-medium text-white">
-                ดู spec hardware ทั้งหมด <span>→</span>
-            </a>
-        </div>
-    </div>
-</section>
-
 <!-- Use Cases — 4 Industry Groups (Catalog V1.1) -->
 <section class="py-20 md:py-28 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,7 +140,7 @@
                             <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-mono font-semibold">SME · BUSINESS</span>
                         </div>
                         <h3 class="font-display text-2xl font-semibold mb-2 text-navy">SME</h3>
-                        <p class="text-slate-600 text-sm font-th mb-4">Modern meeting rooms without enterprise complexity — voice commands replace touch panels</p>
+                        <p class="text-slate-600 text-sm font-th mb-4">Modern meeting rooms without enterprise complexity — AI-powered commands replace touch panels</p>
                         <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-2">IDEAL FOR</div>
                         <ul class="text-slate-700 text-sm font-th space-y-1">
                             <li>▸ Conference rooms</li>
@@ -412,13 +312,13 @@
     </div>
 </section>
 
-<!-- Voice Demo / Terminal -->
+<!-- AI Command Demo / Terminal -->
 <section class="py-20 bg-cloud border-y border-slate-200">
     <div class="max-w-6xl mx-auto px-4">
         <div class="text-center mb-12">
-            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">VOICE COMMAND</div>
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">AI COMMAND</div>
             <h2 class="font-display text-3xl md:text-4xl font-semibold mb-3 text-navy">สั่งงานง่ายเหมือนคุยกับเพื่อน</h2>
-            <p class="text-slate-600 font-th">พิมพ์หรือพูดภาษาธรรมชาติ Voscene จัดการอุปกรณ์ทั้งหมดให้</p>
+            <p class="text-slate-600 font-th">พิมพ์ · พูด · ส่ง LINE — AI ตีความภาษาไทย/อังกฤษ แล้วจัดการอุปกรณ์ทั้งหมดให้</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 items-center">

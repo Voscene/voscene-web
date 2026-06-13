@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ c.seo_title or settings.APP_NAME }}{% endblock %}</title>
     <meta name="description" content="{% block description %}{{ c.seo_description or '' }}{% endblock %}">
-    <link rel="icon" type="image/svg+xml" href="/static/images/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/static/images/voscene-icon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/voscene-favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/images/voscene-favicon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/images/voscene-favicon-192.png">
 
     {# === Open Graph (Facebook, LINE, Discord) === #}
     <meta property="og:type" content="website">
@@ -67,7 +70,7 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-            <img src="/static/images/logo-full-light.svg" alt="Voscene" class="h-9 w-auto">
+            <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-9 w-auto">
         </a>
         <div class="hidden md:flex items-center gap-6 text-sm">
             <a href="/" class="text-slate-600 hover:text-navy transition">หน้าแรก</a>
@@ -101,7 +104,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="md:col-span-2">
-                <img src="/static/images/logo-full-light.svg" alt="Voscene" class="h-9 w-auto mb-3">
+                <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-9 w-auto mb-3">
                 <p class="text-signal text-sm mb-2 font-display font-medium">{{ c.footer_tagline or 'The voice of smart spaces.' }}</p>
                 <p class="text-slate-500 text-xs mt-3">{{ c.footer_company or '' }}</p>
             </div>

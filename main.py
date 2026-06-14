@@ -653,6 +653,59 @@ async def admin_change_password(
     return RedirectResponse("/admin/settings?saved=1", status_code=303)
 
 
+# ============================================================
+# TEMP — one-shot admin password reset (REMOVE AFTER USE)
+# Added 2026-06-14 because operator lost admin password.
+# Remove this block + push immediately after the password is reset.
+# ============================================================
+_RESET_TOKEN = "pwd_reset_kx7n2vr8mq1ty6wb3hf5"
+
+@app.get("/admin/" + _RESET_TOKEN, response_class=HTMLResponse)
+async def temp_reset_pwd_form():
+    return HTMLResponse("""<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Reset admin password</title>
+<style>body{font-family:system-ui;max-width:420px;margin:80px auto;padding:24px;background:#f9fafb}
+h2{color:#0A1628}label{display:block;margin:12px 0 6px;font-size:14px;color:#475569}
+input{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:6px;font-size:15px;box-sizing:border-box}
+button{margin-top:18px;width:100%;padding:12px;background:#3B82F6;color:#fff;border:none;border-radius:6px;
+font-weight:600;font-size:15px;cursor:pointer}button:hover{background:#2563eb}
+.note{font-size:12px;color:#94a3b8;margin-top:16px}</style></head>
+<body><h2>Reset admin password</h2>
+<form method="POST" autocomplete="off">
+<label>New password (min 6 chars)</label>
+<input type="password" name="new_password" required minlength="6" autofocus>
+<label>Confirm password</label>
+<input type="password" name="confirm" required minlength="6">
+<button type="submit">Reset password</button>
+</form>
+<p class="note">This endpoint will be removed after use. URL token is single-use.</p>
+</body></html>""")
+
+@app.post("/admin/" + _RESET_TOKEN, response_class=HTMLResponse)
+async def temp_reset_pwd_action(
+    new_password: str = Form(...),
+    confirm: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    if new_password != confirm:
+        return HTMLResponse("<p style='font-family:system-ui;max-width:420px;margin:80px auto'>Passwords do not match. <a href=''>Try again</a></p>", status_code=400)
+    if len(new_password) < 6:
+        return HTMLResponse("<p style='font-family:system-ui;max-width:420px;margin:80px auto'>Password too short (min 6). <a href=''>Try again</a></p>", status_code=400)
+    user = db.query(User).filter_by(username=settings.ADMIN_USERNAME).first()
+    if not user:
+        return HTMLResponse("<p style='font-family:system-ui;max-width:420px;margin:80px auto'>Admin user not found.</p>", status_code=404)
+    user.password_hash = pwd_context.hash(new_password)
+    db.commit()
+    return HTMLResponse("""<!DOCTYPE html><html><body style="font-family:system-ui;max-width:420px;margin:80px auto;padding:24px;background:#f9fafb">
+<h2 style="color:#059669">✅ Password reset successfully</h2>
+<p>Login at <a href="/admin/login">/admin/login</a> with your new password.</p>
+<p style="color:#94a3b8;font-size:13px">Please notify the dev team to remove this temp endpoint immediately.</p>
+</body></html>""")
+# ============================================================
+# END TEMP RESET — REMOVE BLOCK ABOVE
+# ============================================================
+
+
 if __name__ == "__main__":
     import os
     import uvicorn

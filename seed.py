@@ -77,7 +77,7 @@ DEFAULT_PACKAGES = [
         "code": "starter", "name": "Voscene Starter",
         "price": "Contact for pricing", "price_unit": "",
         "description": "For single meeting rooms · Best for small offices",
-        "features": "1 control unit\nUp to 8 connected devices\n4 configurable scenes (tech-tunable)\nBrowser-based UI (no app install)\nTwo-tier PIN security\nIn-browser settings\nDevice health monitor\nOffline-capable\nEmail support\n1-year warranty",
+        "features": "1 control unit\nUp to 8 connected devices\n4 configurable scenes (tech-tunable)\nBrowser-based UI (no app install)\n3-level access (Engineer / Admin / User)\nIn-browser settings\nDevice health monitor\nOffline-capable\nEmail support\n1-year warranty",
         "category": "purchase", "sort_order": 1, "is_featured": False,
     },
     {
@@ -91,7 +91,7 @@ DEFAULT_PACKAGES = [
         "code": "enterprise", "name": "Voscene Enterprise",
         "price": "Custom quote", "price_unit": "",
         "description": "For large-scale operations · Best for government, large enterprises",
-        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (Roadmap)\nCustom DSP integration (Roadmap)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
+        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (Roadmap)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 

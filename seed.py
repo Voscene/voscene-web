@@ -91,7 +91,7 @@ DEFAULT_PACKAGES = [
         "code": "enterprise", "name": "Voscene Enterprise",
         "price": "Custom quote", "price_unit": "",
         "description": "For large-scale operations · Best for government, large enterprises",
-        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (Roadmap)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
+        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (กำลังพัฒนา)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 

@@ -1,12 +1,43 @@
 {% extends "public/base.html" %}
 
 {% block content %}
-<!-- Hero — Dark Pattern with Photo Background -->
+<!-- Hero — Animated Aurora Gradient Background -->
+<style>
+    @keyframes hero-aurora-flow {
+        0%, 100% { background-position:   0%   0%, 100% 100%,  50%  50%, 100%   0%; }
+        25%      { background-position: 100%  50%,   0%  50%, 100%   0%,  50% 100%; }
+        50%      { background-position:  50% 100%,  50%   0%,   0%  50%, 100% 100%; }
+        75%      { background-position:   0% 100%, 100%   0%,  50% 100%,   0%   0%; }
+    }
+    .hero-aurora {
+        background-color: #0A1628;
+        background-image:
+            radial-gradient(ellipse 60% 60% at 20% 30%, rgba(59, 130, 246, 0.55) 0%, transparent 60%),
+            radial-gradient(ellipse 70% 70% at 80% 70%, rgba(24, 95, 165, 0.55) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 50% at 50% 90%, rgba(133, 183, 235, 0.35) 0%, transparent 55%),
+            radial-gradient(ellipse 65% 65% at 100% 10%, rgba(59, 130, 246, 0.40) 0%, transparent 60%);
+        background-size: 160% 160%, 180% 180%, 140% 140%, 200% 200%;
+        background-repeat: no-repeat;
+        animation: hero-aurora-flow 28s ease-in-out infinite;
+        will-change: background-position;
+    }
+    .hero-aurora-grain {
+        background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 1.5px);
+        background-size: 3px 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .hero-aurora { animation: none; }
+    }
+</style>
 <section class="relative overflow-hidden bg-navy">
-    <!-- Background photo with overlay -->
-    <div class="absolute inset-0 opacity-60 bg-cover bg-center" style="background-image: url('/static/images/hero-bg.jpg')"></div>
-    <div class="absolute inset-0 bg-gradient-to-br from-navy/85 via-navy/70 to-navy/50"></div>
-    <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/15 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Animated aurora gradient (replaces hero-bg.jpg) -->
+    <div class="absolute inset-0 hero-aurora"></div>
+    <!-- Subtle grain texture for depth -->
+    <div class="absolute inset-0 hero-aurora-grain opacity-50 pointer-events-none"></div>
+    <!-- Bottom-to-top fade so content reads clearly over the aurora -->
+    <div class="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent"></div>
+    <!-- Original decorative blurred orbs (kept for extra glow accents) -->
+    <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">

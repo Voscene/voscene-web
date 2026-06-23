@@ -14,9 +14,9 @@ DEFAULT_CONTENT = [
     ("hero_badge", "AI-Powered AV Control · Now in Thailand", "Badge ใต้ navbar", "hero", "text"),
     ("hero_title_line1", "The voice of", "บรรทัดที่ 1 ของ Headline", "hero", "text"),
     ("hero_title_line2", "smart spaces.", "บรรทัดที่ 2 (สี gradient)", "hero", "text"),
-    ("hero_subtitle_th", "ระบบควบคุม AV อัจฉริยะ ตัวแรกที่ออกแบบสำหรับองค์กรไทย", "บรรทัดภาษาไทย", "hero", "text"),
+    ("hero_subtitle_th", "ระบบควบคุม AV ขับเคลื่อนด้วย AI ออกแบบเพื่อองค์กรไทย", "บรรทัดภาษาไทย", "hero", "text"),
     ("hero_tagline", "Voice on SCENE · Speak. Control. Transform.", "Slogan", "hero", "text"),
-    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบ AV แบรนด์ใหญ่ 60-80% รองรับอุปกรณ์ทุก Brand ผ่าน Protocol มาตรฐาน", "คำอธิบาย Hero", "hero", "textarea"),
+    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบ AV ระดับโลก 60-80% รองรับอุปกรณ์ AV หลากหลายยี่ห้อ — 48 ยี่ห้อ · 1,000+ รุ่น ผ่านโปรโตคอลมาตรฐาน (PJLink · VISCA · webOS/Tizen · DMX ฯลฯ)", "คำอธิบาย Hero", "hero", "textarea"),
     ("hero_cta_primary", "Book a Demo", "ปุ่มหลัก", "hero", "text"),
     ("hero_cta_secondary", "ดูฟีเจอร์", "ปุ่มรอง", "hero", "text"),
     ("hero_mission", "\"พูดสิ่งที่อยากทำ\" — Voscene จัดการที่เหลือให้", "Mission Statement (quote-style)", "hero", "textarea"),
@@ -34,17 +34,17 @@ DEFAULT_CONTENT = [
     ("stat_1_label", "ประหยัดกว่าระบบ AV แบรนด์ใหญ่", "คำอธิบายสถิติ 1", "stats", "text"),
     ("stat_2_value", "<24h", "ตัวเลขสถิติ 2", "stats", "text"),
     ("stat_2_label", "ติดตั้งห้องเดียว Plug & Play", "คำอธิบายสถิติ 2", "stats", "text"),
-    ("stat_3_value", "100%", "ตัวเลขสถิติ 3", "stats", "text"),
-    ("stat_3_label", "AI-Driven · Thai + English LLM", "คำอธิบายสถิติ 3", "stats", "text"),
+    ("stat_3_value", "48", "ตัวเลขสถิติ 3", "stats", "text"),
+    ("stat_3_label", "ยี่ห้อที่รองรับ · 1,000+ รุ่น", "คำอธิบายสถิติ 3", "stats", "text"),
     ("stat_4_value", "0", "ตัวเลขสถิติ 4 (มี * เล็ก)", "stats", "text"),
     ("stat_4_label", "App ที่ต้องติดตั้ง · Browser-based UI", "คำอธิบายสถิติ 4", "stats", "text"),
 
     # ===== About / Why =====
     ("about_title", "ทำไมต้องเลือก Voscene", "หัวข้อ About", "about", "text"),
-    ("about_description", "ออกแบบมาเพื่อแข่งกับ Crestron, AMX, QSC แต่ราคาถูกกว่า 10-15 เท่า — โดยไม่ลดคุณภาพ ใช้ AI สั่งงานด้วยภาษาธรรมชาติ ลดความซับซ้อน รองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วผ่าน Protocol มาตรฐาน", "คำอธิบาย About", "about", "textarea"),
+    ("about_description", "ออกแบบมาเทียบชั้นระบบ AV ระดับโลก แต่ราคาประหยัดกว่า 60-80% — ใช้ AI สั่งงานด้วยภาษาธรรมชาติ ลดความซับซ้อน รองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วผ่านโปรโตคอลมาตรฐาน", "คำอธิบาย About", "about", "textarea"),
 
     # ===== Brand Note =====
-    ("brand_note", "ระบบรองรับอุปกรณ์ทุกยี่ห้อที่ใช้ Protocol มาตรฐาน ไม่ผูกกับ Brand ใด Brand หนึ่ง — สามารถปรับแต่งเพื่อรองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วได้", "หมายเหตุเรื่อง Brand", "about", "textarea"),
+    ("brand_note", "ระบบรองรับอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลมาตรฐาน — ไม่ต้องมีรุ่นในลิสต์ก็คุมได้ถ้าพูดโปรโตคอลที่รองรับ · ปรับแต่งเพื่อรองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วได้", "หมายเหตุเรื่อง Brand", "about", "textarea"),
 
     # ===== LINE Integration =====
     ("line_title", "Text to control. Alerts in real-time.", "หัวข้อ LINE section", "line", "text"),
@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV ตัวแรกที่ออกแบบสำหรับองค์กรไทย ควบคุมด้วยเสียง/ข้อความภาษาไทยและอังกฤษผ่าน AI · ติดตั้งใน 24 ชั่วโมง · ราคาประหยัด 60-80% · 15 ฟีเจอร์: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, Conference, Calendar, Schedule, Multi-Room (20 rooms), Video Conferencing, PA · OAuth + LINE + OTA + AES-128 Backup · ไม่ผูกกับ Brand", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · ควบคุมด้วยเสียง/ข้อความภาษาไทยและอังกฤษ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 15 ฟีเจอร์: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, Conference, Calendar, Schedule, Multi-Room (สูงสุด 20 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -133,9 +133,25 @@ def run_seed():
             db.add(user)
             print(f"[seed] created admin user: {settings.ADMIN_USERNAME}")
 
-        # Default content — adds new keys + migrates field_type/label/section of existing
+        # Default content — adds new keys + migrates field_type/label/section of existing.
+        # Legal-risk values (competitor names, "10-15 เท่า", absolutes/superlatives) are
+        # force-updated to the safe default; if the operator has already replaced the value
+        # with something that no longer contains any risky phrase, their edit is preserved.
+        LEGAL_RISK_PHRASES = (
+            "Crestron", "AMX", "QSC",
+            "10-15 เท่า", "10-15เท่า",
+            "อัจฉริยะ ตัวแรก", "ตัวแรกที่ออกแบบ",
+            "ทุก Brand", "ทุกยี่ห้อ", "ทุกยีห้อ",
+        )
+        LEGAL_CRITICAL_KEYS = {
+            "hero_subtitle_th", "hero_description",
+            "about_description", "brand_note",
+            "seo_description",
+            "stat_3_value", "stat_3_label",
+        }
         added = 0
         migrated = 0
+        legal_forced = 0
         for key, value, label, section, field_type in DEFAULT_CONTENT:
             existing = db.query(Content).filter_by(key=key).first()
             if existing:
@@ -150,12 +166,22 @@ def run_seed():
                 if existing.section != section:
                     existing.section = section
                     changed = True
+                # Force legal fixes if the stored value still carries a risky phrase,
+                # OR if a critical stat key still reads "100%" (superlative).
+                if key in LEGAL_CRITICAL_KEYS:
+                    current = existing.value or ""
+                    has_risk = any(p in current for p in LEGAL_RISK_PHRASES)
+                    is_100_pct_stat = (key == "stat_3_value" and current.strip() in {"100%", "100"})
+                    if has_risk or is_100_pct_stat:
+                        existing.value = value
+                        legal_forced += 1
+                        changed = True
                 if changed:
                     migrated += 1
             else:
                 db.add(Content(key=key, value=value, label=label, section=section, field_type=field_type))
                 added += 1
-        print(f"[seed] content: +{added} new · ~{migrated} migrated ({len(DEFAULT_CONTENT)} total defined)")
+        print(f"[seed] content: +{added} new · ~{migrated} migrated · {legal_forced} legal-forced ({len(DEFAULT_CONTENT)} total defined)")
 
         # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
         # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated

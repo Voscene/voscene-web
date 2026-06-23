@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · ควบคุมด้วยเสียง/ข้อความภาษาไทยและอังกฤษ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 15 ฟีเจอร์: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, Conference, Calendar, Schedule, Multi-Room (สูงสุด 20 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Early access · ปฏิทิน พ.ศ.), Multi-Room (สูงสุด 20 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 

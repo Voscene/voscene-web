@@ -304,7 +304,20 @@
             </div>
         </div>
 
-        <div class="mt-12 max-w-3xl mx-auto bg-electric/5 border border-electric/20 rounded-xl p-5 text-center">
+        <!-- Government / CapEx positioning strip -->
+        <div class="mt-12 max-w-4xl mx-auto bg-gradient-to-br from-navy to-navy-700 text-white rounded-2xl p-7 md:p-9">
+            <div class="flex items-start gap-3 md:gap-4">
+                <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-electric/20 flex items-center justify-center text-2xl">🏛</div>
+                <div>
+                    <div class="text-electric-300 text-xs font-mono font-semibold tracking-[2px] mb-2">FOR GOVERNMENT &amp; ENTERPRISE</div>
+                    <h3 class="font-display text-xl md:text-2xl font-semibold mb-3">ขายขาด (CapEx) · ผ่านเกณฑ์จัดซื้อภาครัฐ</h3>
+                    <p class="text-sky text-sm md:text-base font-th leading-relaxed">เป็นเจ้าของถาวร · ประหยัดกว่าระบบ AV ระดับโลก 60-80% · ประกัน 1/3/5 ปี · ทำงานในเครือข่ายปิดได้ (closed network) · ไม่มี subscription ที่ต้องจ่ายต่อเนื่อง — เหมาะสำหรับ TOR ภาครัฐที่ขอ specification สินค้าครบครันโดยไม่มี recurring fee</p>
+                    <p class="text-sky/70 text-xs font-th mt-3"><span class="text-electric-300">SaaS</span> เป็นทางเลือกสำหรับลูกค้าเอกชนที่ต้องการ flexibility</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 max-w-3xl mx-auto bg-electric/5 border border-electric/20 rounded-xl p-5 text-center">
             <p class="text-slate-700 text-sm font-th">
                 <span class="text-electric font-semibold">หมายเหตุ:</span> {{ c.brand_note }}
             </p>
@@ -609,10 +622,24 @@
                 </div>
             </div>
 
-            <!-- 14 · MULTI-ROOM — NEW (V2) -->
+            <!-- 14 · BOOKING — Early access (room booking) -->
+            <div class="card rounded-2xl p-6 transition relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold tracking-wider">Early access</span>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">14 · BOOKING</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🗓</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Room Booking</h3>
+                <p class="text-slate-600 text-sm font-th">จองห้องประชุม · ปฏิทินไทย พ.ศ. · จอหน้าห้อง · จองผ่าน LINE · auto-release เมื่อไม่มีคนเข้า · เชื่อม Scene Control ให้ห้องพร้อมเอง — ทดแทน MRBS สำหรับงานราชการ</p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">พ.ศ. CALENDAR</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">LINE BOOKING</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-xs font-mono">AUTO-RELEASE</span>
+                </div>
+            </div>
+
+            <!-- 15 · MULTI-ROOM — NEW (V2) -->
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
-                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">14 · MULTI-ROOM</div>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">15 · MULTI-ROOM</div>
                 <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🏢</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Room Dashboard</h3>
                 <p class="text-slate-600 text-sm font-th">Federated control สูงสุด 20 ห้อง · proxy commands จาก single pane of glass · central monitoring สำหรับ campuses + hotels</p>
@@ -622,10 +649,10 @@
                 </div>
             </div>
 
-            <!-- 15 · VC ROOM — NEW (V2) -->
+            <!-- 16 · VC ROOM — NEW (V2) -->
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
-                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">15 · VC ROOM</div>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">16 · VC ROOM</div>
                 <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">💻</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Video Conferencing Room</h3>
                 <p class="text-slate-600 text-sm font-th">TCP protocol integration กับ VC room systems · join/leave meetings, mute, change layout — trigger ผ่าน scene/AI <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></p>
@@ -635,10 +662,10 @@
                 </div>
             </div>
 
-            <!-- 16 · PA (In development) -->
+            <!-- 17 · PA (In development) -->
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-medium">กำลังพัฒนา</span>
-                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">16 · PA</div>
+                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">17 · PA</div>
                 <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">📢</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">PA Announcement</h3>
                 <p class="text-slate-600 text-sm font-th">Multi-room PA ผ่าน RTP/UDP Multicast — Zone control + Emergency broadcast</p>
@@ -802,6 +829,38 @@
                 <div class="flex gap-1.5 mt-3">
                     <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">RACK TEMP</span>
                     <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">BATTERY TEMP</span>
+                </div>
+            </div>
+
+            <!-- Service Bot (In development) -->
+            <div class="card rounded-2xl p-6 relative">
+                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-semibold tracking-wider">กำลังพัฒนา</span>
+                <div class="w-10 h-10 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center mb-3 text-xl">🤝</div>
+                <h3 class="font-display font-semibold mb-1 text-navy">Service Bot (24/7)</h3>
+                <p class="text-slate-600 text-sm font-th">AI วินิจฉัยอาการของระบบเองและแนะนำแนวทางแก้ไขผ่าน LINE · เปิด ticket อัตโนมัติเมื่ออาการเกินรับมือ — ลด downtime ระหว่าง MA</p>
+                <div class="flex gap-1.5 mt-3">
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">DIAGNOSE</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">AUTO-TICKET</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service & Support unified strip -->
+        <div class="mt-12 max-w-5xl mx-auto bg-gradient-to-br from-cloud to-white border border-slate-200 rounded-2xl p-7 md:p-9">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-electric/10 text-electric flex items-center justify-center text-2xl">🔧</div>
+                <div class="flex-1">
+                    <div class="text-muted text-xs font-mono font-semibold tracking-[2px] mb-2">SERVICE &amp; SUPPORT (MA)</div>
+                    <h3 class="font-display text-xl md:text-2xl font-semibold text-navy mb-3">ดูแลหลังการขายแบบ remote-first</h3>
+                    <ul class="grid sm:grid-cols-2 gap-x-6 gap-y-1.5 text-slate-700 text-sm font-th">
+                        <li class="flex gap-2"><span class="text-electric">▸</span> OTA Updates + Auto-rollback</li>
+                        <li class="flex gap-2"><span class="text-electric">▸</span> AES-128 Encrypted Auto-Backup (30 วัน)</li>
+                        <li class="flex gap-2"><span class="text-electric">▸</span> Remote tunnel (เข้ารหัส · เปิดเมื่อขอ)</li>
+                        <li class="flex gap-2"><span class="text-electric">▸</span> LINE alerts (5 ประเภท · per-channel)</li>
+                        <li class="flex gap-2"><span class="text-electric">▸</span> Hardware Watchdog auto-reset</li>
+                        <li class="flex gap-2"><span class="text-sky-600">▸</span> Service Bot 24/7 <span class="text-sky-600">(กำลังพัฒนา)</span></li>
+                    </ul>
+                    <p class="text-slate-500 text-xs font-th mt-4">เลือก SLA ตามความสำคัญของไซต์ — Email · Priority phone · SLA 24/7</p>
                 </div>
             </div>
         </div>

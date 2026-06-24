@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Early access · ปฏิทิน พ.ศ.), Multi-Room (20 ห้อง/controller · ขยายถึง 200 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Early access · ปฏิทิน พ.ศ.), Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -84,7 +84,7 @@ DEFAULT_PACKAGES = [
         "code": "pro", "name": "Voscene Pro",
         "price": "Contact for pricing", "price_unit": "",
         "description": "For multi-room deployments · Best for hotels, universities, enterprises",
-        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · up to 200 with Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
+        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · designed to scale to ~200 with Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
         "category": "purchase", "sort_order": 2, "is_featured": True,
     },
     {

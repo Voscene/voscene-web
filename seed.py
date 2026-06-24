@@ -95,26 +95,26 @@ DEFAULT_PACKAGES = [
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 
-    # ===== Add-on Kits (Catalog v1.4) =====
+    # ===== IR Add-on Kits (network IR via Broadlink RM4 Pro) =====
     {
         "code": "addon_base", "name": "Base Kit",
         "price": "Included", "price_unit": "in-box",
         "description": "มาในกล่อง · สำหรับห้องประชุมขนาดเล็ก",
-        "features": "Voscene 2U Controller\nIR emitter cable มาตรฐาน 1.8 เมตร\nสำหรับ: ห้องประชุมขนาดเล็ก · อุปกรณ์อยู่ใน AV cabinet เดียวกัน",
+        "features": "Voscene Controller\nBroadlink RM4 Pro (network IR blaster) 1 ตัว\nสำหรับ: ห้องประชุมขนาดเล็ก · คุมอุปกรณ์ IR ในห้องเดียวผ่านเครือข่าย",
         "category": "addon", "sort_order": 10, "is_featured": False,
     },
     {
-        "code": "addon_ir_extension", "name": "IR Extension Kit",
+        "code": "addon_ir_extension", "name": "IR Coverage Kit",
         "price": "Contact for pricing", "price_unit": "",
-        "description": "เดินสาย IR ระยะไกล · สำหรับห้องประชุมใหญ่",
-        "features": "IR Extender (Transmitter + Receiver pair)\nCAT5 cable 15-30 เมตร\nIR emitter cable 3 เส้น\nสำหรับ: ห้องประชุมใหญ่ · เดินสายผ่านฝ้าเพดาน",
+        "description": "เพิ่มจุดกระจาย IR · สำหรับห้องใหญ่/อุปกรณ์กระจายตัว",
+        "features": "Broadlink RM4 Pro เพิ่มเติม (ต่อโซน)\nกระจายสัญญาณ IR ครอบคลุมทั้งห้องผ่าน Wi-Fi/LAN\nสำหรับ: ห้องประชุมใหญ่ · อุปกรณ์อยู่คนละจุด — ไม่ต้องเดินสาย",
         "category": "addon", "sort_order": 11, "is_featured": True,
     },
     {
         "code": "addon_multi_device", "name": "Multi-device Kit",
         "price": "Contact for pricing", "price_unit": "",
         "description": "คุมหลายอุปกรณ์ผ่าน IR พร้อมกัน",
-        "features": "IR Y-splitter (1-to-4)\nIR emitter cable 4 เส้น\nสำหรับ: คุมหลายอุปกรณ์พร้อมกัน (TV + Audio + Player)",
+        "features": "Broadlink RM4 Pro หลายตัว (1 ตัว/กลุ่มอุปกรณ์)\nคุม TV + Audio + Player พร้อมกันผ่านเครือข่าย\nสำหรับ: คุมหลายอุปกรณ์/หลายตู้ AV พร้อมกัน",
         "category": "addon", "sort_order": 12, "is_featured": False,
     },
 ]
@@ -185,10 +185,15 @@ def run_seed():
 
         # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
         # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated
-        # (admin may have customized pricing).
+        # in general (admin may have customized pricing) — EXCEPT the IR kits, which are
+        # force-corrected ONLY if their features still describe the obsolete wired-IR design
+        # (emitter cable / CAT5 extender / Y-splitter). IR is now network-based via Broadlink
+        # RM4 Pro, so the old wired wording is factually wrong. Price/price_unit are preserved.
         pkg_added = 0
         pkg_migrated = 0
         CORE_EDITIONS = {"starter", "pro", "enterprise"}
+        IR_KIT_CODES = {"addon_base", "addon_ir_extension", "addon_multi_device"}
+        IR_KIT_STALE_PHRASES = ("IR emitter cable", "IR Extender", "IR Y-splitter", "CAT5", "เดินสาย IR", "2U Controller")
         for pkg_data in DEFAULT_PACKAGES:
             existing = db.query(Package).filter_by(code=pkg_data["code"]).first()
             if not existing:
@@ -204,6 +209,14 @@ def run_seed():
                     existing.description = pkg_data["description"]
                     changed = True
                 if changed:
+                    pkg_migrated += 1
+            elif pkg_data["code"] in IR_KIT_CODES:
+                # Force-correct only if stale wired-IR phrasing remains; keep operator's price.
+                cur = existing.features or ""
+                if any(p in cur for p in IR_KIT_STALE_PHRASES):
+                    existing.features = pkg_data["features"]
+                    existing.description = pkg_data["description"]
+                    existing.name = pkg_data["name"]
                     pkg_migrated += 1
         print(f"[seed] packages: +{pkg_added} new · ~{pkg_migrated} migrated ({len(DEFAULT_PACKAGES)} total defined)")
 

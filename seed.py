@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Early access · ปฏิทิน พ.ศ.), Multi-Room (สูงสุด 20 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Early access · ปฏิทิน พ.ศ.), Multi-Room (20 ห้อง/controller · ขยายถึง 200 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -84,7 +84,7 @@ DEFAULT_PACKAGES = [
         "code": "pro", "name": "Voscene Pro",
         "price": "Contact for pricing", "price_unit": "",
         "description": "For multi-room deployments · Best for hotels, universities, enterprises",
-        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (up to 20 rooms)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
+        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · up to 200 with Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
         "category": "purchase", "sort_order": 2, "is_featured": True,
     },
     {
@@ -95,26 +95,26 @@ DEFAULT_PACKAGES = [
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 
-    # ===== IR Add-on Kits (network IR via Broadlink RM4 Pro) =====
+    # ===== IR Add-on Kits (network IR blaster — generic, no brand/model) =====
     {
         "code": "addon_base", "name": "Base Kit",
         "price": "Included", "price_unit": "in-box",
         "description": "มาในกล่อง · สำหรับห้องประชุมขนาดเล็ก",
-        "features": "Voscene Controller\nBroadlink RM4 Pro (network IR blaster) 1 ตัว\nสำหรับ: ห้องประชุมขนาดเล็ก · คุมอุปกรณ์ IR ในห้องเดียวผ่านเครือข่าย",
+        "features": "Voscene Controller\nIR blaster (network) 1 ตัว\nสำหรับ: ห้องประชุมขนาดเล็ก · คุมอุปกรณ์ IR ในห้องเดียวผ่านเครือข่าย",
         "category": "addon", "sort_order": 10, "is_featured": False,
     },
     {
         "code": "addon_ir_extension", "name": "IR Coverage Kit",
         "price": "Contact for pricing", "price_unit": "",
         "description": "เพิ่มจุดกระจาย IR · สำหรับห้องใหญ่/อุปกรณ์กระจายตัว",
-        "features": "Broadlink RM4 Pro เพิ่มเติม (ต่อโซน)\nกระจายสัญญาณ IR ครอบคลุมทั้งห้องผ่าน Wi-Fi/LAN\nสำหรับ: ห้องประชุมใหญ่ · อุปกรณ์อยู่คนละจุด — ไม่ต้องเดินสาย",
+        "features": "IR blaster (network) เพิ่มเติม ต่อโซน\nกระจายสัญญาณ IR ครอบคลุมทั้งห้องผ่าน Wi-Fi/LAN\nสำหรับ: ห้องประชุมใหญ่ · อุปกรณ์อยู่คนละจุด — ไม่ต้องเดินสาย",
         "category": "addon", "sort_order": 11, "is_featured": True,
     },
     {
         "code": "addon_multi_device", "name": "Multi-device Kit",
         "price": "Contact for pricing", "price_unit": "",
         "description": "คุมหลายอุปกรณ์ผ่าน IR พร้อมกัน",
-        "features": "Broadlink RM4 Pro หลายตัว (1 ตัว/กลุ่มอุปกรณ์)\nคุม TV + Audio + Player พร้อมกันผ่านเครือข่าย\nสำหรับ: คุมหลายอุปกรณ์/หลายตู้ AV พร้อมกัน",
+        "features": "IR blaster (network) หลายตัว — 1 ตัว/กลุ่มอุปกรณ์\nคุม TV + Audio + Player พร้อมกันผ่านเครือข่าย\nสำหรับ: คุมหลายอุปกรณ์/หลายตู้ AV พร้อมกัน",
         "category": "addon", "sort_order": 12, "is_featured": False,
     },
 ]
@@ -186,14 +186,15 @@ def run_seed():
         # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
         # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated
         # in general (admin may have customized pricing) — EXCEPT the IR kits, which are
-        # force-corrected ONLY if their features still describe the obsolete wired-IR design
-        # (emitter cable / CAT5 extender / Y-splitter). IR is now network-based via Broadlink
-        # RM4 Pro, so the old wired wording is factually wrong. Price/price_unit are preserved.
+        # force-corrected if their features still contain a stale phrase: either the obsolete
+        # wired-IR design (emitter cable / CAT5 extender / Y-splitter) OR a brand/model name
+        # (Broadlink / RM4) that slipped in before. The site must use generic device terms
+        # only, so both get rewritten to "IR blaster (network)". Price/price_unit are preserved.
         pkg_added = 0
         pkg_migrated = 0
         CORE_EDITIONS = {"starter", "pro", "enterprise"}
         IR_KIT_CODES = {"addon_base", "addon_ir_extension", "addon_multi_device"}
-        IR_KIT_STALE_PHRASES = ("IR emitter cable", "IR Extender", "IR Y-splitter", "CAT5", "เดินสาย IR", "2U Controller")
+        IR_KIT_STALE_PHRASES = ("IR emitter cable", "IR Extender", "IR Y-splitter", "CAT5", "เดินสาย IR", "2U Controller", "Broadlink", "RM4")
         for pkg_data in DEFAULT_PACKAGES:
             existing = db.query(Package).filter_by(code=pkg_data["code"]).first()
             if not existing:

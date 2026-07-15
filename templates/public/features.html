@@ -32,15 +32,8 @@
                         <span class="px-2 py-1 rounded bg-electric/10 text-electric text-xs">LLM Powered</span>
                     </div>
                 </div>
-                <div class="bg-navy rounded-2xl p-6 font-mono text-sm shadow-lg">
-                    <div class="text-sky/40 mb-2">$ คุณ:</div>
-                    <div class="text-white mb-4">เปิดโปรเจคเตอร์ HDMI1 หรี่ไฟ 30%</div>
-                    <div class="text-electric-400 mb-2">→ AI Agent:</div>
-                    <div class="space-y-1 text-sky">
-                        <div>✓ Projector ON via PJLink</div>
-                        <div>✓ Input → HDMI1</div>
-                        <div>✓ DMX Lighting → 30%</div>
-                    </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-navy-950">
+                    <img src="/static/images/feature-ai-agent.png" alt="AI Agent Controller — สั่งงานหลายคำสั่งพร้อมกัน" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -56,11 +49,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> ควบคุม ไฟ + เสียง + ภาพ + Matrix Routing พร้อมกัน</li>
                     </ul>
                 </div>
-                <div class="md:order-1 grid grid-cols-2 gap-3">
-                    <div class="card rounded-xl p-5 text-center font-th"><div class="text-3xl mb-2">📊</div>ประชุม</div>
-                    <div class="card rounded-xl p-5 text-center font-th"><div class="text-3xl mb-2">🎬</div>โปรเจคเตอร์</div>
-                    <div class="card rounded-xl p-5 text-center font-th"><div class="text-3xl mb-2">☕</div>พักเบรก</div>
-                    <div class="card rounded-xl p-5 text-center font-th"><div class="text-3xl mb-2">🔒</div>เลิกประชุม</div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-scene.png" alt="Scene Control — 4 ซีนสำเร็จรูป + custom scene" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -77,17 +67,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Save/Recall configuration</li>
                     </ul>
                 </div>
-                <div class="card rounded-2xl p-4">
-                    <div class="grid grid-cols-9 gap-1 text-xs">
-                        <div></div>
-                        {% for i in range(8) %}<div class="text-center text-slate-400">O{{ i+1 }}</div>{% endfor %}
-                        {% for r in range(8) %}
-                        <div class="text-slate-400">I{{ r+1 }}</div>
-                        {% for c in range(8) %}
-                        <div class="aspect-square rounded {% if r == c %}bg-electric{% else %}bg-slate-100{% endif %}"></div>
-                        {% endfor %}
-                        {% endfor %}
-                    </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-video-matrix.png" alt="Video Matrix Switcher — routing สัญญาณ HDMI 8×8" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -103,12 +84,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Feedback Destroyer (Auto / Manual Notch Filter)</li>
                     </ul>
                 </div>
-                <div class="md:order-1 card rounded-2xl p-6">
-                    <div class="text-xs text-slate-400 mb-2">VU METER</div>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2"><span class="text-xs w-8 text-navy">IN</span><div class="flex-1 h-3 bg-slate-100 rounded overflow-hidden"><div class="h-full bg-gradient-to-r from-emerald-500 via-yellow-400 to-red-500" style="width:65%"></div></div></div>
-                        <div class="flex items-center gap-2"><span class="text-xs w-8 text-navy">OUT</span><div class="flex-1 h-3 bg-slate-100 rounded overflow-hidden"><div class="h-full bg-gradient-to-r from-emerald-500 via-yellow-400 to-red-500" style="width:42%"></div></div></div>
-                    </div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-audio.png" alt="Audio Control — VU meter + mixer console" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -124,19 +101,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Status Monitor: Lamp Hours / Error / Connection</li>
                     </ul>
                 </div>
-                <div class="card rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <div class="text-slate-400 text-xs">PROJECTOR STATUS</div>
-                            <div class="text-2xl font-semibold text-navy">ONLINE</div>
-                        </div>
-                        <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-                    </div>
-                    <div class="space-y-2 text-sm font-th">
-                        <div class="flex justify-between"><span class="text-slate-500">Input</span><span class="text-navy">HDMI 1</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Lamp Hours</span><span class="text-navy">347 / 2000</span></div>
-                        <div class="flex justify-between"><span class="text-slate-500">Protocol</span><span class="text-navy">PJLink</span></div>
-                    </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-projector.png" alt="Projector Control — เปิด/ปิด + สถานะผ่าน PJLink" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -151,10 +117,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> เลือก Input Source</li>
                     </ul>
                 </div>
-                <div class="md:order-1 grid grid-cols-3 gap-2">
-                    <div class="card rounded-xl p-3 text-center text-xs font-th"><div class="text-2xl mb-1">📺</div>WebOS</div>
-                    <div class="card rounded-xl p-3 text-center text-xs font-th"><div class="text-2xl mb-1">📺</div>Tizen</div>
-                    <div class="card rounded-xl p-3 text-center text-xs font-th"><div class="text-2xl mb-1">📺</div>Android TV</div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-smart-tv.png" alt="Smart TV Control — WebOS / Tizen / Android TV" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -170,13 +134,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Scene + Fade smooth</li>
                     </ul>
                 </div>
-                <div class="card rounded-2xl p-6">
-                    <div class="text-slate-400 text-xs mb-3">LIGHTING SCENES</div>
-                    <div class="space-y-3 font-th">
-                        <div class="flex items-center justify-between"><span class="text-sm text-navy">Presentation</span><div class="w-32 h-1.5 bg-slate-100 rounded"><div class="h-full rounded bg-gradient-to-r from-signal to-electric" style="width:30%"></div></div></div>
-                        <div class="flex items-center justify-between"><span class="text-sm text-navy">Meeting</span><div class="w-32 h-1.5 bg-slate-100 rounded"><div class="h-full rounded bg-gradient-to-r from-signal to-electric" style="width:80%"></div></div></div>
-                        <div class="flex items-center justify-between"><span class="text-sm text-navy">Break</span><div class="w-32 h-1.5 bg-slate-100 rounded"><div class="h-full rounded bg-gradient-to-r from-signal to-electric" style="width:60%"></div></div></div>
-                    </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-lighting.png" alt="Lighting Control DMX512 — scene + fade" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -196,16 +155,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Latency ~10-20ms</li>
                     </ul>
                 </div>
-                <div class="md:order-1 card rounded-2xl p-6">
-                    <div class="text-slate-400 text-xs mb-3">ZONE BROADCAST</div>
-                    <div class="grid grid-cols-3 gap-2 font-th">
-                        <div class="bg-slate-100 rounded p-2 text-center text-xs text-navy">Lobby</div>
-                        <div class="bg-electric text-white rounded p-2 text-center text-xs">Hall A</div>
-                        <div class="bg-slate-100 rounded p-2 text-center text-xs text-navy">Hall B</div>
-                        <div class="bg-electric text-white rounded p-2 text-center text-xs">Room 1</div>
-                        <div class="bg-electric text-white rounded p-2 text-center text-xs">Room 2</div>
-                        <div class="bg-slate-100 rounded p-2 text-center text-xs text-navy">Office</div>
-                    </div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-pa.png" alt="PA Announcement — zone broadcast (กำลังพัฒนา)" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
@@ -225,15 +176,8 @@
                         <li class="flex gap-2"><span class="text-amber-500">⚡</span> <strong>Enterprise-ready</strong> — <em class="not-italic text-slate-500">ออกแบบให้ขยายถึง ~200 ห้อง</em> ด้วย Master Controller (รุ่นองค์กร · หลายอาคาร)</li>
                     </ul>
                 </div>
-                <div class="card rounded-2xl p-6">
-                    <div class="grid grid-cols-3 gap-2 text-xs font-th">
-                        {% for i in range(9) %}
-                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center text-navy">
-                            <div class="w-2 h-2 mx-auto rounded-full {% if i % 3 == 0 %}bg-emerald-500{% elif i % 3 == 1 %}bg-electric{% else %}bg-slate-300{% endif %} mb-1"></div>
-                            Room {{ i+1 }}
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-dashboard.png" alt="Multi-room Central Dashboard — คุมทุกห้องจากจอเดียว" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
         </div>

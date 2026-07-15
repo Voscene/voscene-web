@@ -920,112 +920,125 @@
 </section>
 
 <!-- LINE Integration Section -->
-<section class="py-20 md:py-28 bg-navy relative overflow-hidden">
-    <div class="absolute top-0 -right-40 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-electric/10 rounded-full blur-3xl"></div>
+<section class="py-20 md:py-28 bg-white relative overflow-hidden">
+    <div class="absolute top-0 -right-40 w-[600px] h-[600px] bg-[#06C755]/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-emerald-400/5 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
-            <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold tracking-wider mb-4">💬 LINE OFFICIAL ACCOUNT</span>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-white font-th">ส่งข้อความ <span class="text-emerald-400">ควบคุมได้ทันที</span><br>แจ้งเตือน <span class="text-electric-300">แบบ Real-time</span></h2>
-            <p class="text-sky text-lg font-th">Voscene ทำงานบน LINE ที่ทีมคุณคุ้นเคยอยู่แล้ว</p>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#06C755]/10 border border-[#06C755]/30 text-[#06C755] text-xs font-semibold tracking-wider mb-4">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.79 2 10.44c0 4.16 3.58 7.64 8.42 8.3.33.07.78.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.02.9.56 1.1-.46 5.92-3.49 8.08-5.97C21.6 14.03 22 12.3 22 10.44 22 5.79 17.52 2 12 2z"/></svg>
+                LINE OFFICIAL ACCOUNT
+            </span>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy font-th">ส่งข้อความ <span class="text-[#06C755]">ควบคุมได้ทันที</span><br>แจ้งเตือน <span class="text-[#06C755]">แบบ Real-time</span></h2>
+            <p class="text-slate-600 text-lg font-th">Voscene ทำงานบน <span class="font-semibold text-[#06C755]">LINE</span> ที่ทีมคุณคุ้นเคยอยู่แล้ว</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
-            <!-- Send Commands -->
-            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
-                <div class="mb-5">
-                    <h3 class="font-display text-xl font-semibold text-white mb-1 font-th">📤 ส่งคำสั่งควบคุม</h3>
-                    <p class="text-sky/70 text-sm font-th">ควบคุมผ่านข้อความ LINE — ใช้งานได้แล้ว</p>
-                </div>
-
-                <!-- Chat mockup -->
-                <div class="bg-navy-950 rounded-xl p-4 space-y-3 mb-5">
-                    <div class="flex justify-end">
-                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th">"เปิดโปรเจคเตอร์"</div>
-                    </div>
-                    <div class="flex justify-start">
-                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th">✓ เปิดโปรเจคเตอร์แล้ว</div>
-                    </div>
-                    <div class="flex justify-end">
-                        <div class="bg-slate-700 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th">"หรี่ไฟเหลือ 30%"</div>
-                    </div>
-                    <div class="flex justify-start">
-                        <div class="bg-emerald-500 text-white text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th">✓ หรี่ไฟแล้ว</div>
+            <!-- Send Commands (LINE chat window style) -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-[#06C755] text-white px-5 py-3 flex items-center gap-2.5">
+                    <span class="text-lg leading-none">📤</span>
+                    <div class="flex-1">
+                        <div class="font-semibold text-sm leading-tight font-th">ส่งคำสั่งควบคุม</div>
+                        <div class="text-white/85 text-[11px] font-th">ควบคุมผ่านข้อความ LINE — ใช้งานได้แล้ว</div>
                     </div>
                 </div>
 
-                <ul class="space-y-2 text-sm text-sky/85 font-th">
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> AI ตีความคำสั่งภาษาไทย/อังกฤษ · ตอบกลับทันที</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ตรวจสอบลายเซ็น HMAC · ป้องกันการปลอมแปลง</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> อนุญาตเฉพาะผู้ส่งที่กำหนด (User allowlist)</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ปุ่มหยุดรับ — ผู้ใช้ในห้องระงับคำสั่งจากภายนอกได้</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> บันทึก Audit log ครบ — ใคร/สั่งอะไร/เมื่อไหร่/ผลลัพธ์</li>
-                </ul>
+                <div class="p-6">
+                    <!-- Chat mockup — LINE style: sent = green right, reply = white left -->
+                    <div class="bg-emerald-50/70 rounded-xl p-4 space-y-3 mb-5">
+                        <div class="flex justify-end">
+                            <div class="bg-[#06C755] text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th shadow-sm">"เปิดโปรเจคเตอร์"</div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="bg-white text-navy text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th border border-slate-200 shadow-sm">✓ เปิดโปรเจคเตอร์แล้ว</div>
+                        </div>
+                        <div class="flex justify-end">
+                            <div class="bg-[#06C755] text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] font-th shadow-sm">"หรี่ไฟเหลือ 30%"</div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="bg-white text-navy text-sm rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] font-th border border-slate-200 shadow-sm">✓ หรี่ไฟแล้ว</div>
+                        </div>
+                    </div>
+
+                    <ul class="space-y-2 text-sm text-slate-600 font-th">
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> AI ตีความคำสั่งภาษาไทย/อังกฤษ · ตอบกลับทันที</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> ตรวจสอบลายเซ็น HMAC · ป้องกันการปลอมแปลง</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> อนุญาตเฉพาะผู้ส่งที่กำหนด (User allowlist)</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> ปุ่มหยุดรับ — ผู้ใช้ในห้องระงับคำสั่งจากภายนอกได้</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> บันทึก Audit log ครบ — ใคร/สั่งอะไร/เมื่อไหร่/ผลลัพธ์</li>
+                    </ul>
+                </div>
             </div>
 
-            <!-- Get Notifications -->
-            <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6">
-                <div class="mb-5">
-                    <h3 class="font-display text-xl font-semibold text-white mb-1 font-th">🔔 รับการแจ้งเตือน</h3>
-                    <p class="text-sky/70 text-sm font-th">แจ้งเตือนเหตุการณ์สำคัญเข้า LINE ทันที</p>
-                </div>
-
-                <!-- Alerts mockup (V2 — 5 alert types) -->
-                <div class="bg-navy-950 rounded-xl p-4 space-y-3 mb-5">
-                    <div class="border-l-4 border-red-500 bg-red-500/10 rounded-r-lg px-4 py-2.5">
-                        <div class="flex items-start gap-2">
-                            <span class="text-red-400">🔥</span>
-                            <div>
-                                <div class="text-white font-semibold text-sm font-th">อุณหภูมิแบตเตอรี่วิกฤต</div>
-                                <div class="text-sky/60 text-xs font-th">ตัดวงจรชาร์จอัตโนมัติ · เครื่อง A1</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-l-4 border-orange-500 bg-orange-500/10 rounded-r-lg px-4 py-2.5">
-                        <div class="flex items-start gap-2">
-                            <span class="text-orange-400">🌡</span>
-                            <div>
-                                <div class="text-white font-semibold text-sm font-th">Rack ร้อนเกินกำหนด</div>
-                                <div class="text-sky/60 text-xs font-th">Rack 38°C · ตรวจสอบเครื่องปรับอากาศ</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-l-4 border-red-500 bg-red-500/10 rounded-r-lg px-4 py-2.5">
-                        <div class="flex items-start gap-2">
-                            <span class="text-red-400 font-bold">!</span>
-                            <div>
-                                <div class="text-white font-semibold text-sm font-th">โปรเจคเตอร์ Offline</div>
-                                <div class="text-sky/60 text-xs font-th">ห้อง A · 5 นาทีที่แล้ว</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-l-4 border-electric bg-electric/10 rounded-r-lg px-4 py-2.5">
-                        <div class="flex items-start gap-2">
-                            <span class="text-electric-300">📦</span>
-                            <div>
-                                <div class="text-white font-semibold text-sm font-th">มีซอฟต์แวร์เวอร์ชันใหม่</div>
-                                <div class="text-sky/60 text-xs font-th">v40.2 · พร้อมอัปเดต OTA</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="border-l-4 border-emerald-500 bg-emerald-500/10 rounded-r-lg px-4 py-2.5">
-                        <div class="flex items-start gap-2">
-                            <span class="text-emerald-400">✓</span>
-                            <div>
-                                <div class="text-white font-semibold text-sm font-th">สำรองข้อมูลสำเร็จ</div>
-                                <div class="text-sky/60 text-xs font-th">สำรองอัตโนมัติ AES-128 · 02:00 น.</div>
-                            </div>
-                        </div>
+            <!-- Get Notifications (LINE chat window style) -->
+            <div class="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                <div class="bg-[#06C755] text-white px-5 py-3 flex items-center gap-2.5">
+                    <span class="text-lg leading-none">🔔</span>
+                    <div class="flex-1">
+                        <div class="font-semibold text-sm leading-tight font-th">รับการแจ้งเตือน</div>
+                        <div class="text-white/85 text-[11px] font-th">แจ้งเตือนเหตุการณ์สำคัญเข้า LINE ทันที</div>
                     </div>
                 </div>
 
-                <ul class="space-y-2 text-sm text-sky/85 font-th">
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> แจ้งเตือนสถานะอุปกรณ์</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> เตือนเมื่อค่าเกินกำหนด (อุณหภูมิแบตเตอรี่ + Rack)</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> บันทึก Events ระบบ + แจ้งเตือน OTA</li>
-                    <li class="flex gap-2"><span class="text-emerald-400">—</span> ปรับแต่งได้ตามแต่ละช่อง</li>
-                </ul>
+                <div class="p-6">
+                    <!-- Alerts mockup (V2 — 5 alert types) on light chat bg -->
+                    <div class="bg-emerald-50/70 rounded-xl p-4 space-y-2.5 mb-5">
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-red-500 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-red-500">🔥</span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">อุณหภูมิแบตเตอรี่วิกฤต</div>
+                                    <div class="text-slate-500 text-xs font-th">ตัดวงจรชาร์จอัตโนมัติ · เครื่อง A1</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-orange-500 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-orange-500">🌡</span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">Rack ร้อนเกินกำหนด</div>
+                                    <div class="text-slate-500 text-xs font-th">Rack 38°C · ตรวจสอบเครื่องปรับอากาศ</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-red-500 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-red-500 font-bold">!</span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">โปรเจคเตอร์ Offline</div>
+                                    <div class="text-slate-500 text-xs font-th">ห้อง A · 5 นาทีที่แล้ว</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-electric rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-electric">📦</span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">มีซอฟต์แวร์เวอร์ชันใหม่</div>
+                                    <div class="text-slate-500 text-xs font-th">v40.2 · พร้อมอัปเดต OTA</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-[#06C755] rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[#06C755]">✓</span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">สำรองข้อมูลสำเร็จ</div>
+                                    <div class="text-slate-500 text-xs font-th">สำรองอัตโนมัติ AES-128 · 02:00 น.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul class="space-y-2 text-sm text-slate-600 font-th">
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> แจ้งเตือนสถานะอุปกรณ์</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> เตือนเมื่อค่าเกินกำหนด (อุณหภูมิแบตเตอรี่ + Rack)</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> บันทึก Events ระบบ + แจ้งเตือน OTA</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> ปรับแต่งได้ตามแต่ละช่อง</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

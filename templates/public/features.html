@@ -10,6 +10,20 @@
             <p class="text-slate-600 text-lg font-th">17 control modules ครอบคลุมการควบคุมห้องประชุมที่ต้องการ — ตาม Catalog V2 (Volume 2.0) · รวม Booking (Coming soon)</p>
         </div>
 
+        <!-- Video Demo — muted autoplay loop; shows the poster until static/videos/voscene-demo.mp4 is added -->
+        <div class="max-w-5xl mx-auto mb-20">
+            <div class="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl bg-navy-950">
+                <div class="absolute -inset-1 bg-gradient-to-tr from-electric/20 via-transparent to-signal/20 blur-2xl -z-10"></div>
+                <video class="w-full h-auto block"
+                       poster="/static/images/EPPO-Graphic-Switcher.png"
+                       muted autoplay loop playsinline preload="none">
+                    {# TODO: วางไฟล์วิดีโอที่ static/videos/voscene-demo.mp4 แล้ววิดีโอจะเล่น autoplay loop เอง #}
+                    <source src="/static/videos/voscene-demo.mp4" type="video/mp4">
+                </video>
+            </div>
+            <p class="text-center text-slate-500 text-sm font-th mt-4">ตัวอย่างการควบคุมแบบกราฟิก — ลากแหล่งสัญญาณไปวางบนจอ ปรับเสียงและซีนได้จากหน้าจอเดียว</p>
+        </div>
+
         <div class="space-y-16">
             <!-- 1 AI Agent -->
             <div class="grid md:grid-cols-2 gap-10 items-center">

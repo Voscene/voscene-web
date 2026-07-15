@@ -145,8 +145,9 @@
                 {% endif %}
             </div>
         </div>
-        <div class="border-t border-slate-200 mt-10 pt-6 text-center text-sm text-slate-500">
+        <div class="border-t border-slate-200 mt-10 pt-6 text-center text-sm text-slate-500 relative">
             {{ c.footer_copyright or '' }}
+            <span class="block mt-2 md:mt-0 md:absolute md:left-0 md:top-6 text-xs text-slate-400 font-mono">v{{ APP_VERSION }}</span>
         </div>
     </div>
 </footer>

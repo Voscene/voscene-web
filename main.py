@@ -38,6 +38,11 @@ app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+# App version shown in the footer. Override without a code change by setting
+# the APP_VERSION env var (e.g. in Render); defaults to the baseline below.
+APP_VERSION = os.getenv("APP_VERSION", "2.0.0")
+templates.env.globals["APP_VERSION"] = APP_VERSION
+
 
 def load_content(db: Session) -> dict:
     """โหลดเนื้อหาทั้งหมดเป็น dict { key: value }"""

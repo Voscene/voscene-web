@@ -72,12 +72,13 @@
         <a href="/" class="flex items-center gap-2">
             <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-9 w-auto">
         </a>
+        {% set p = request.url.path %}
         <div class="hidden md:flex items-center gap-6 text-sm">
-            <a href="/" class="text-slate-600 hover:text-navy transition">หน้าแรก</a>
-            <a href="/features" class="text-slate-600 hover:text-navy transition">ฟีเจอร์</a>
-            <a href="/pricing" class="text-slate-600 hover:text-navy transition">ราคา</a>
-            <a href="/blog" class="text-slate-600 hover:text-navy transition">บทความ</a>
-            <a href="/contact" class="text-slate-600 hover:text-navy transition">ติดต่อ</a>
+            <a href="/" class="transition {% if p == '/' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">หน้าแรก</a>
+            <a href="/features" class="transition {% if p == '/features' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ฟีเจอร์</a>
+            <a href="/pricing" class="transition {% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ราคา</a>
+            <a href="/blog" class="transition {% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">บทความ</a>
+            <a href="/contact" class="transition {% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ติดต่อ</a>
             <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white text-sm">Book Demo</a>
         </div>
         <button class="md:hidden text-navy" onclick="document.getElementById('m-menu').classList.toggle('hidden')">
@@ -86,11 +87,11 @@
     </div>
     <div id="m-menu" class="hidden md:hidden border-t border-slate-200 bg-white">
         <div class="px-4 py-3 flex flex-col gap-3 text-sm">
-            <a href="/" class="text-slate-600">หน้าแรก</a>
-            <a href="/features" class="text-slate-600">ฟีเจอร์</a>
-            <a href="/pricing" class="text-slate-600">ราคา</a>
-            <a href="/blog" class="text-slate-600">บทความ</a>
-            <a href="/contact" class="text-slate-600">ติดต่อ</a>
+            <a href="/" class="{% if p == '/' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">หน้าแรก</a>
+            <a href="/features" class="{% if p == '/features' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ฟีเจอร์</a>
+            <a href="/pricing" class="{% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ราคา</a>
+            <a href="/blog" class="{% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-600{% endif %}">บทความ</a>
+            <a href="/contact" class="{% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ติดต่อ</a>
             <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric text-white text-center font-semibold">Book Demo</a>
         </div>
     </div>

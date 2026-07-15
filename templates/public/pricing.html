@@ -115,46 +115,6 @@
     </div>
 </section>
 
-<!-- Add-on Kits (v1.4) -->
-{% if addon_packages %}
-<section class="py-20 md:py-28 bg-cloud border-y border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-12">
-            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">ADD-ON KITS</div>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Optional <em class="text-electric not-italic">Add-on Kits.</em></h2>
-            <p class="text-slate-600 text-lg font-th">เพิ่มเติมตามขนาดห้องและจำนวนอุปกรณ์</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {% for pkg in addon_packages %}
-            <div class="relative card rounded-2xl p-6 {% if pkg.is_featured %}!border-electric ring-2 ring-electric/30{% endif %}">
-                {% if pkg.is_featured %}
-                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-electric text-white rounded-full text-xs font-semibold tracking-wider">RECOMMENDED</div>
-                {% endif %}
-                <h3 class="font-display text-xl font-semibold mb-1 text-navy">{{ pkg.name }}</h3>
-                <p class="text-slate-600 text-sm mb-4 font-th italic">{{ pkg.description }}</p>
-                <div class="mb-4">
-                    <span class="font-display text-lg font-semibold text-navy">{{ pkg.price }}</span>
-                    {% if pkg.price_unit %}<span class="text-slate-500 text-sm ml-1 font-th">{{ pkg.price_unit }}</span>{% endif %}
-                </div>
-                <ul class="space-y-1.5 text-sm font-th">
-                    {% for line in pkg.features.split('\n') %}
-                    {% if line.strip() %}
-                    <li class="flex items-start gap-2">
-                        <span class="text-electric">▸</span>
-                        <span class="text-slate-700">{{ line }}</span>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endfor %}
-        </div>
-
-    </div>
-</section>
-{% endif %}
-
 <!-- Partner Program -->
 <section class="py-20 bg-white">
     <div class="max-w-4xl mx-auto px-4">

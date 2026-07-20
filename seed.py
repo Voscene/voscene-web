@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -149,13 +149,15 @@ def run_seed():
             "seo_description",
             "stat_3_value", "stat_3_label",
         }
-        # Phase-14 reposition: retire the old voice-first brand line from the SEO
-        # <title> + footer tagline. Force the new default ONLY while the stored value
-        # still carries the retired phrase — once updated it stops forcing, so a later
-        # admin edit sticks.
+        # Phase-14 reposition: retire off-message values (voice-first brand line, the
+        # AI-forward meta lead + internal AES-128 spec leak, and a mismatched stat
+        # label). Force the new default ONLY while the stored value still carries the
+        # retired marker — once updated it stops forcing, so a later admin edit sticks.
         REPOSITION_FORCE = {
             "seo_title": "The voice of smart spaces",
             "footer_tagline": "The voice of smart spaces",
+            "seo_description": "AES-128",
+            "stat_3_label": "AI-Driven",
         }
         added = 0
         migrated = 0

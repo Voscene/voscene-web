@@ -25,11 +25,134 @@
         </div>
 
         <div class="space-y-16">
-            <!-- 1 AI Agent -->
+            <!-- 1 Scene Control -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 01 · SCENE</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Scene Control</h2>
+                    <p class="text-slate-600 mb-4 font-th">4 Scene สำเร็จรูป + 1 Custom Scene กดปุ่มเดียวควบคุมทุกอุปกรณ์</p>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ประชุม / ฉายโปรเจคเตอร์ / พักเบรก / เลิกประชุม</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Custom Scene บันทึก/Recall ได้</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ควบคุม ไฟ + เสียง + ภาพ + Matrix Routing พร้อมกัน</li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-scene.png" alt="Scene Control — 4 ซีนสำเร็จรูป + custom scene" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 2 Video Matrix (Graphic Switcher) -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="md:order-2">
+                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 02 · VIDEO</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Video Matrix Switcher</h2>
+                    <p class="text-slate-600 mb-4 font-th">Visual Routing Matrix สูงสุด 8×8 (ขยายได้) กด Cell เพื่อ Route สัญญาณ HDMI</p>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ 8 Input / 8 Output ขยายได้</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ควบคุมผ่าน RS232 หรือ Telnet</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ใช้ได้กับ Matrix Switcher แทบทุกยี่ห้อที่รองรับ Protocol</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Save/Recall configuration</li>
+                    </ul>
+                </div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-video-matrix.png" alt="Video Matrix Switcher — routing สัญญาณ HDMI 8×8" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 3 Audio -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 03 · AUDIO</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Audio Control</h2>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Volume 0-100% ด้วย Slider + Preset 5 ระดับ</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Mute / Pause / Resume</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> VU Meter แสดงสัญญาณ IN/OUT Real-time</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Feedback Destroyer (Auto / Manual Notch Filter)</li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-audio.png" alt="Audio Control — VU meter + mixer console" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 4 Projector -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="md:order-2">
+                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 04 · PROJECTOR</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Projector Control</h2>
+                    <p class="text-slate-600 mb-4 font-th">เปิด/ปิดผ่าน LAN เลือก Input Source ดู Lamp Hours / Status</p>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ Projector แทบทุกยี่ห้อที่ใช้ <strong>PJLink Protocol</strong></li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> มาตรฐาน IEC 62386</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Status Monitor: Lamp Hours / Error / Connection</li>
+                    </ul>
+                </div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-projector.png" alt="Projector Control — เปิด/ปิด + สถานะผ่าน PJLink" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 5 Smart TV -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 05 · TV</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Smart TV Control</h2>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> เปิดผ่าน <strong>Wake-on-LAN</strong> ปิดผ่าน Network Protocol</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ <strong>WebOS, Tizen, Android TV</strong> และอื่นๆ</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> เลือก Input Source</li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-smart-tv.png" alt="Smart TV Control — WebOS / Tizen / Android TV" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 6 DMX Lighting -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="md:order-2">
+                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 06 · LIGHTING</div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Lighting Control (DMX512)</h2>
+                    <p class="text-slate-600 mb-4 font-th">ควบคุมระบบแสงสว่างตาม Scene อัตโนมัติ Fade in/out ราบรื่น</p>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ 512 Channel</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Dimmer, RGB และอุปกรณ์แสงทุกชนิดที่ใช้ <strong>DMX512</strong></li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> Scene + Fade smooth</li>
+                    </ul>
+                </div>
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-lighting.png" alt="Lighting Control DMX512 — scene + fade" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 7 Multi-room Dashboard — LIVE in V2 -->
             <div class="grid md:grid-cols-2 gap-10 items-center">
                 <div>
                     <div class="flex items-center gap-2 mb-3">
-                        <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 01 · AI</div>
+                        <span class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 07 · DASHBOARD</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">LIVE</span>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Multi-room Central Dashboard</h2>
+                    <p class="text-slate-600 mb-4 font-th">คุมและเฝ้าดูทุกห้องจากจอเดียว — <strong class="text-navy">พร้อมใช้สูงสุด 20 ห้องต่อ controller</strong> · ออกแบบให้ขยายสู่ระดับองค์กร (หลายอาคาร) ด้วย Master Controller</p>
+                    <ul class="space-y-2 text-slate-700 font-th">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Central Control + Monitoring</strong> — สั่งงาน + เห็นสถานะทุกห้อง real-time จากจอเดียว</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Federated</strong> — สั่งข้ามห้องจาก single pane</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Independent Rooms</strong> — แต่ละห้องทำงานอิสระ · ศูนย์กลางล่ม ห้องยังคุมเองได้ (no single point of failure)</li>
+                        <li class="flex gap-2"><span class="text-amber-500">⚡</span> <strong>Enterprise-ready</strong> — <em class="not-italic text-slate-500">ออกแบบให้ขยายถึง ~200 ห้อง</em> ด้วย Master Controller (รุ่นองค์กร · หลายอาคาร)</li>
+                    </ul>
+                </div>
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                    <img src="/static/images/feature-dashboard.png" alt="Multi-room Central Dashboard — คุมทุกห้องจากจอเดียว" class="w-full h-auto" loading="lazy">
+                </div>
+            </div>
+
+            <!-- 8 AI Agent (supporting feature) -->
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="md:order-2">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 08 · AI</div>
                         <div class="inline-block px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold tracking-wider">นำร่อง (Voice)</div>
                     </div>
                     <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">AI Agent Controller</h2>
@@ -46,118 +169,16 @@
                         <span class="px-2 py-1 rounded bg-electric/10 text-electric text-xs">LLM Powered</span>
                     </div>
                 </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-navy-950">
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg bg-navy-950">
                     <img src="/static/images/feature-ai-agent.png" alt="AI Agent Controller — สั่งงานหลายคำสั่งพร้อมกัน" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
 
-            <!-- 2 Scene Control -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div class="md:order-2">
-                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 02 · SCENE</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Scene Control</h2>
-                    <p class="text-slate-600 mb-4 font-th">4 Scene สำเร็จรูป + 1 Custom Scene กดปุ่มเดียวควบคุมทุกอุปกรณ์</p>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> ประชุม / ฉายโปรเจคเตอร์ / พักเบรก / เลิกประชุม</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Custom Scene บันทึก/Recall ได้</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> ควบคุม ไฟ + เสียง + ภาพ + Matrix Routing พร้อมกัน</li>
-                    </ul>
-                </div>
-                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-scene.png" alt="Scene Control — 4 ซีนสำเร็จรูป + custom scene" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 3 Video Matrix -->
+            <!-- 9 PA System (Roadmap) -->
             <div class="grid md:grid-cols-2 gap-10 items-center">
                 <div>
-                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 03 · VIDEO</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Video Matrix Switcher</h2>
-                    <p class="text-slate-600 mb-4 font-th">Visual Routing Matrix สูงสุด 8×8 (ขยายได้) กด Cell เพื่อ Route สัญญาณ HDMI</p>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ 8 Input / 8 Output ขยายได้</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> ควบคุมผ่าน RS232 หรือ Telnet</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> ใช้ได้กับ Matrix Switcher แทบทุกยี่ห้อที่รองรับ Protocol</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Save/Recall configuration</li>
-                    </ul>
-                </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-video-matrix.png" alt="Video Matrix Switcher — routing สัญญาณ HDMI 8×8" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 4 Audio -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div class="md:order-2">
-                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 04 · AUDIO</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Audio Control</h2>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Volume 0-100% ด้วย Slider + Preset 5 ระดับ</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Mute / Pause / Resume</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> VU Meter แสดงสัญญาณ IN/OUT Real-time</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Feedback Destroyer (Auto / Manual Notch Filter)</li>
-                    </ul>
-                </div>
-                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-audio.png" alt="Audio Control — VU meter + mixer console" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 5 Projector -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 05 · PROJECTOR</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Projector Control</h2>
-                    <p class="text-slate-600 mb-4 font-th">เปิด/ปิดผ่าน LAN เลือก Input Source ดู Lamp Hours / Status</p>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ Projector แทบทุกยี่ห้อที่ใช้ <strong>PJLink Protocol</strong></li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> มาตรฐาน IEC 62386</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Status Monitor: Lamp Hours / Error / Connection</li>
-                    </ul>
-                </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-projector.png" alt="Projector Control — เปิด/ปิด + สถานะผ่าน PJLink" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 6 Smart TV -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div class="md:order-2">
-                    <div class="inline-block px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-medium mb-3">FEATURE 06 · TV</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Smart TV Control</h2>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> เปิดผ่าน <strong>Wake-on-LAN</strong> ปิดผ่าน Network Protocol</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ <strong>WebOS, Tizen, Android TV</strong> และอื่นๆ</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> เลือก Input Source</li>
-                    </ul>
-                </div>
-                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-smart-tv.png" alt="Smart TV Control — WebOS / Tizen / Android TV" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 7 DMX Lighting -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                    <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 07 · LIGHTING</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Lighting Control (DMX512)</h2>
-                    <p class="text-slate-600 mb-4 font-th">ควบคุมระบบแสงสว่างตาม Scene อัตโนมัติ Fade in/out ราบรื่น</p>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ 512 Channel</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Dimmer, RGB และอุปกรณ์แสงทุกชนิดที่ใช้ <strong>DMX512</strong></li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Scene + Fade smooth</li>
-                    </ul>
-                </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-lighting.png" alt="Lighting Control DMX512 — scene + fade" class="w-full h-auto" loading="lazy">
-                </div>
-            </div>
-
-            <!-- 8 PA System (Roadmap) -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div class="md:order-2">
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 08 · PA</span>
+                        <span class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 09 · PA</span>
                         <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-semibold">กำลังพัฒนา</span>
                     </div>
                     <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">PA Announcement System</h2>
@@ -169,30 +190,58 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Latency ~10-20ms</li>
                     </ul>
                 </div>
-                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
                     <img src="/static/images/feature-pa.png" alt="PA Announcement — zone broadcast (กำลังพัฒนา)" class="w-full h-auto" loading="lazy">
                 </div>
             </div>
+        </div>
+    </div>
+</section>
 
-            <!-- 9 Multi-room Dashboard — LIVE in V2 -->
-            <div class="grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium">FEATURE 09 · DASHBOARD</span>
-                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">LIVE</span>
+<!-- Enterprise Platform — Zero Installation + In-Browser Settings (for engineers / admins) -->
+<section class="py-20 md:py-28 bg-cloud border-y border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-14">
+            <div class="inline-block px-3 py-1 rounded-full bg-navy/5 text-navy text-xs font-semibold tracking-wider mb-3">ENTERPRISE PLATFORM</div>
+            <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">แพลตฟอร์มสำหรับ<span class="text-electric">วิศวกรและผู้ดูแลระบบ</span></h2>
+            <p class="text-slate-600 font-th">ไม่ใช่แค่หน้าจอควบคุม — เป็นแพลตฟอร์มที่ติดตั้งและดูแลง่ายสำหรับทีม IT / System Integrator</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Zero Installation -->
+            <div class="card rounded-2xl p-8 border-t-4 border-t-electric">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="flex items-center justify-center w-14 h-14 rounded-xl bg-electric/10 text-electric text-3xl flex-shrink-0">🌐</span>
+                    <div>
+                        <h3 class="font-display text-2xl font-semibold text-navy">Zero Installation</h3>
+                        <p class="text-slate-500 text-sm font-th">เปิดเบราว์เซอร์ ใช้งานได้ทันที</p>
                     </div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Multi-room Central Dashboard</h2>
-                    <p class="text-slate-600 mb-4 font-th">คุมและเฝ้าดูทุกห้องจากจอเดียว — <strong class="text-navy">พร้อมใช้สูงสุด 20 ห้องต่อ controller</strong> · ออกแบบให้ขยายสู่ระดับองค์กร (หลายอาคาร) ด้วย Master Controller</p>
-                    <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Central Control + Monitoring</strong> — สั่งงาน + เห็นสถานะทุกห้อง real-time จากจอเดียว</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Federated</strong> — สั่งข้ามห้องจาก single pane</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> <strong>Independent Rooms</strong> — แต่ละห้องทำงานอิสระ · ศูนย์กลางล่ม ห้องยังคุมเองได้ (no single point of failure)</li>
-                        <li class="flex gap-2"><span class="text-amber-500">⚡</span> <strong>Enterprise-ready</strong> — <em class="not-italic text-slate-500">ออกแบบให้ขยายถึง ~200 ห้อง</em> ด้วย Master Controller (รุ่นองค์กร · หลายอาคาร)</li>
-                    </ul>
                 </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <img src="/static/images/feature-dashboard.png" alt="Multi-room Central Dashboard — คุมทุกห้องจากจอเดียว" class="w-full h-auto" loading="lazy">
+                <p class="text-slate-600 font-th mb-5">ไม่ต้องติดตั้งซอฟต์แวร์บนเครื่องผู้ใช้ ไม่ต้องแจกจ่ายแอป ไม่ต้องใช้ Touch Panel ราคาแพง — เปิดเบราว์เซอร์ พิมพ์ IP แล้วคุมได้เลย</p>
+                <ul class="space-y-2.5 text-slate-700 font-th text-sm">
+                    <li class="flex gap-2"><span class="text-electric">✓</span> ทำงานบนทุกอุปกรณ์ที่มีเบราว์เซอร์ — Windows, macOS, iOS, Android</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> ไม่มีขั้นตอน roll-out ฝั่ง client — ไม่ต้องแจกตัวติดตั้งหรือลงแอปทีละเครื่อง</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> ติดตั้งเป็นแอปบนหน้าจอมือถือได้ (PWA)</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> อัปเดตที่ศูนย์กลางครั้งเดียว ทุกเครื่องได้เวอร์ชันล่าสุดทันที</li>
+                </ul>
+            </div>
+
+            <!-- In-Browser Settings -->
+            <div class="card rounded-2xl p-8 border-t-4 border-t-signal">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="flex items-center justify-center w-14 h-14 rounded-xl bg-signal/10 text-signal text-3xl flex-shrink-0">🛠️</span>
+                    <div>
+                        <h3 class="font-display text-2xl font-semibold text-navy">In-Browser Settings</h3>
+                        <p class="text-slate-500 text-sm font-th">ตั้งค่าทั้งระบบผ่านเบราว์เซอร์ ไม่ต้องเขียนโค้ด</p>
+                    </div>
                 </div>
+                <p class="text-slate-600 font-th mb-5">กำหนดค่าระบบทั้งหมดจากหน้าเว็บ — เพิ่มอุปกรณ์ ผูกปุ่มควบคุม สร้างซีน ตั้งสิทธิ์ผู้ใช้ ทำได้เองโดยไม่ต้องพึ่งโปรแกรมเมอร์เฉพาะทาง</p>
+                <ul class="space-y-2.5 text-slate-700 font-th text-sm">
+                    <li class="flex gap-2"><span class="text-electric">✓</span> เพิ่ม/แก้ไขอุปกรณ์และโปรโตคอลจากหน้าตั้งค่า</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> ออกแบบปุ่มควบคุมและซีนแบบ visual ไม่ต้องคอมไพล์</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> จัดการผู้ใช้และสิทธิ์การเข้าถึงต่อห้อง</li>
+                    <li class="flex gap-2"><span class="text-electric">✓</span> ปรับแก้หน้างานได้ทันที — ไม่ต้องรอรอบ deploy</li>
+                </ul>
             </div>
         </div>
     </div>

@@ -40,107 +40,92 @@
     <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
-        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-24">
 
-            <!-- LEFT — Copy -->
-            <div class="max-w-xl">
-                <!-- Brand row (compact — headline now leads) -->
-                <div class="flex items-center gap-3 mb-8">
-                    <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 drop-shadow-lg">
-                    <span class="font-display font-bold text-2xl md:text-3xl tracking-tight leading-none">
-                        <span class="text-white">VO</span><span class="text-electric-300">SCENE</span>
-                    </span>
-                </div>
+        <!-- TOP — Copy (centered) -->
+        <div class="max-w-3xl mx-auto text-center">
+            <!-- Brand row -->
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 drop-shadow-lg">
+                <span class="font-display font-bold text-2xl md:text-3xl tracking-tight leading-none">
+                    <span class="text-white">VO</span><span class="text-electric-300">SCENE</span>
+                </span>
+            </div>
 
-                <!-- Positioning badge (control-software forward) -->
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
-                    </span>
-                    <span class="font-th">ซอฟต์แวร์ควบคุม AV สำหรับองค์กร</span>
-                </div>
+            <!-- Positioning badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
+                </span>
+                <span class="font-th">ซอฟต์แวร์ควบคุม AV สำหรับองค์กร</span>
+            </div>
 
-                <!-- Primary Headline -->
-                <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-5xl md:text-6xl lg:text-7xl mb-5">
-                    One touch.<br><span class="text-electric-300">Total control.</span>
-                </h1>
+            <!-- Primary Headline -->
+            <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-5xl md:text-6xl lg:text-7xl mb-5">
+                One touch. <span class="text-electric-300">Total control.</span>
+            </h1>
 
-                <!-- Thai subline -->
-                <p class="font-th text-lg md:text-xl text-sky/90 leading-relaxed mb-6 max-w-lg">
-                    ระบบควบคุม AV สำหรับองค์กรและห้องประชุมยุคใหม่ สั่งการได้เบ็ดเสร็จในสัมผัสเดียว
-                </p>
+            <!-- Thai subline -->
+            <p class="font-th text-lg md:text-xl text-sky/90 leading-relaxed mb-4 max-w-2xl mx-auto">
+                ระบบควบคุม AV สำหรับองค์กรและห้องประชุมยุคใหม่ สั่งการได้เบ็ดเสร็จในสัมผัสเดียว
+            </p>
 
-                <!-- Supporting line — zero-install, browser-based, no expensive touch panel -->
-                <p class="font-th text-sm md:text-base text-muted leading-relaxed mb-9 max-w-lg">
-                    เปิดเบราว์เซอร์แล้วคุมได้ทันที — ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง รองรับอุปกรณ์ AV หลากหลายผ่านโปรโตคอลมาตรฐาน
-                </p>
+            <!-- Supporting line — zero-install, browser-based, no expensive touch panel -->
+            <p class="font-th text-sm md:text-base text-muted leading-relaxed mb-9 max-w-2xl mx-auto">
+                เปิดเบราว์เซอร์แล้วคุมได้ทันที — ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง รองรับอุปกรณ์ AV หลากหลายผ่านโปรโตคอลมาตรฐาน
+            </p>
 
-                <!-- CTAs -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="/features" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white shadow-lg shadow-electric/20">
-                        ดูฟีเจอร์ทั้งหมด
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                    </a>
-                    <a href="/pricing" class="inline-flex items-center justify-center px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
-                        ดูแพ็กเกจ
-                    </a>
-                </div>
+            <!-- CTAs -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/features" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white shadow-lg shadow-electric/20">
+                    ดูฟีเจอร์ทั้งหมด
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </a>
+                <a href="/pricing" class="inline-flex items-center justify-center px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
+                    ดูแพ็กเกจ
+                </a>
+            </div>
 
-                {# Download buttons (show only if files exist) #}
-                {% if c.brochure_file or c.catalog_file %}
-                <div class="flex flex-wrap gap-3 mt-6">
-                    {% if c.brochure_file %}
-                    <a href="/uploads/{{ c.brochure_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        {{ c.brochure_label or 'Download Brochure' }}
-                    </a>
-                    {% endif %}
-                    {% if c.catalog_file %}
-                    <a href="/uploads/{{ c.catalog_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
-                        {{ c.catalog_label or 'Download Catalog' }}
-                    </a>
-                    {% endif %}
-                </div>
+            {# Download buttons (show only if files exist) #}
+            {% if c.brochure_file or c.catalog_file %}
+            <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                {% if c.brochure_file %}
+                <a href="/uploads/{{ c.brochure_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    {{ c.brochure_label or 'Download Brochure' }}
+                </a>
+                {% endif %}
+                {% if c.catalog_file %}
+                <a href="/uploads/{{ c.catalog_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                    {{ c.catalog_label or 'Download Catalog' }}
+                </a>
                 {% endif %}
             </div>
+            {% endif %}
+        </div>
 
-            <!-- RIGHT — Control-software mockup in an App Window frame -->
+        <!-- SHOWCASE — Multi-device product shot (used across all devices) -->
+        <div class="mt-14 md:mt-16 max-w-5xl mx-auto">
+            <!-- Editable heading above the image -->
+            <div class="text-center mb-6">
+                <p class="font-display text-xl md:text-2xl font-semibold text-white">ใช้งานได้ทุกอุปกรณ์</p>
+                <p class="font-th text-sm md:text-base text-sky/80 mt-1">จอคอมพิวเตอร์ · แท็บเล็ต · มือถือ — คุมห้องผ่านเบราว์เซอร์เดียว ไม่ต้องติดตั้งแอป</p>
+            </div>
+            <!-- Soft glow + framed product shot -->
             <div class="relative">
-                <!-- Soft glow behind the window -->
-                <div class="absolute -inset-6 bg-electric/20 rounded-[2rem] blur-3xl pointer-events-none"></div>
-                <div class="relative rounded-xl overflow-hidden bg-white shadow-2xl ring-1 ring-black/5 border border-white/10">
-                    <!-- Title bar with traffic-light dots — signals "app", not "webpage" -->
-                    <div class="flex items-center gap-2 px-4 py-3 bg-slate-100 border-b border-slate-200">
-                        <span class="w-3 h-3 rounded-full bg-[#FF5F57]"></span>
-                        <span class="w-3 h-3 rounded-full bg-[#FEBC2E]"></span>
-                        <span class="w-3 h-3 rounded-full bg-[#28C840]"></span>
-                        <span class="ml-3 font-th text-xs text-slate-500 truncate">Voscene Control · ห้องประชุม A</span>
-                        <span class="ml-auto inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 flex-shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ออนไลน์
-                        </span>
-                    </div>
-                    <!-- Real light-mode software screenshot -->
-                    <img src="/static/images/feature-simple-mode.png" alt="แผงควบคุม Voscene — ควบคุมทั้งห้องจากหน้าจอเดียว" class="w-full block" loading="eager">
-                </div>
-                <!-- Floating caption chip -->
-                <div class="hidden lg:flex absolute -bottom-5 -left-5 items-center gap-3 px-4 py-3 rounded-xl bg-white shadow-xl border border-slate-100">
-                    <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-electric/10 text-electric text-lg">⚡</span>
-                    <div class="leading-tight">
-                        <div class="font-th text-sm font-semibold text-navy">คุมทั้งห้องจากหน้าเดียว</div>
-                        <div class="font-th text-xs text-slate-500">ผ่านเบราว์เซอร์ · ไม่ต้องติดตั้ง</div>
-                    </div>
+                <div class="absolute -inset-6 bg-electric/20 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
+                <div class="relative rounded-2xl overflow-hidden bg-white shadow-2xl ring-1 ring-black/5">
+                    <img src="/static/images/voscene-devices-hero.jpg" alt="Voscene ใช้งานได้ทุกอุปกรณ์ — จอคอมพิวเตอร์ แท็บเล็ต และมือถือ ผ่านเบราว์เซอร์" class="w-full block" loading="eager">
                 </div>
             </div>
-
         </div>
 
         <!-- Trusted by -->
-        <div class="mt-16 md:mt-24 pt-8 border-t border-white/10 max-w-2xl">
+        <div class="mt-16 md:mt-20 pt-8 border-t border-white/10 max-w-3xl mx-auto text-center">
             <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>
-            <div class="flex flex-wrap gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
+            <div class="flex flex-wrap justify-center gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
                 <div>Hotel Group</div>
                 <div>University</div>
                 <div>Enterprise</div>

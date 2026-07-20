@@ -41,70 +41,110 @@
     <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-28">
-        <div class="max-w-5xl">
-            <!-- ⭐ BIG BRAND DISPLAY — Logo Mark + VOSCENE Wordmark -->
-            <div class="mb-8 md:mb-10">
-                <div class="flex items-center gap-4 md:gap-6 mb-4 md:mb-5">
-                    <!-- Big Logo Mark -->
-                    <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 flex-shrink-0 drop-shadow-2xl">
-                    <!-- Big Wordmark -->
-                    <h1 class="font-display font-bold tracking-tight leading-none">
-                        <span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-white">VO</span><span class="text-5xl sm:text-6xl md:text-8xl lg:text-[140px] text-electric-300">SCENE</span>
-                    </h1>
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+            <!-- LEFT — Copy -->
+            <div class="max-w-xl">
+                <!-- Brand row (compact — headline now leads) -->
+                <div class="flex items-center gap-3 mb-8">
+                    <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 drop-shadow-lg">
+                    <span class="font-display font-bold text-2xl md:text-3xl tracking-tight leading-none">
+                        <span class="text-white">VO</span><span class="text-electric-300">SCENE</span>
+                    </span>
                 </div>
-                <p class="font-display italic text-xl md:text-3xl lg:text-4xl text-sky tracking-wide pl-1">The voice of smart spaces.</p>
-            </div>
 
-            <!-- Divider -->
-            <div class="h-px bg-gradient-to-r from-electric/40 via-sky/20 to-transparent max-w-2xl mb-8"></div>
-
-            <!-- Hero Badge with pulse -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
-                </span>
-                {{ c.hero_badge }}
-            </div>
-
-            <!-- Secondary Headline (Thai context) -->
-            <h2 class="font-th text-2xl md:text-3xl text-white font-light mb-4 max-w-3xl leading-snug">{{ c.hero_subtitle_th }}</h2>
-            <p class="text-base md:text-lg text-muted mb-6 max-w-2xl font-display tracking-wide">{{ c.hero_tagline }}</p>
-            <p class="font-th text-sm md:text-base text-sky/80 mb-10 max-w-2xl leading-relaxed">{{ c.hero_description }}</p>
-
-            <div class="flex flex-col sm:flex-row gap-4">
-                <a href="/features" class="px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
-                    {{ c.hero_cta_secondary }}
-                </a>
-            </div>
-
-            {# Download buttons (show only if files exist) #}
-            {% if c.brochure_file or c.catalog_file %}
-            <div class="flex flex-wrap gap-3 mt-6">
-                {% if c.brochure_file %}
-                <a href="/uploads/{{ c.brochure_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                    {{ c.brochure_label or 'Download Brochure' }}
-                </a>
-                {% endif %}
-                {% if c.catalog_file %}
-                <a href="/uploads/{{ c.catalog_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
-                    {{ c.catalog_label or 'Download Catalog' }}
-                </a>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            <!-- Trusted by -->
-            <div class="mt-16 md:mt-20 pt-8 border-t border-white/10 max-w-2xl">
-                <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>
-                <div class="flex flex-wrap gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
-                    <div>Hotel Group</div>
-                    <div>University</div>
-                    <div>Enterprise</div>
-                    <div>Government</div>
+                <!-- Positioning badge (control-software forward) -->
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
+                    </span>
+                    <span class="font-th">ซอฟต์แวร์ควบคุม AV สำหรับองค์กร</span>
                 </div>
+
+                <!-- Primary Headline -->
+                <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-5xl md:text-6xl lg:text-7xl mb-5">
+                    One touch.<br><span class="text-electric-300">Total control.</span>
+                </h1>
+
+                <!-- Thai subline -->
+                <p class="font-th text-lg md:text-xl text-sky/90 leading-relaxed mb-6 max-w-lg">
+                    ระบบควบคุม AV สำหรับองค์กรและห้องประชุมยุคใหม่ สั่งการได้เบ็ดเสร็จในสัมผัสเดียว
+                </p>
+
+                <!-- Supporting line — zero-install, browser-based, no expensive touch panel -->
+                <p class="font-th text-sm md:text-base text-muted leading-relaxed mb-9 max-w-lg">
+                    เปิดเบราว์เซอร์แล้วคุมได้ทันที — ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง รองรับอุปกรณ์ AV หลากหลายผ่านโปรโตคอลมาตรฐาน
+                </p>
+
+                <!-- CTAs -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/features" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white shadow-lg shadow-electric/20">
+                        ดูฟีเจอร์ทั้งหมด
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                    <a href="/pricing" class="inline-flex items-center justify-center px-7 py-3.5 rounded-lg border border-white/20 hover:bg-white/5 transition font-medium text-white">
+                        ดูแพ็กเกจ
+                    </a>
+                </div>
+
+                {# Download buttons (show only if files exist) #}
+                {% if c.brochure_file or c.catalog_file %}
+                <div class="flex flex-wrap gap-3 mt-6">
+                    {% if c.brochure_file %}
+                    <a href="/uploads/{{ c.brochure_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        {{ c.brochure_label or 'Download Brochure' }}
+                    </a>
+                    {% endif %}
+                    {% if c.catalog_file %}
+                    <a href="/uploads/{{ c.catalog_file }}" download class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-electric/10 hover:bg-electric/20 border border-electric/30 text-electric-200 text-sm font-medium transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                        {{ c.catalog_label or 'Download Catalog' }}
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- RIGHT — Control-software mockup in an App Window frame -->
+            <div class="relative">
+                <!-- Soft glow behind the window -->
+                <div class="absolute -inset-6 bg-electric/20 rounded-[2rem] blur-3xl pointer-events-none"></div>
+                <div class="relative rounded-xl overflow-hidden bg-white shadow-2xl ring-1 ring-black/5 border border-white/10">
+                    <!-- Title bar with traffic-light dots — signals "app", not "webpage" -->
+                    <div class="flex items-center gap-2 px-4 py-3 bg-slate-100 border-b border-slate-200">
+                        <span class="w-3 h-3 rounded-full bg-[#FF5F57]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#FEBC2E]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#28C840]"></span>
+                        <span class="ml-3 font-th text-xs text-slate-500 truncate">Voscene Control · ห้องประชุม A</span>
+                        <span class="ml-auto inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 flex-shrink-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ออนไลน์
+                        </span>
+                    </div>
+                    <!-- Real light-mode software screenshot -->
+                    <img src="/static/images/feature-simple-mode.png" alt="แผงควบคุม Voscene — ควบคุมทั้งห้องจากหน้าจอเดียว" class="w-full block" loading="eager">
+                </div>
+                <!-- Floating caption chip -->
+                <div class="hidden lg:flex absolute -bottom-5 -left-5 items-center gap-3 px-4 py-3 rounded-xl bg-white shadow-xl border border-slate-100">
+                    <span class="flex items-center justify-center w-9 h-9 rounded-lg bg-electric/10 text-electric text-lg">⚡</span>
+                    <div class="leading-tight">
+                        <div class="font-th text-sm font-semibold text-navy">คุมทั้งห้องจากหน้าเดียว</div>
+                        <div class="font-th text-xs text-slate-500">ผ่านเบราว์เซอร์ · ไม่ต้องติดตั้ง</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Trusted by -->
+        <div class="mt-16 md:mt-24 pt-8 border-t border-white/10 max-w-2xl">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>
+            <div class="flex flex-wrap gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
+                <div>Hotel Group</div>
+                <div>University</div>
+                <div>Enterprise</div>
+                <div>Government</div>
             </div>
         </div>
     </div>
@@ -163,24 +203,24 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             <div class="card rounded-2xl p-8 border-l-4 border-l-electric">
-                <div class="text-3xl mb-3">🤖</div>
-                <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI-First Design</h3>
-                <p class="text-slate-600 font-th">พิมพ์หรือพูดคำสั่งภาษาไทยหรืออังกฤษ ระบบแปลงเป็นคำสั่งควบคุมอุปกรณ์ทั้งหมดอัตโนมัติ รองรับหลายคำสั่งในครั้งเดียว</p>
-            </div>
-            <div class="card rounded-2xl p-8 border-l-4 border-l-signal">
                 <div class="text-3xl mb-3">🌐</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Zero Installation</h3>
-                <p class="text-slate-600 font-th">เปิด Browser พิมพ์ IP ใช้งานได้ทันที ไม่ต้องติดตั้งซอฟต์แวร์ รองรับทุก Platform รองรับ PWA ติดตั้งบนหน้าจอมือถือได้</p>
+                <p class="text-slate-600 font-th">เปิดเบราว์เซอร์ พิมพ์ IP ใช้งานได้ทันที ไม่ต้องติดตั้งซอฟต์แวร์ ไม่ต้องใช้ Touch Panel ราคาแพง — รองรับทุกแพลตฟอร์ม ติดตั้งเป็นแอปบนหน้าจอมือถือได้ (PWA)</p>
+            </div>
+            <div class="card rounded-2xl p-8 border-l-4 border-l-signal">
+                <div class="text-3xl mb-3">🎛️</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Total Control</h3>
+                <p class="text-slate-600 font-th">คุมทั้งห้องจากหน้าจอเดียว — สลับซีน ลากแหล่งสัญญาณบนผังห้องแบบกราฟิก ปรับภาพและเสียง สั่งการได้เบ็ดเสร็จในสัมผัสเดียว</p>
             </div>
             <div class="card rounded-2xl p-8 border-l-4 border-l-sky">
-                <div class="text-3xl mb-3">📡</div>
-                <h3 class="font-display text-xl font-semibold mb-2 text-navy">Real-time Multi-user</h3>
-                <p class="text-slate-600 font-th">หลาย Device เปิด UI พร้อมกันได้ เมื่อใครปรับค่า ทุก Device เห็นผลทันที</p>
-            </div>
-            <div class="card rounded-2xl p-8 border-l-4 border-l-electric-400">
                 <div class="text-3xl mb-3">🔌</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Protocol</h3>
                 <p class="text-slate-600 font-th">รองรับโปรโตคอลมาตรฐานอุตสาหกรรม — ควบคุมอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลเดียวกัน ไม่ผูกกับ Vendor</p>
+            </div>
+            <div class="card rounded-2xl p-8 border-l-4 border-l-electric-400">
+                <div class="text-3xl mb-3">🤖</div>
+                <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI Assist</h3>
+                <p class="text-slate-600 font-th">เสริมด้วย AI — พิมพ์คำสั่งภาษาไทยหรืออังกฤษ ระบบแปลงเป็นคำสั่งควบคุมอุปกรณ์ให้อัตโนมัติ รองรับหลายคำสั่งในครั้งเดียว</p>
             </div>
         </div>
 
@@ -212,29 +252,19 @@
                 </thead>
                 <tbody class="text-sm font-th">
                     <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">AI Control</td>
-                        <td class="px-6 py-3.5 text-slate-500">Add-on, limited</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native, LLM-powered</td>
-                    </tr>
-                    <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">Setup Time</td>
                         <td class="px-6 py-3.5 text-slate-500">2–4 weeks</td>
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">&lt;24 hours (single-room)</td>
                     </tr>
-                    <tr class="border-b border-slate-100">
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">Touch Panel</td>
                         <td class="px-6 py-3.5 text-slate-500">Required, expensive</td>
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Not needed (browser)</td>
                     </tr>
-                    <tr class="border-b border-slate-100 bg-slate-50/50">
+                    <tr class="border-b border-slate-100">
                         <td class="px-6 py-3.5 font-medium text-navy">Programming</td>
                         <td class="px-6 py-3.5 text-slate-500">Specialist required</td>
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">In-browser settings</td>
-                    </tr>
-                    <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">Thai Language</td>
-                        <td class="px-6 py-3.5 text-slate-500">Rare</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native support</td>
                     </tr>
                     <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">Multi-protocol</td>
@@ -242,9 +272,9 @@
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Open standards</td>
                     </tr>
                     <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">Offline Operation</td>
-                        <td class="px-6 py-3.5 text-slate-500">Varies</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Fully closed-network ready</td>
+                        <td class="px-6 py-3.5 font-medium text-navy">Thai Language</td>
+                        <td class="px-6 py-3.5 text-slate-500">Rare</td>
+                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native support</td>
                     </tr>
                     <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">Video Tracking</td>
@@ -256,10 +286,15 @@
                         <td class="px-6 py-3.5 text-slate-500">Custom programming</td>
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Standard integration</td>
                     </tr>
-                    <tr class="bg-slate-50/50">
+                    <tr class="border-b border-slate-100 bg-slate-50/50">
                         <td class="px-6 py-3.5 font-medium text-navy">LINE Integration</td>
                         <td class="px-6 py-3.5 text-slate-500">None</td>
                         <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native — control + alerts</td>
+                    </tr>
+                    <tr>
+                        <td class="px-6 py-3.5 font-medium text-navy">AI Control</td>
+                        <td class="px-6 py-3.5 text-slate-500">Add-on, limited</td>
+                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native, LLM-powered</td>
                     </tr>
                 </tbody>
             </table>

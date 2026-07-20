@@ -62,11 +62,11 @@ DEFAULT_CONTENT = [
 
     # ===== Footer =====
     ("footer_company", "Central System Integration Co., Ltd.", "ชื่อบริษัท", "footer", "text"),
-    ("footer_tagline", "The voice of smart spaces. · Voice on SCENE — Speak. Control. Transform.", "คำขวัญ", "footer", "text"),
+    ("footer_tagline", "One touch. Total control. · ซอฟต์แวร์ควบคุม AV สำหรับองค์กร", "คำขวัญ", "footer", "text"),
     ("footer_copyright", "© 2026 Voscene by Central System Integration. All rights reserved.", "Copyright", "footer", "text"),
 
     # ===== SEO / Meta =====
-    ("seo_title", "Voscene — The voice of smart spaces. AI-Powered AV Control for Thai Enterprise", "Title สำหรับ Search Engine", "seo", "text"),
+    ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
     ("seo_description", "Voscene — ระบบควบคุม AV เพื่อองค์กรไทย ขับเคลื่อนด้วย AI · พิมพ์/ข้อความภาษาไทยและอังกฤษ + คำสั่งเสียง (นำร่อง) · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูล: AI Agent, Scene, Matrix, Audio, Projector, TV, DMX Lighting, PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), Video Conferencing · OAuth + LINE + OTA + AES-128 Backup · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
@@ -149,9 +149,18 @@ def run_seed():
             "seo_description",
             "stat_3_value", "stat_3_label",
         }
+        # Phase-14 reposition: retire the old voice-first brand line from the SEO
+        # <title> + footer tagline. Force the new default ONLY while the stored value
+        # still carries the retired phrase — once updated it stops forcing, so a later
+        # admin edit sticks.
+        REPOSITION_FORCE = {
+            "seo_title": "The voice of smart spaces",
+            "footer_tagline": "The voice of smart spaces",
+        }
         added = 0
         migrated = 0
         legal_forced = 0
+        reposition_forced = 0
         for key, value, label, section, field_type in DEFAULT_CONTENT:
             existing = db.query(Content).filter_by(key=key).first()
             if existing:
@@ -176,12 +185,17 @@ def run_seed():
                         existing.value = value
                         legal_forced += 1
                         changed = True
+                # Force reposition fixes while the retired phrase is still present.
+                if key in REPOSITION_FORCE and REPOSITION_FORCE[key] in (existing.value or ""):
+                    existing.value = value
+                    reposition_forced += 1
+                    changed = True
                 if changed:
                     migrated += 1
             else:
                 db.add(Content(key=key, value=value, label=label, section=section, field_type=field_type))
                 added += 1
-        print(f"[seed] content: +{added} new · ~{migrated} migrated · {legal_forced} legal-forced ({len(DEFAULT_CONTENT)} total defined)")
+        print(f"[seed] content: +{added} new · ~{migrated} migrated · {legal_forced} legal-forced · {reposition_forced} reposition-forced ({len(DEFAULT_CONTENT)} total defined)")
 
         # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
         # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated

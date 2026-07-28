@@ -63,6 +63,13 @@
       .card:hover { border-color: #BFDBFE; box-shadow: 0 4px 12px rgba(59,130,246,0.08); }
       .font-th { font-family: 'IBM Plex Sans Thai', 'Inter', system-ui, sans-serif; }
       .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+      /* Hover dark→light screenshot crossfade (pure CSS). Base img = light (sets height); overlay = dark on top, fades out on hover. */
+      .theme-swap { position: relative; }
+      .theme-swap > img { display: block; width: 100%; height: auto; }
+      .theme-swap > img.swap-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity .45s ease; }
+      .theme-swap:hover > img.swap-dark { opacity: 0; }
+      @media (hover: none) { .theme-swap > img.swap-dark { opacity: 1 !important; } }
+      @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
     </style>
 </head>
 <body class="bg-white text-navy antialiased">

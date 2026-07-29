@@ -10,13 +10,14 @@
         75%      { background-position:   0% 100%, 100%   0%,  50% 100%,   0%   0%; }
     }
     .hero-aurora {
-        background-color: #0A1628;
+        /* bolt.new tone — vivid electric-blue FIELD (not a dark base); black only at edges via the vignette overlay */
+        background-color: #0a1c44;
         background-image:
-            radial-gradient(ellipse 60% 60% at 20% 30%, rgba(59, 130, 246, 0.55) 0%, transparent 60%),
-            radial-gradient(ellipse 70% 70% at 80% 70%, rgba(24, 95, 165, 0.55) 0%, transparent 60%),
-            radial-gradient(ellipse 50% 50% at 50% 90%, rgba(133, 183, 235, 0.35) 0%, transparent 55%),
-            radial-gradient(ellipse 65% 65% at 100% 10%, rgba(59, 130, 246, 0.40) 0%, transparent 60%);
-        background-size: 160% 160%, 180% 180%, 140% 140%, 200% 200%;
+            radial-gradient(ellipse 88% 85% at 48% 38%, rgba(24, 110, 240, 0.95) 0%, rgba(15, 72, 180, 0.55) 46%, transparent 74%),
+            radial-gradient(ellipse 44% 54% at 74% 30%, rgba(130, 205, 255, 0.62) 0%, transparent 55%),
+            radial-gradient(ellipse 56% 50% at 38% 12%, rgba(43, 166, 255, 0.55) 0%, transparent 60%),
+            radial-gradient(ellipse 62% 62% at 14% 74%, rgba(18, 70, 165, 0.60) 0%, transparent 66%);
+        background-size: 150% 150%, 170% 170%, 150% 150%, 180% 180%;
         background-repeat: no-repeat;
         animation: hero-aurora-flow 28s ease-in-out infinite;
         will-change: background-position;
@@ -25,60 +26,48 @@
         background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 1.5px);
         background-size: 3px 3px;
     }
+    @keyframes marquee-scroll {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
+    }
+    .marquee-track { display: flex; width: max-content; animation: marquee-scroll 34s linear infinite; }
+    .marquee-track:hover { animation-play-state: paused; }
+    .marquee-mask {
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+                mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    }
     @media (prefers-reduced-motion: reduce) {
-        .hero-aurora { animation: none; }
+        .hero-aurora, .marquee-track { animation: none; }
     }
 </style>
-<section class="relative overflow-hidden bg-navy">
+<section class="relative overflow-hidden bg-[#0a1c44]">
     <!-- Animated aurora gradient (replaces hero-bg.jpg) -->
     <div class="absolute inset-0 hero-aurora"></div>
     <!-- Subtle grain texture for depth -->
     <div class="absolute inset-0 hero-aurora-grain opacity-50 pointer-events-none"></div>
-    <!-- Bottom-to-top fade so content reads clearly over the aurora -->
-    <div class="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent"></div>
+    <!-- Top + bottom dark vignette (bolt look): near-black behind the nav, fade to dark at the seam -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#070711]/60 via-transparent to-[#070711]/90"></div>
     <!-- Original decorative blurred orbs (kept for extra glow accents) -->
-    <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-0 -right-40 w-[800px] h-[800px] bg-[#57c7ff]/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-[#1565e0]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-24">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 min-h-[calc(100vh-50px)] flex flex-col justify-evenly">
 
         <!-- TOP — Copy (centered) -->
-        <div class="max-w-3xl mx-auto text-center">
-            <!-- Brand row -->
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <img src="/static/images/voscene-icon.svg" alt="Voscene" class="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 drop-shadow-lg">
-                <span class="font-display font-bold text-2xl md:text-3xl tracking-tight leading-none">
-                    <span class="text-white">VO</span><span class="text-electric-300">SCENE</span>
-                </span>
-            </div>
-
-            <!-- Positioning badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-electric/10 border border-electric/30 text-sky text-sm font-medium mb-6">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-electric"></span>
-                </span>
-                <span class="font-th">ซอฟต์แวร์ควบคุม AV สำหรับองค์กร</span>
-            </div>
-
-            <!-- Primary Headline -->
-            <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-5xl md:text-6xl lg:text-7xl mb-5">
+        <div class="max-w-4xl mx-auto text-center">
+            <!-- Primary Headline — main, biggest, one line on desktop -->
+            <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-4xl sm:text-5xl lg:text-6xl lg:whitespace-nowrap mb-6">
                 One touch. <span class="text-electric-300">Total control.</span>
             </h1>
 
-            <!-- Thai subline -->
-            <p class="font-th text-lg md:text-xl text-sky/90 leading-relaxed mb-4 max-w-2xl mx-auto">
+            <!-- Thai subline — secondary, white, clear -->
+            <p class="font-th text-xl md:text-2xl text-white/95 leading-relaxed mb-6 max-w-2xl mx-auto">
                 ระบบควบคุม AV สำหรับองค์กรและห้องประชุมยุคใหม่ สั่งการได้เบ็ดเสร็จในสัมผัสเดียว
-            </p>
-
-            <!-- Supporting line — zero-install, browser-based, no expensive touch panel -->
-            <p class="font-th text-sm md:text-base text-muted leading-relaxed mb-9 max-w-2xl mx-auto">
-                เปิดเบราว์เซอร์แล้วคุมได้ทันที — ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง รองรับอุปกรณ์ AV หลากหลายผ่านโปรโตคอลมาตรฐาน
             </p>
 
             <!-- CTAs -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/features" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white shadow-lg shadow-electric/20">
+                <a href="/features" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-[#1488fc] hover:bg-[#2ba6ff] transition font-semibold text-white shadow-lg shadow-[#1488fc]/30">
                     ดูฟีเจอร์ทั้งหมด
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                 </a>
@@ -107,12 +96,7 @@
         </div>
 
         <!-- SHOWCASE — Multi-device product shot (used across all devices) -->
-        <div class="mt-14 md:mt-16 max-w-5xl mx-auto">
-            <!-- Editable heading above the image -->
-            <div class="text-center mb-6">
-                <p class="font-display text-xl md:text-2xl font-semibold text-white">ใช้งานได้ทุกอุปกรณ์</p>
-                <p class="font-th text-sm md:text-base text-sky/80 mt-1">จอคอมพิวเตอร์ · แท็บเล็ต · มือถือ — คุมห้องผ่านเบราว์เซอร์เดียว ไม่ต้องติดตั้งแอป</p>
-            </div>
+        <div class="max-w-4xl mx-auto">
             <!-- Soft glow + framed product shot -->
             <div class="relative">
                 <div class="absolute -inset-6 bg-electric/20 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
@@ -122,14 +106,35 @@
             </div>
         </div>
 
-        <!-- Trusted by -->
-        <div class="mt-16 md:mt-20 pt-8 border-t border-white/10 max-w-3xl mx-auto text-center">
-            <div class="text-muted text-xs font-semibold tracking-[2px] mb-4">TRUSTED BY AV INTEGRATORS ACROSS SEA</div>
-            <div class="flex flex-wrap justify-center gap-x-12 gap-y-2 text-muted font-display font-medium text-sm">
-                <div>Hotel Group</div>
-                <div>University</div>
-                <div>Enterprise</div>
-                <div>Government</div>
+        <!-- Running capability marquee (bolt-style) — swap the items for whatever you want -->
+        <div class="w-full">
+            <p class="text-center text-white/40 text-xs font-semibold tracking-[2px] mb-6 font-th">ควบคุมได้ทุกระบบ — ในสัมผัสเดียว</p>
+            {# Real VOSCENE line-icons (voscene-icons set) — CSS mask keeps them white on the dark hero #}
+            {% set caps = [
+                ['meeting.svg', 'ประชุม'],
+                ['projector.svg', 'ฉายภาพ'],
+                ['matrix.svg', 'สลับภาพ'],
+                ['tv.svg', 'Smart TV'],
+                ['audio.svg', 'เสียง'],
+                ['light.svg', 'แสง'],
+                ['camera.svg', 'กล้อง'],
+                ['power.svg', 'เปิด-ปิด'],
+                ['coffee.svg', 'พักเบรก'],
+                ['moon.svg', 'เลิกประชุม'],
+                ['ai.svg', 'AI'],
+                ['chat.svg', 'LINE']
+            ] %}
+            <div class="marquee-mask overflow-hidden">
+                <div class="marquee-track">
+                    {% for _ in range(2) %}
+                        {% for cap in caps %}
+                        <div class="flex items-center gap-2.5 text-white/80 shrink-0 me-10 md:me-14">
+                            <span class="vico w-6 h-6 md:w-7 md:h-7" style="-webkit-mask-image:url('/static/images/voscene-icons/{{ cap[0] }}');mask-image:url('/static/images/voscene-icons/{{ cap[0] }}')"></span>
+                            <span class="font-th text-sm md:text-base whitespace-nowrap">{{ cap[1] }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
@@ -509,7 +514,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold tracking-wider">นำร่อง (Voice)</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">01 · CONTROLLER</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🤖</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/ai.svg');mask-image:url('/static/images/voscene-icons/ai.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI Agent Controller</h3>
                 <p class="text-slate-600 text-sm font-th">พิมพ์คำสั่งภาษาไทย/อังกฤษ ระบบ parse เป็น device commands อัตโนมัติ · รองรับหลายคำสั่งในครั้งเดียว · คำสั่งเสียงใช้งานผ่านแป้นพิมพ์คีย์บอร์ดที่รองรับ</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -521,7 +526,7 @@
             <!-- 02 · SCENE -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">02 · SCENE</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🎬</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/scene.svg');mask-image:url('/static/images/voscene-icons/scene.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Scene Control</h3>
                 <p class="text-slate-600 text-sm font-th">4 main scenes ปรับแต่งเต็มที่โดยช่างเทคนิค · กดปุ่มเดียวให้ user เรียกใช้</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -533,7 +538,7 @@
             <!-- 03 · MATRIX -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">03 · MATRIX</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🖥</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/matrix.svg');mask-image:url('/static/images/voscene-icons/matrix.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Video Matrix</h3>
                 <p class="text-slate-600 text-sm font-th">Visual 8×8 HDMI routing — extensible to multi-brand matrix switchers</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -545,7 +550,7 @@
             <!-- 04 · AUDIO -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">04 · AUDIO</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🔊</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/audio.svg');mask-image:url('/static/images/voscene-icons/audio.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Audio Control</h3>
                 <p class="text-slate-600 text-sm font-th">Volume slider + presets, mute/pause, VU meter, Feedback Destroyer 12 notch filters</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -557,7 +562,7 @@
             <!-- 05 · PROJECTOR -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">05 · PROJECTOR</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">📽</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/projector.svg');mask-image:url('/static/images/voscene-icons/projector.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Projector Control</h3>
                 <p class="text-slate-600 text-sm font-th">Power on/off via LAN · input source select · lamp-hours monitoring (PJLink standard)</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -569,7 +574,7 @@
             <!-- 06 · TV -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">06 · TV</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📺</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/tv.svg');mask-image:url('/static/images/voscene-icons/tv.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Smart TV Control</h3>
                 <p class="text-slate-600 text-sm font-th">Wake-on-LAN power on · network shutdown · WebOS / Tizen / Android TV · extensible</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -581,7 +586,7 @@
             <!-- 07 · LIGHTING -->
             <div class="card rounded-2xl p-6 transition">
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">07 · LIGHTING</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">💡</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/light.svg');mask-image:url('/static/images/voscene-icons/light.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Lighting (DMX512)</h3>
                 <p class="text-slate-600 text-sm font-th">Dedicated tab · 4 light scenes + smooth fade transitions · 512 channels RGB/RGBW</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -594,7 +599,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">08 · CAMERA</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📹</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/camera.svg');mask-image:url('/static/images/voscene-icons/camera.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">PTZ Camera Control</h3>
                 <p class="text-slate-600 text-sm font-th">Up to 4 PTZ cameras — pan/tilt/zoom/preset recall via VISCA over IP · compatible with industry-standard cameras</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -607,7 +612,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">09 · TRACKING</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🎯</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/tracking.svg');mask-image:url('/static/images/voscene-icons/tracking.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Auto Video Tracking</h3>
                 <p class="text-slate-600 text-sm font-th">กล้องติดตามตำแหน่งชุดไมโครโฟนประชุมที่กดพูดอัตโนมัติ เมื่อต่อกับระบบชุดประชุมที่รองรับการควบคุม · ทดแทน tracking hardware แยกตัว <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -620,7 +625,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">10 · IR</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📡</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/antenna.svg');mask-image:url('/static/images/voscene-icons/antenna.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">IR Control</h3>
                 <p class="text-slate-600 text-sm font-th">ควบคุม TV/Audio/BluRay เก่าที่ไม่มี network API ผ่าน IR blaster มาตรฐานที่สั่งงานผ่านเครือข่าย · Learn IR code แล้วสั่งจากระบบได้เลย</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -633,7 +638,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">11 · CONFERENCE</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">🎤</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/mic.svg');mask-image:url('/static/images/voscene-icons/mic.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Conference System</h3>
                 <p class="text-slate-600 text-sm font-th">TCP-based integration กับ dome microphone arrays · centralized control สำหรับ meetings + parliamentary sessions <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -646,7 +651,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">12 · CALENDAR</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">📅</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/calendar.svg');mask-image:url('/static/images/voscene-icons/calendar.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Calendar Integration</h3>
                 <p class="text-slate-600 text-sm font-th">OAuth Device Flow pairing กับ cloud calendars · auto-trigger scenes จาก meeting events ห้องพร้อมเองอัตโนมัติ</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -659,7 +664,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">13 · SCHEDULE</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">⏰</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/clock.svg');mask-image:url('/static/images/voscene-icons/clock.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Schedule Rule Engine</h3>
                 <p class="text-slate-600 text-sm font-th">Recurring rules ตาม weekday + HH:MM · debounced execution · power-saving + opening-hour + after-hours lockdown</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -672,7 +677,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-semibold tracking-wider">Coming soon</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">14 · BOOKING</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🗓</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/room.svg');mask-image:url('/static/images/voscene-icons/room.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Room Booking</h3>
                 <p class="text-slate-600 text-sm font-th">จองห้องประชุม · ปฏิทินไทย พ.ศ. · จอหน้าห้อง · จองผ่าน LINE · auto-release เมื่อไม่มีคนเข้า · เชื่อม Scene Control ให้ห้องพร้อมเอง — ทดแทน MRBS สำหรับงานราชการ</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -686,7 +691,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">15 · MULTI-ROOM</div>
-                <div class="w-12 h-12 rounded-xl bg-signal/15 flex items-center justify-center mb-4 text-2xl">🏢</div>
+                <div class="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/rooms.svg');mask-image:url('/static/images/voscene-icons/rooms.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Room Dashboard</h3>
                 <p class="text-slate-600 text-sm font-th">คุมและเฝ้าดูทุกห้องจากจอเดียว — พร้อมใช้สูงสุด 20 ห้องต่อ controller · ออกแบบให้ขยายสู่ระดับองค์กร (หลายอาคาร) ด้วย Master Controller</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -699,7 +704,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold tracking-wider">NEW</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">16 · VC ROOM</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">💻</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/laptop.svg');mask-image:url('/static/images/voscene-icons/laptop.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Video Conferencing Room</h3>
                 <p class="text-slate-600 text-sm font-th">TCP protocol integration กับ VC room systems · join/leave meetings, mute, change layout — trigger ผ่าน scene/AI <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></p>
                 <div class="flex flex-wrap gap-1.5 mt-3">
@@ -712,7 +717,7 @@
             <div class="card rounded-2xl p-6 transition relative">
                 <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-medium">กำลังพัฒนา</span>
                 <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">17 · PA</div>
-                <div class="w-12 h-12 rounded-xl bg-electric/15 flex items-center justify-center mb-4 text-2xl">📢</div>
+                <div class="w-12 h-12 rounded-xl bg-electric/15 text-electric flex items-center justify-center mb-4"><span class="vico w-6 h-6" style="-webkit-mask-image:url('/static/images/voscene-icons/megaphone.svg');mask-image:url('/static/images/voscene-icons/megaphone.svg')"></span></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">PA Announcement</h3>
                 <p class="text-slate-600 text-sm font-th">Multi-room PA ผ่าน RTP/UDP Multicast — Zone control + Emergency broadcast</p>
                 <div class="flex flex-wrap gap-1.5 mt-3">

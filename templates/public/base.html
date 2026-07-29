@@ -70,14 +70,16 @@
       .theme-swap:hover > img.swap-dark { opacity: 0; }
       @media (hover: none) { .theme-swap > img.swap-dark { opacity: 1 !important; } }
       @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
+      /* Monochrome line-icon via CSS mask — color follows currentColor (voscene-icons set) */
+      .vico { display: inline-block; background-color: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; flex-shrink: 0; }
     </style>
 </head>
 <body class="bg-white text-navy antialiased">
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[50px] flex items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-            <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-11 w-auto">
+            <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-10 w-auto">
         </a>
         {% set p = request.url.path %}
         <div class="hidden md:flex items-center gap-6 text-sm">
@@ -104,7 +106,7 @@
     </div>
 </nav>
 
-<main class="pt-16">
+<main class="pt-[50px]">
     {% block content %}{% endblock %}
 </main>
 

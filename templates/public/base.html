@@ -72,6 +72,17 @@
       @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
       /* Monochrome line-icon via CSS mask — color follows currentColor (voscene-icons set) */
       .vico { display: inline-block; background-color: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; flex-shrink: 0; }
+      /* ===== Opt-in dark theme (body.theme-dark): dark #070711 field + alternating floating-card sections ===== */
+      body.theme-dark main > section { background-color: transparent !important; border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark main > section:nth-of-type(even) { background-color: #0d1526 !important; border-width: 0 !important; border-radius: 28px; margin: 16px 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 50px -24px rgba(0,0,0,0.6); }
+      body.theme-dark main > section :is(h1, h2) { color: #f1f5f9 !important; }
+      body.theme-dark main > section :is(h1, h2) + p { color: #cbd5e1 !important; }
+      /* lighten section-level muted text on the dark field... */
+      body.theme-dark main > section :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #e2e8f0 !important; }
+      /* ...but restore dark text inside light cards / panels so they stay readable */
+      body.theme-dark main > section :is(.card, .bg-white, .bg-cloud, [class*="from-cloud"], [class*="from-white"]) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #334155 !important; }
+      body.theme-dark main > section .text-center .text-slate-600,
+      body.theme-dark main > section .text-center .text-slate-500 { color: #cbd5e1 !important; }
     </style>
 </head>
 <body class="{% block body_class %}bg-white text-navy{% endblock %} antialiased">

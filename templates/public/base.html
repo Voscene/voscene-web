@@ -72,6 +72,10 @@
       .theme-swap:hover > img.swap-dark { opacity: 0; }
       @media (hover: none) { .theme-swap > img.swap-dark { opacity: 1 !important; } }
       @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
+      /* Cross-fading 2-image showcase (pure CSS): slide 2 sits underneath, slide 1 fades in/out on top */
+      @keyframes demo-cycle { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
+      .demo-slide-top { animation: demo-cycle 16s ease-in-out infinite; }
+      @media (prefers-reduced-motion: reduce) { .demo-slide-top { animation: none; } }
       /* Monochrome line-icon via CSS mask — color follows currentColor (voscene-icons set) */
       .vico { display: inline-block; background-color: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; flex-shrink: 0; }
       /* ===== Opt-in dark theme (body.theme-dark): dark #070711 field + alternating floating-card sections ===== */

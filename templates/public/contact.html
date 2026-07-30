@@ -16,25 +16,25 @@
             <div class="space-y-4">
                 {% if c.contact_phone %}
                 <div class="card rounded-2xl p-6">
-                    <div class="text-electric text-xs font-medium mb-1">📞 โทรศัพท์</div>
+                    <div class="text-electric text-xs font-medium mb-1"><span class="vico w-3.5 h-3.5 align-[-2px] mr-1" style="-webkit-mask-image:url('/static/images/voscene-icons/mobile.svg');mask-image:url('/static/images/voscene-icons/mobile.svg')"></span>โทรศัพท์</div>
                     <div class="font-semibold text-lg text-navy whitespace-pre-line">{{ c.contact_phone }}</div>
                 </div>
                 {% endif %}
                 {% if c.contact_email %}
                 <div class="card rounded-2xl p-6">
-                    <div class="text-electric text-xs font-medium mb-1">✉️ อีเมล</div>
+                    <div class="text-electric text-xs font-medium mb-1"><span class="vico w-3.5 h-3.5 align-[-2px] mr-1" style="-webkit-mask-image:url('/static/images/voscene-icons/chat.svg');mask-image:url('/static/images/voscene-icons/chat.svg')"></span>อีเมล</div>
                     <a href="mailto:{{ c.contact_email }}" class="font-semibold text-navy hover:text-electric">{{ c.contact_email }}</a>
                 </div>
                 {% endif %}
                 {% if c.contact_address %}
                 <div class="card rounded-2xl p-6">
-                    <div class="text-electric text-xs font-medium mb-1">📍 ที่อยู่</div>
+                    <div class="text-electric text-xs font-medium mb-1"><span class="vico w-3.5 h-3.5 align-[-2px] mr-1" style="-webkit-mask-image:url('/static/images/voscene-icons/room.svg');mask-image:url('/static/images/voscene-icons/room.svg')"></span>ที่อยู่</div>
                     <div class="font-semibold text-navy whitespace-pre-line leading-relaxed">{{ c.contact_address }}</div>
                 </div>
                 {% endif %}
                 {% if c.contact_hours %}
                 <div class="card rounded-2xl p-6">
-                    <div class="text-electric text-xs font-medium mb-1">🕐 เวลาทำการ</div>
+                    <div class="text-electric text-xs font-medium mb-1"><span class="vico w-3.5 h-3.5 align-[-2px] mr-1" style="-webkit-mask-image:url('/static/images/voscene-icons/clock.svg');mask-image:url('/static/images/voscene-icons/clock.svg')"></span>เวลาทำการ</div>
                     <div class="font-semibold text-navy">{{ c.contact_hours }}</div>
                 </div>
                 {% endif %}

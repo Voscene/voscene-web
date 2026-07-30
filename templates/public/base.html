@@ -76,37 +76,38 @@
 </head>
 <body class="bg-white text-navy antialiased">
 
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[50px] flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2">
-            <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-10 w-auto">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-[#070711]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2.5">
+            <img src="/static/images/voscene-icon.svg" alt="" aria-hidden="true" class="h-7 w-auto">
+            <span class="font-display font-bold text-2xl tracking-tight text-white leading-none">VOSCENE</span>
         </a>
         {% set p = request.url.path %}
         <div class="hidden md:flex items-center gap-6 text-sm">
-            <a href="/" class="transition {% if p == '/' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">หน้าแรก</a>
-            <a href="/features" class="transition {% if p == '/features' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ฟีเจอร์</a>
-            <a href="/pricing" class="transition {% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ราคา</a>
-            <a href="/blog" class="transition {% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">บทความ</a>
-            <a href="/contact" class="transition {% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-600 hover:text-navy{% endif %}">ติดต่อ</a>
+            <a href="/" class="transition {% if p == '/' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">หน้าแรก</a>
+            <a href="/features" class="transition {% if p == '/features' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ฟีเจอร์</a>
+            <a href="/pricing" class="transition {% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ราคา</a>
+            <a href="/blog" class="transition {% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">บทความ</a>
+            <a href="/contact" class="transition {% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ติดต่อ</a>
             <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric hover:bg-electric-600 transition font-semibold text-white text-sm">Book Demo</a>
         </div>
-        <button class="md:hidden text-navy" onclick="document.getElementById('m-menu').classList.toggle('hidden')">
+        <button class="md:hidden text-white" onclick="document.getElementById('m-menu').classList.toggle('hidden')">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
     </div>
-    <div id="m-menu" class="hidden md:hidden border-t border-slate-200 bg-white">
+    <div id="m-menu" class="hidden md:hidden border-t border-white/10 bg-[#0a0a0f]">
         <div class="px-4 py-3 flex flex-col gap-3 text-sm">
-            <a href="/" class="{% if p == '/' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">หน้าแรก</a>
-            <a href="/features" class="{% if p == '/features' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ฟีเจอร์</a>
-            <a href="/pricing" class="{% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ราคา</a>
-            <a href="/blog" class="{% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-600{% endif %}">บทความ</a>
-            <a href="/contact" class="{% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-600{% endif %}">ติดต่อ</a>
+            <a href="/" class="{% if p == '/' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">หน้าแรก</a>
+            <a href="/features" class="{% if p == '/features' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ฟีเจอร์</a>
+            <a href="/pricing" class="{% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ราคา</a>
+            <a href="/blog" class="{% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-300{% endif %}">บทความ</a>
+            <a href="/contact" class="{% if p == '/contact' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ติดต่อ</a>
             <a href="/#ai-consult" class="px-4 py-2 rounded-lg bg-electric text-white text-center font-semibold">Book Demo</a>
         </div>
     </div>
 </nav>
 
-<main class="pt-[50px]">
+<main class="pt-[60px]">
     {% block content %}{% endblock %}
 </main>
 

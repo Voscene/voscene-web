@@ -79,8 +79,23 @@
       body.theme-dark main > section :is(h1, h2) + p { color: #cbd5e1 !important; }
       /* lighten section-level muted text on the dark field... */
       body.theme-dark main > section :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #e2e8f0 !important; }
-      /* ...but restore dark text inside light cards / panels so they stay readable */
-      body.theme-dark main > section :is(.card, .bg-white, .bg-cloud, [class*="from-cloud"], [class*="from-white"]) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #334155 !important; }
+      /* ...but restore dark text inside panels that stay light (LINE mockup, product frames) */
+      body.theme-dark main > section :is(.bg-white, .bg-cloud) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #334155 !important; }
+      /* light gradient panels (from-cloud/from-white) become elevated dark surfaces too */
+      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) { background-image: none !important; background-color: #141c2e !important; border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) :is(h3, h4, .text-navy) { color: #f1f5f9 !important; }
+      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) :is(.text-slate-500, .text-slate-600, .text-slate-700) { color: #cbd5e1 !important; }
+      /* Cards = elevated dark surfaces (never white on dark — avoids halation glare) */
+      body.theme-dark .card { background: #141c2e !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: 0 1px 2px rgba(0,0,0,0.35) !important; }
+      body.theme-dark .card:hover { border-color: rgba(59,130,246,0.45) !important; box-shadow: 0 10px 28px -10px rgba(0,0,0,0.65) !important; }
+      body.theme-dark .card :is(h3, h4, .text-navy) { color: #f1f5f9 !important; }
+      body.theme-dark .card :is(.text-slate-500, .text-slate-600, .text-slate-700) { color: #cbd5e1 !important; }
+      body.theme-dark .card :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: rgba(255,255,255,0.09) !important; color: #cbd5e1 !important; }
+      body.theme-dark .card :is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: rgba(255,255,255,0.10) !important; }
+      /* form controls: dark fields instead of bright white boxes */
+      body.theme-dark main :is(input[type="text"], input[type="tel"], input[type="email"], select, textarea) { background-color: #16203a !important; border-color: rgba(255,255,255,0.15) !important; color: #f1f5f9 !important; }
+      body.theme-dark main :is(input, textarea)::placeholder { color: #64748b !important; }
+      body.theme-dark main select option { background-color: #16203a; color: #f1f5f9; }
       body.theme-dark main > section .text-center .text-slate-600,
       body.theme-dark main > section .text-center .text-slate-500 { color: #cbd5e1 !important; }
     </style>

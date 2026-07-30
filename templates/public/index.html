@@ -1,6 +1,6 @@
 {% extends "public/base.html" %}
 
-{% block body_class %}bg-[#070711] text-slate-300{% endblock %}
+{% block body_class %}theme-dark bg-[#070711] text-slate-300{% endblock %}
 
 {% block content %}
 <!-- Hero — Animated Aurora Gradient Background -->
@@ -41,22 +41,7 @@
     @media (prefers-reduced-motion: reduce) {
         .hero-aurora, .marquee-track { animation: none; }
     }
-    /* ===== Homepage dark theme: dark #070711 page field, light .card elements float ===== */
-    main > section { background-color: transparent !important; border-color: rgba(255,255,255,0.08) !important; }
-    /* alternate sections become floating rounded cards (like the hero) on the #070711 field */
-    main > section:nth-of-type(even) {
-        background-color: #0d1526 !important;
-        border-width: 0 !important;
-        border-radius: 28px;
-        margin: 16px 12px;
-        overflow: hidden;
-        box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 50px -24px rgba(0,0,0,0.6);
-    }
-    main > section h2 { color: #f1f5f9 !important; }
-    main > section h2 + p { color: #94a3b8 !important; }
-    /* eyebrow labels + generic section paragraphs (not inside a white card) */
-    main > section > div > .text-center .text-slate-600,
-    main > section > div > .text-center .text-slate-500 { color: #94a3b8 !important; }
+    /* Homepage dark theme lives in base.html under body.theme-dark (shared with /features) */
 </style>
 <section class="bg-[#070711] p-2 sm:p-3">
   <!-- Floating hero card (bolt.new-style): inset from the viewport edges, rounded, on a near-black page field -->

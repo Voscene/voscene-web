@@ -101,6 +101,17 @@
       /* ...except inside panels that stay light (LINE mockup, product frames) */
       body.theme-dark main > section :is(.bg-white, .bg-cloud) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: #f1f5f9 !important; color: #475569 !important; }
       body.theme-dark .card :is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: rgba(255,255,255,0.10) !important; }
+      /* tables on dark: header + zebra rows become subtle dark tints (light tints turn muddy grey) */
+      body.theme-dark main > section table thead tr { background-color: #1b2438 !important; }
+      body.theme-dark main > section table thead th { color: #e2e8f0 !important; }
+      body.theme-dark main > section table tbody tr[class*="bg-slate-50"],
+      body.theme-dark main > section table tbody tr[class*="bg-cloud"] { background-color: rgba(255,255,255,0.035) !important; }
+      body.theme-dark main > section table :is(td, th).text-navy { color: #f1f5f9 !important; }
+      body.theme-dark main > section table :is(td, th).text-slate-500 { color: #a9b6c9 !important; }
+      /* header cells keep the light-panel class, so out-specify the "restore dark text" rule */
+      body.theme-dark main > section table thead tr:is(.bg-cloud, .bg-white) :is(.text-navy, .text-slate-500, .text-slate-600) { color: #e2e8f0 !important; }
+      /* brand blue is a touch dark for body text on the dark field — lift it in tables */
+      body.theme-dark main > section table :is(td, th).text-electric { color: #7cb2ff !important; }
       /* form controls: dark fields instead of bright white boxes */
       body.theme-dark main :is(input[type="text"], input[type="tel"], input[type="email"], select, textarea) { background-color: #16203a !important; border-color: rgba(255,255,255,0.15) !important; color: #f1f5f9 !important; }
       body.theme-dark main :is(input, textarea)::placeholder { color: #64748b !important; }

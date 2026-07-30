@@ -67,7 +67,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 17 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -156,7 +156,7 @@ def run_seed():
         REPOSITION_FORCE = {
             "seo_title": "The voice of smart spaces",
             "footer_tagline": "The voice of smart spaces",
-            "seo_description": "AES-128",
+            "seo_description": "17 โมดูลควบคุม",
             "stat_3_label": "AI-Driven",
         }
         added = 0

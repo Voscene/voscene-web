@@ -1,5 +1,7 @@
 {% extends "public/base.html" %}
 
+{% block body_class %}bg-[#070711] text-slate-300{% endblock %}
+
 {% block content %}
 <!-- Hero — Animated Aurora Gradient Background -->
 <style>
@@ -39,6 +41,22 @@
     @media (prefers-reduced-motion: reduce) {
         .hero-aurora, .marquee-track { animation: none; }
     }
+    /* ===== Homepage dark theme: dark #070711 page field, light .card elements float ===== */
+    main > section { background-color: transparent !important; border-color: rgba(255,255,255,0.08) !important; }
+    /* alternate sections become floating rounded cards (like the hero) on the #070711 field */
+    main > section:nth-of-type(even) {
+        background-color: #0d1526 !important;
+        border-width: 0 !important;
+        border-radius: 28px;
+        margin: 16px 12px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 50px -24px rgba(0,0,0,0.6);
+    }
+    main > section h2 { color: #f1f5f9 !important; }
+    main > section h2 + p { color: #94a3b8 !important; }
+    /* eyebrow labels + generic section paragraphs (not inside a white card) */
+    main > section > div > .text-center .text-slate-600,
+    main > section > div > .text-center .text-slate-500 { color: #94a3b8 !important; }
 </style>
 <section class="bg-[#070711] p-2 sm:p-3">
   <!-- Floating hero card (bolt.new-style): inset from the viewport edges, rounded, on a near-black page field -->
@@ -148,23 +166,23 @@
     <!-- Optional photo backdrop (falls back gracefully if file missing) -->
     <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/static/images/mission-bg.jpg')"></div>
     <!-- Subtle dot-grid texture so the section never feels flat -->
-    <div class="absolute inset-0 opacity-[0.18]" style="background-image: radial-gradient(circle, rgb(15 23 42 / 0.5) 1px, transparent 1.2px); background-size: 22px 22px;"></div>
+    <div class="absolute inset-0 opacity-[0.5]" style="background-image: radial-gradient(circle, rgb(255 255 255 / 0.08) 1px, transparent 1.2px); background-size: 22px 22px;"></div>
     <!-- Decorative gradient blobs -->
     <div class="absolute top-0 -left-32 w-[400px] h-[400px] bg-electric/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-32 -right-32 w-[500px] h-[500px] bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
     <!-- Soft white-to-cloud wash on top of pattern -->
-    <div class="absolute inset-0 bg-gradient-to-b from-white/75 via-white/55 to-cloud/80"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#070711]/50"></div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
             <!-- LEFT: Mission quote -->
             <div class="text-center md:text-left">
                 <div class="text-muted text-xs font-semibold tracking-[2px] mb-5">OUR MISSION</div>
-                <p class="font-th text-3xl md:text-4xl lg:text-5xl text-navy leading-tight font-medium">
+                <p class="font-th text-3xl md:text-4xl lg:text-5xl text-white leading-tight font-medium">
                     <span class="font-display text-electric/70 align-middle mr-1">&#8220;</span>สัมผัสเดียว <span class="text-electric">คุมได้ทั้งห้อง</span><span class="font-display text-electric/70 align-middle ml-1">&#8221;</span>
                 </p>
-                <p class="font-th text-2xl md:text-3xl lg:text-4xl text-navy mt-4 md:mt-5 font-medium">
-                    <span class="text-navy/60 font-light">—</span>
+                <p class="font-th text-2xl md:text-3xl lg:text-4xl text-slate-100 mt-4 md:mt-5 font-medium">
+                    <span class="text-white/40 font-light">—</span>
                     <span class="font-display font-bold text-electric tracking-tight">Voscene</span>
                     <span class="font-light">จัดการที่เหลือให้</span>
                 </p>
@@ -173,12 +191,12 @@
             <!-- RIGHT: USP Stats -->
             <div class="grid grid-cols-2 gap-6 md:gap-10">
                 <div class="text-center">
-                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-navy">{{ c.stat_1_value }}</div>
-                    <div class="text-slate-600 mt-3 text-sm font-th">{{ c.stat_1_label }}</div>
+                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white">{{ c.stat_1_value }}</div>
+                    <div class="text-slate-400 mt-3 text-sm font-th">{{ c.stat_1_label }}</div>
                 </div>
                 <div class="text-center">
-                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-navy">{{ c.stat_3_value }}</div>
-                    <div class="text-slate-600 mt-3 text-sm font-th">{{ c.stat_3_label }}</div>
+                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white">{{ c.stat_3_value }}</div>
+                    <div class="text-slate-400 mt-3 text-sm font-th">{{ c.stat_3_label }}</div>
                 </div>
             </div>
         </div>
@@ -208,7 +226,7 @@
             <div class="card rounded-2xl p-8 border-l-4 border-l-sky">
                 <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-multi-protocol.jpg" alt="Multi-Protocol" class="w-full h-full object-cover" loading="lazy"></div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Protocol</h3>
-                <p class="text-slate-600 font-th">รองรับโปรโตคอลมาตรฐานอุตสาหกรรม — ควบคุมอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลเดียวกัน ไม่ผูกกับ Vendor</p>
+                <p class="text-slate-400 font-th">รองรับโปรโตคอลมาตรฐานอุตสาหกรรม — ควบคุมอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลเดียวกัน ไม่ผูกกับ Vendor</p>
             </div>
             <div class="card rounded-2xl p-8 border-l-4 border-l-electric-400">
                 <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-ai-assist.jpg" alt="AI Assist" class="w-full h-full object-cover" loading="lazy"></div>
@@ -218,7 +236,7 @@
         </div>
 
         <div class="mt-12 max-w-3xl mx-auto bg-electric/5 border border-electric/20 rounded-xl p-5 text-center">
-            <p class="text-slate-700 text-sm font-th">
+            <p class="text-slate-300 text-sm font-th">
                 <span class="text-electric font-semibold">หมายเหตุ:</span> {{ c.brand_note }}
             </p>
         </div>
@@ -241,8 +259,8 @@
                     <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Switcher-light.jpg" alt="Graphic Video Switcher — ผังห้องแบบภาพ ลากแหล่งสัญญาณไปวางบนจอ" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
                 </div>
                 <div class="mt-5">
-                    <h3 class="font-display text-xl font-semibold text-navy mb-1">Graphic Video Switcher</h3>
-                    <p class="text-slate-600 text-sm font-th">ผังห้องแบบภาพ — ลากแหล่งสัญญาณไปวางบนจอที่ต้องการ เห็น routing ทั้งห้องในหน้าเดียว ไม่ต้องจำเลข input/output</p>
+                    <h3 class="font-display text-xl font-semibold text-white mb-1">Graphic Video Switcher</h3>
+                    <p class="text-slate-400 text-sm font-th">ผังห้องแบบภาพ — ลากแหล่งสัญญาณไปวางบนจอที่ต้องการ เห็น routing ทั้งห้องในหน้าเดียว ไม่ต้องจำเลข input/output</p>
                 </div>
             </div>
 
@@ -252,8 +270,8 @@
                     <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Audio-light.jpg" alt="Graphic Audio Mixer — ปรับระดับเสียงแต่ละช่องบนหน้าจอ" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Audio.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
                 </div>
                 <div class="mt-5">
-                    <h3 class="font-display text-xl font-semibold text-navy mb-1">Graphic Audio Mixer</h3>
-                    <p class="text-slate-600 text-sm font-th">มิกเซอร์บนหน้าจอ — ปรับระดับเสียงแต่ละช่อง/โซน mute/unmute พร้อม VU meter real-time คุมง่ายเหมือนมิกเซอร์จริง</p>
+                    <h3 class="font-display text-xl font-semibold text-white mb-1">Graphic Audio Mixer</h3>
+                    <p class="text-slate-400 text-sm font-th">มิกเซอร์บนหน้าจอ — ปรับระดับเสียงแต่ละช่อง/โซน mute/unmute พร้อม VU meter real-time คุมง่ายเหมือนมิกเซอร์จริง</p>
                 </div>
             </div>
         </div>
@@ -660,7 +678,7 @@
         </div>
 
         <div class="text-center mt-10">
-            <a href="/features" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 hover:border-electric hover:text-electric transition font-medium text-navy">
+            <a href="/features" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 hover:border-electric hover:text-electric transition font-medium text-slate-200">
                 ดูฟีเจอร์ทั้งหมด <span>→</span>
             </a>
         </div>

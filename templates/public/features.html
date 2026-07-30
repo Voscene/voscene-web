@@ -189,14 +189,14 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> ประกาศฉุกเฉินปุ่มเดียว ตัดเข้าทุกโซนพร้อมกัน ไม่ต้องเลือกโซนก่อน</li>
                         <li class="flex gap-2"><span class="text-electric">✓</span> ตั้งเวลาประกาศล่วงหน้า เปิด-ปิดทำการ พักกลางวัน ซ้อมอพยพประจำเดือน</li>
                         <li class="flex gap-2"><span class="text-electric">✓</span> เก็บประวัติทุกครั้งที่ประกาศ ใครสั่ง เวลาไหน เข้าโซนใดบ้าง</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> หน่วงเสียงระดับ 10-20 มิลลิวินาที พูดแล้วออกลำโพงทันที</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> หน่วงเสียงค่าต่ำ พูดแล้วออกลำโพงทันที</li>
                     </ul>
                     <p class="text-slate-600 mt-4 font-th text-sm">ประกาศเสียงทั่วอาคารผ่านระบบเครือข่ายเส้นเดียวกับระบบควบคุม ไม่ต้องเดินสายลำโพงกลับมารวมที่ห้องคุมเหมือนระบบเดิม เพิ่มโซนภายหลังได้โดยไม่ต้องรื้อสาย สั่งงานจากหน้าจอเดียวกับที่ใช้คุมห้องประชุมอยู่แล้ว ไม่ต้องเรียนรู้เครื่องใหม่</p>
                 </div>
                 <div>
-                    <div class="flex flex-wrap gap-1.5 mb-3">
+                    <div class="flex flex-wrap gap-2 mb-3">
                         {% for tag in ['Zone Control', 'Emergency', 'Scheduled', 'RTP Multicast', 'Low Latency'] %}
-                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-mono">{{ tag }}</span>
+                        <span class="px-2 py-1 rounded bg-electric/10 text-electric text-xs">{{ tag }}</span>
                         {% endfor %}
                     </div>
                     <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
@@ -224,9 +224,9 @@
                     <p class="text-slate-600 mt-4 font-th text-sm">ระบบประกาศทั่วไปให้เลือกโซนจากรายการตัวหนังสือ เจ้าหน้าที่ต้องจำให้ได้ว่าโซนไหนคือพื้นที่ใด ซึ่งเป็นจุดที่ผิดพลาดบ่อยที่สุดตอนฉุกเฉิน — Graphic Paging เปลี่ยนเป็นการกดจากภาพอาคารจริง เห็นแล้วรู้ทันทีว่ากำลังจะประกาศที่ไหน ช่างเป็นคนอัปโหลดผังของหน่วยงานและวางจุดเองตอนติดตั้ง จึงตรงกับอาคารจริงทุกหลัง ไม่ใช่ผังสำเร็จรูปที่ใช้กับทุกที่เหมือนกันหมด</p>
                 </div>
                 <div class="md:order-1">
-                    <div class="flex flex-wrap gap-1.5 mb-3">
+                    <div class="flex flex-wrap gap-2 mb-3">
                         {% for tag in ['ผังของหน่วยงานเอง', 'ลากวางจุดเอง', 'สถานะรายโซน', 'ผังอาคาร + ผังชั้น'] %}
-                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-th">{{ tag }}</span>
+                        <span class="px-2 py-1 rounded bg-electric/10 text-electric text-xs font-th">{{ tag }}</span>
                         {% endfor %}
                     </div>
                     <div class="space-y-4">
@@ -553,7 +553,7 @@
                     <li>• PA Multicast Audio</li>
                     <li>• Multi-room Sync</li>
                     <li>• Emergency Broadcast</li>
-                    <li>• Latency ~10-20ms</li>
+                    <li>• Low Latency</li>
                 </ul>
             </div>
         </div>

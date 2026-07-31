@@ -1,5 +1,6 @@
 {% extends "public/base.html" %}
 {% block title %}ติดต่อสอบถาม — {{ settings.APP_NAME }}{% endblock %}
+{% block body_class %}theme-dark bg-[#070711] text-slate-300{% endblock %}
 
 {% block content %}
 <section class="py-20 md:py-28 relative overflow-hidden bg-white">
@@ -40,7 +41,7 @@
                 {% endif %}
                 {% if c.contact_facebook or c.contact_line %}
                 <div class="card rounded-2xl p-6">
-                    <div class="text-electric text-xs font-medium mb-3">🌐 Social</div>
+                    <div class="text-electric text-xs font-medium mb-3"><span class="vico w-3.5 h-3.5 align-[-2px] mr-1" style="-webkit-mask-image:url('/static/images/voscene-icons/installed.svg');mask-image:url('/static/images/voscene-icons/installed.svg')"></span>Social</div>
                     <div class="flex flex-wrap gap-2">
                         {% if c.contact_facebook %}
                         <a href="{{ c.contact_facebook }}" target="_blank" rel="noopener" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1877F2] hover:bg-[#0E5DC0] text-white text-sm font-medium transition">

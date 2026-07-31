@@ -79,45 +79,67 @@
       /* Monochrome line-icon via CSS mask — color follows currentColor (voscene-icons set) */
       .vico { display: inline-block; background-color: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; flex-shrink: 0; }
       /* ===== Opt-in dark theme (body.theme-dark): dark #070711 field + alternating floating-card sections ===== */
-      body.theme-dark main > section { background-color: transparent !important; border-color: rgba(255,255,255,0.08) !important; }
-      body.theme-dark main > section:nth-of-type(even) { background-color: #0d1526 !important; border-width: 0 !important; border-radius: 28px; margin: 16px 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 50px -24px rgba(0,0,0,0.6); }
-      body.theme-dark main > section :is(h1, h2) { color: #f1f5f9 !important; }
-      body.theme-dark main > section :is(h1, h2) + p { color: #cbd5e1 !important; }
+      body.theme-dark main > :is(section, article) { background-color: transparent !important; border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark main > :is(section, article):nth-of-type(even) { background-color: #0d1526 !important; border-width: 0 !important; border-radius: 28px; margin: 16px 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 50px -24px rgba(0,0,0,0.6); }
+      body.theme-dark main > :is(section, article) :is(h1, h2) { color: #f1f5f9 !important; }
+      body.theme-dark main > :is(section, article) :is(h1, h2) + p { color: #cbd5e1 !important; }
       /* lighten section-level muted text on the dark field... */
-      body.theme-dark main > section :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #e2e8f0 !important; }
+      body.theme-dark main > :is(section, article) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-slate-800, .text-navy) { color: #e2e8f0 !important; }
       /* ...but restore dark text inside panels that stay light (LINE mockup, product frames) */
-      body.theme-dark main > section :is(.bg-white, .bg-cloud) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-navy) { color: #334155 !important; }
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-slate-800, .text-navy) { color: #334155 !important; }
       /* light gradient panels (from-cloud/from-white) become elevated dark surfaces too */
-      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) { background-image: none !important; background-color: #141c2e !important; border-color: rgba(255,255,255,0.08) !important; }
-      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) :is(h3, h4, .text-navy) { color: #f1f5f9 !important; }
-      body.theme-dark main > section :is([class*="from-cloud"], [class*="from-white"]) :is(.text-slate-500, .text-slate-600, .text-slate-700) { color: #cbd5e1 !important; }
+      body.theme-dark main > :is(section, article) :is([class*="from-cloud"], [class*="from-white"]) { background-image: none !important; background-color: #141c2e !important; border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark main > :is(section, article) :is([class*="from-cloud"], [class*="from-white"]) :is(h3, h4, .text-navy) { color: #f1f5f9 !important; }
+      body.theme-dark main > :is(section, article) :is([class*="from-cloud"], [class*="from-white"]) :is(.text-slate-500, .text-slate-600, .text-slate-700) { color: #cbd5e1 !important; }
       /* Cards = elevated dark surfaces (never white on dark — avoids halation glare) */
       body.theme-dark .card { background: #141c2e !important; border-color: rgba(255,255,255,0.08) !important; box-shadow: 0 1px 2px rgba(0,0,0,0.35) !important; }
       body.theme-dark .card:hover { border-color: rgba(59,130,246,0.45) !important; box-shadow: 0 10px 28px -10px rgba(0,0,0,0.65) !important; }
       body.theme-dark .card :is(h3, h4, .text-navy) { color: #f1f5f9 !important; }
       body.theme-dark .card :is(.text-slate-500, .text-slate-600, .text-slate-700) { color: #cbd5e1 !important; }
       /* chips/tags anywhere on the dark field (cards, feature blocks, callouts) */
-      body.theme-dark main > section :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: rgba(255,255,255,0.09) !important; color: #cbd5e1 !important; }
+      body.theme-dark main > :is(section, article) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: rgba(255,255,255,0.09) !important; color: #cbd5e1 !important; }
       /* ...except inside panels that stay light (LINE mockup, product frames) */
-      body.theme-dark main > section :is(.bg-white, .bg-cloud) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: #f1f5f9 !important; color: #475569 !important; }
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: #f1f5f9 !important; color: #475569 !important; }
       body.theme-dark .card :is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: rgba(255,255,255,0.10) !important; }
+      /* electric chips read 5:1 on the flat field but only 4.1:1 once the card lifts the tint behind them */
+      body.theme-dark .card [class*="bg-electric/1"].text-electric,
+      body.theme-dark .card [class*="bg-electric/1"] .text-electric { color: #7cb2ff !important; }
       /* tables on dark: header + zebra rows become subtle dark tints (light tints turn muddy grey) */
-      body.theme-dark main > section table thead tr { background-color: #1b2438 !important; }
-      body.theme-dark main > section table thead th { color: #e2e8f0 !important; }
-      body.theme-dark main > section table tbody tr[class*="bg-slate-50"],
-      body.theme-dark main > section table tbody tr[class*="bg-cloud"] { background-color: rgba(255,255,255,0.035) !important; }
-      body.theme-dark main > section table :is(td, th).text-navy { color: #f1f5f9 !important; }
-      body.theme-dark main > section table :is(td, th).text-slate-500 { color: #a9b6c9 !important; }
+      body.theme-dark main > :is(section, article) table thead tr { background-color: #1b2438 !important; }
+      body.theme-dark main > :is(section, article) table thead th { color: #e2e8f0 !important; }
+      body.theme-dark main > :is(section, article) table tbody tr[class*="bg-slate-50"],
+      body.theme-dark main > :is(section, article) table tbody tr[class*="bg-cloud"] { background-color: rgba(255,255,255,0.035) !important; }
+      body.theme-dark main > :is(section, article) table :is(td, th).text-navy { color: #f1f5f9 !important; }
+      body.theme-dark main > :is(section, article) table :is(td, th).text-slate-500 { color: #a9b6c9 !important; }
       /* header cells keep the light-panel class, so out-specify the "restore dark text" rule */
-      body.theme-dark main > section table thead tr:is(.bg-cloud, .bg-white) :is(.text-navy, .text-slate-500, .text-slate-600) { color: #e2e8f0 !important; }
+      body.theme-dark main > :is(section, article) table thead tr:is(.bg-cloud, .bg-white) :is(.text-navy, .text-slate-500, .text-slate-600) { color: #e2e8f0 !important; }
       /* brand blue is a touch dark for body text on the dark field — lift it in tables */
-      body.theme-dark main > section table :is(td, th).text-electric { color: #7cb2ff !important; }
+      body.theme-dark main > :is(section, article) table :is(td, th).text-electric { color: #7cb2ff !important; }
       /* form controls: dark fields instead of bright white boxes */
       body.theme-dark main :is(input[type="text"], input[type="tel"], input[type="email"], select, textarea) { background-color: #16203a !important; border-color: rgba(255,255,255,0.15) !important; color: #f1f5f9 !important; }
       body.theme-dark main :is(input, textarea)::placeholder { color: #64748b !important; }
       body.theme-dark main select option { background-color: #16203a; color: #f1f5f9; }
-      body.theme-dark main > section .text-center .text-slate-600,
-      body.theme-dark main > section .text-center .text-slate-500 { color: #cbd5e1 !important; }
+      body.theme-dark main > :is(section, article) .text-center .text-slate-600,
+      body.theme-dark main > :is(section, article) .text-center .text-slate-500 { color: #cbd5e1 !important; }
+      /* muted/signal/sky accents were picked for the light design and land under AA on the dark surfaces
+         (eyebrow labels 4.2-4.5:1, signal avatar tiles 2.3:1, sky arrows 2.9:1, sky/40 hints 2.4:1) */
+      body.theme-dark :is(main, footer) .text-muted { color: #8fa8cc !important; }
+      body.theme-dark :is(main, footer) :is(.text-signal, .text-sky-600) { color: #7cb2ff !important; }
+      body.theme-dark main [class*="text-sky/4"] { color: rgba(133,183,235,0.75) !important; }
+      /* protocol labels use -600 accents built for light cards — 3.2-3.7:1 once the card goes dark */
+      body.theme-dark main .text-purple-600 { color: #c084fc !important; }
+      body.theme-dark main .text-pink-600 { color: #f472b6 !important; }
+      body.theme-dark main .text-rose-600 { color: #fb7185 !important; }
+      /* ...restored inside the panels that stay light (LINE mockup, product frames) */
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) .text-muted { color: #5B7FB5 !important; }
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) .text-signal { color: #185FA5 !important; }
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) .text-sky-600 { color: #2964ad !important; }
+      /* footer sits outside <main> — without this it stays a bright light band under the dark pages */
+      body.theme-dark footer { background-color: #070711 !important; border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark footer .border-slate-200 { border-color: rgba(255,255,255,0.08) !important; }
+      body.theme-dark footer :is(h4, .text-navy) { color: #f1f5f9 !important; }
+      body.theme-dark footer :is(.text-slate-600, .text-slate-500) { color: #cbd5e1 !important; }
+      body.theme-dark footer .text-slate-400 { color: #94a3b8 !important; }
     </style>
 </head>
 <body class="{% block body_class %}bg-white text-navy{% endblock %} antialiased">
@@ -161,7 +183,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="md:col-span-2">
-                <img src="/static/images/voscene-horizontal.png" alt="Voscene" class="h-9 w-auto mb-3">
+                <a href="/" class="inline-flex items-center gap-2.5 mb-3">
+                    <img src="/static/images/voscene-icon.svg" alt="" aria-hidden="true" class="h-8 w-auto">
+                    <span class="font-display font-bold text-2xl tracking-tight text-navy leading-none">VOSCENE</span>
+                </a>
                 <p class="text-signal text-sm mb-2 font-display font-medium">{{ c.footer_tagline or 'One touch. Total control.' }}</p>
                 <p class="text-slate-500 text-xs mt-3">{{ c.footer_company or '' }}</p>
             </div>

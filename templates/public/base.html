@@ -100,7 +100,11 @@
       body.theme-dark main > :is(section, article) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: rgba(255,255,255,0.09) !important; color: #cbd5e1 !important; }
       /* ...except inside panels that stay light (LINE mockup, product frames) */
       body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) :is(.bg-slate-100, .bg-slate-50, .bg-slate-200) { background-color: #f1f5f9 !important; color: #475569 !important; }
-      body.theme-dark .card :is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: rgba(255,255,255,0.10) !important; }
+      /* light hairlines (#e2e8f0) read as bright outlines on dark — screenshot frames, dividers, etc. */
+      body.theme-dark :is(main, footer) :is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: rgba(255,255,255,0.10) !important; }
+      /* ...restored on panels that stay light, incl. ones carrying the light bg on the same element (LINE bubbles) */
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud) :is(.border-slate-200, .border-slate-100, .border-slate-300),
+      body.theme-dark main > :is(section, article) :is(.bg-white, .bg-cloud):is(.border-slate-200, .border-slate-100, .border-slate-300) { border-color: #e2e8f0 !important; }
       /* electric chips read 5:1 on the flat field but only 4.1:1 once the card lifts the tint behind them */
       body.theme-dark .card [class*="bg-electric/1"].text-electric,
       body.theme-dark .card [class*="bg-electric/1"] .text-electric { color: #7cb2ff !important; }

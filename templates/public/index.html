@@ -41,6 +41,18 @@
     @media (prefers-reduced-motion: reduce) {
         .hero-aurora, .marquee-track { animation: none; }
     }
+    /* Windowed browsers (tab strip + bookmarks + taskbar) leave ~900px or less. The copy block's
+       rhythm is otherwise fixed, so the CTA ends up hugging the product shot and the marquee gets
+       pushed to the very edge. Tighten by viewport HEIGHT — width breakpoints can't see this. */
+    @media (max-height: 940px) {
+        .hero-copy h1, .hero-copy > p { margin-bottom: 1rem; }
+        .hero-marquee-label { margin-bottom: 0.75rem; }
+    }
+    @media (max-height: 800px) {
+        .hero-copy h1 { font-size: 2.75rem; margin-bottom: 0.75rem; }
+        .hero-copy > p { font-size: 1.125rem; margin-bottom: 0.75rem; }
+        .hero-marquee-label { margin-bottom: 0.5rem; }
+    }
     /* Homepage dark theme lives in base.html under body.theme-dark (shared with /features) */
 </style>
 <section class="bg-[#070711] p-2 sm:p-3">
@@ -59,7 +71,7 @@
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 min-h-[calc(100vh-60px-1.5rem)] flex flex-col justify-evenly">
 
         <!-- TOP — Copy (centered) -->
-        <div class="max-w-4xl mx-auto text-center">
+        <div class="hero-copy max-w-4xl mx-auto text-center">
             <!-- Primary Headline — main, biggest, one line on desktop -->
             <h1 class="font-display font-bold tracking-tight leading-[1.05] text-white text-4xl sm:text-5xl lg:text-6xl lg:whitespace-nowrap mb-6">
                 One touch. <span class="text-electric-300">Total control.</span>
@@ -101,7 +113,10 @@
         </div>
 
         <!-- SHOWCASE — Multi-device product shot (used across all devices) -->
-        <div class="max-w-4xl mx-auto">
+        {# Image is 2:1, so its height is half its width. Capping the width by viewport height keeps the
+           whole hero (copy + shot + marquee) inside the first screen on short/windowed browsers, while
+           tall screens still get the full 56rem. #}
+        <div class="mx-auto w-full max-w-[min(56rem,_82vh)]">
             <!-- Soft glow + framed product shot -->
             <div class="relative">
                 <div class="absolute -inset-6 bg-electric/20 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
@@ -113,7 +128,7 @@
 
         <!-- Running capability marquee (bolt-style) — swap the items for whatever you want -->
         <div class="w-full">
-            <p class="text-center text-white/40 text-xs font-semibold tracking-[2px] mb-6 font-th">ควบคุมได้ทุกระบบ — ในสัมผัสเดียว</p>
+            <p class="hero-marquee-label text-center text-white/40 text-xs font-semibold tracking-[2px] mb-6 font-th">ควบคุมได้ทุกระบบ — ในสัมผัสเดียว</p>
             {# Real VOSCENE line-icons (voscene-icons set) — CSS mask keeps them white on the dark hero #}
             {% set caps = [
                 ['meeting.svg', 'ประชุม'],

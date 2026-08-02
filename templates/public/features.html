@@ -63,13 +63,11 @@
                         <h3 class="font-display font-semibold text-xl text-navy">โหมดช่าง</h3>
                         <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-mono font-semibold tracking-wider">ENGINEER MODE</span>
                     </div>
-                    {# Same tap-to-swap. Frames differ in height (1700×827 vs 1700×980), so the
-                       container is fixed-aspect + object-contain on the console's own dark field
-                       — no layout jump on tap. Toggle replaces the theme-swap pair: both frames
-                       here are the dark console, which is what the site (dark-locked) shows. #}
-                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-2 cursor-pointer bg-[#0d1526] aspect-[1700/980]" onclick="for(const i of this.children) i.classList.toggle('hidden')">
-                        <img src="/static/images/feature-scene.jpg" alt="โหมดช่าง — หน้าซีน สั่งจอ เสียง แสง กล้อง ทั้งห้องเป็นชุดเดียว" class="w-full h-full object-contain" loading="lazy">
-                        <img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="โหมดช่าง — ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ" class="w-full h-full object-contain hidden" loading="lazy">
+                    {# Same tap-to-swap. Owner picked the light-theme console captures (v0.421)
+                       — same 2360×1640 frame as the user card, so no aspect wrapper needed. #}
+                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-2 cursor-pointer" onclick="for(const i of this.children) i.classList.toggle('hidden')">
+                        <img src="/static/images/feature-engineer-scene.jpg" alt="โหมดช่าง — หน้าซีน สั่งจอ เสียง แสง กล้อง ทั้งห้องเป็นชุดเดียว" class="w-full h-auto" loading="lazy">
+                        <img src="/static/images/feature-engineer-plan.jpg" alt="โหมดช่าง — ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอจริงของห้อง" class="w-full h-auto hidden" loading="lazy">
                     </div>
                     <p class="text-slate-400 text-xs font-th text-center mb-4">แตะที่รูป — หน้าซีน → ผังห้องแบบกราฟิก</p>
                     <ul class="space-y-2 text-slate-700 font-th text-sm">

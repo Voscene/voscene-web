@@ -37,16 +37,16 @@
     /* the mission theme strip carries wider items than the hero icon strip — slow it to match perceived speed */
     .marquee-track.marquee-slow { animation-duration: 72s; }
     /* Mission shots: --row drives every height so the section stays one screen on a windowed browser.
-       The side column's WIDTH is derived from --row too, so both columns end level:
-       row = w/1.778 (16:9 room shot) + w/1.439 (break screen) + gap  =>  w ≈ row * 0.75 */
+       The side column's WIDTH is derived from --row too, so both columns end level. The side stacks
+       two 1.439 screens:  2*(w/1.439) + gap = row  =>  w = 1.439 * (row - gap) / 2 */
     .mission-shots { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
     .mission-shots figure { margin: 0; }
     .mission-side { display: flex; gap: 0.75rem; width: 100%; }
     .mission-side > figure { flex: 1 1 0; min-width: 0; }
     @media (min-width: 1024px) {
         .mission-shots { --row: clamp(220px, 36vh, 360px); flex-direction: row; align-items: stretch; justify-content: center; gap: 1.25rem; }
-        .mission-main { height: var(--row); width: calc(var(--row) * 1.439); flex: none; }
-        .mission-side { flex-direction: column; width: calc(var(--row) * 0.75); flex: none; gap: 1rem; }
+        .mission-main { height: var(--row); width: calc(var(--row) * 1.778); flex: none; }
+        .mission-side { flex-direction: column; width: calc((var(--row) - 1rem) * 0.7195); flex: none; gap: 1rem; }
         .mission-side > figure { flex: 1 1 0; }
     }
     /* short/windowed viewports: trim further so the section still ends inside one screen */
@@ -219,20 +219,20 @@
             </div>
         </div>
 
-        {# ROW 2 — two columns side by side. The control screen is the star, so it gets its own
-           column; the room shot and the break state stack in a narrower one. Heights are driven by
-           --row so the whole block scales with the viewport and the section stays one screen. #}
+        {# ROW 2 — two columns side by side. The one-button welcome shot leads (that IS the promise),
+           with the control screen and the break state stacked in a narrower column. Heights are
+           driven by --row so the whole block scales and the section stays one screen. #}
         <div class="mission-shots mt-8 lg:mt-10">
             <figure class="mission-main">
-                <img src="/static/images/mission-user-mode.jpg"
-                     alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
-                     class="w-full h-full object-contain rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl" loading="lazy" width="1600" height="1112">
+                <img src="/static/images/mission-room-tablet.jpg"
+                     alt="แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว"
+                     class="w-full h-full object-contain rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl" loading="lazy" width="1600" height="900">
             </figure>
             <div class="mission-side">
                 <figure class="min-h-0">
-                    <img src="/static/images/mission-room-tablet.jpg"
-                         alt="แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว"
-                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1600" height="900">
+                    <img src="/static/images/mission-user-mode.jpg"
+                         alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
+                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1600" height="1112">
                 </figure>
                 <figure class="min-h-0">
                     <img src="/static/images/mission-break.jpg"

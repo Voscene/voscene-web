@@ -27,6 +27,52 @@
             <p class="text-center text-slate-500 text-sm font-th mt-4">ตัวอย่างการควบคุมแบบกราฟิก — ลากแหล่งสัญญาณไปวางบนผังห้อง และเลือกโซนประกาศจากผังอาคารจริง</p>
         </div>
 
+        <!-- TWO MODES — the same room drives two screens. Explains up front why the
+             feature shots below alternate between the light user page and the dark
+             engineer console. Mode names match the actual in-app buttons
+             ("โหมดช่าง" / "ล็อก" are visible in the user-mode screenshot). -->
+        <div class="max-w-6xl mx-auto mb-24 md:mb-32">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-semibold tracking-wider mb-3">TWO MODES</div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">ห้องเดียวกัน ใช้งานได้ <span class="text-electric">2 โหมด</span></h2>
+                <p class="text-slate-600 font-th">คนใช้ห้องได้หน้าปุ่มใหญ่ที่กดเองได้ทันที ช่างได้หน้าควบคุมครบทุกโมดูล — สลับกันได้จากปุ่มบนหน้าจอ</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 items-start">
+                <div class="card rounded-2xl p-6">
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <h3 class="font-display font-semibold text-xl text-navy">โหมดผู้ใช้</h3>
+                        <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-mono font-semibold tracking-wider">USER MODE</span>
+                    </div>
+                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-4">
+                        <img src="/static/images/feature-simple-mode.png" alt="โหมดผู้ใช้ — ปุ่มใหญ่ เปิด/ปิดจอ เลือกแหล่งภาพ ปรับเสียง พร้อมช่องสั่งงาน AI และปุ่มสลับไปโหมดช่าง" class="w-full h-auto" loading="lazy">
+                    </div>
+                    <ul class="space-y-2 text-slate-700 font-th text-sm">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ปุ่มใหญ่ กดเองได้ทันที — เปิด/ปิดจอ เลือกแหล่งภาพ ปรับเสียง</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> เห็นเฉพาะสิ่งที่ต้องใช้ ไม่ต้องอบรมก่อนใช้ห้อง</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ล็อกหน้าจอได้ เมื่อไม่ต้องการให้ใครแตะ</li>
+                    </ul>
+                </div>
+
+                <div class="card rounded-2xl p-6">
+                    <div class="flex items-center gap-2.5 mb-4">
+                        <h3 class="font-display font-semibold text-xl text-navy">โหมดช่าง</h3>
+                        <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-mono font-semibold tracking-wider">ENGINEER MODE</span>
+                    </div>
+                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-4">
+                        <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Switcher-light.jpg" alt="โหมดช่าง — ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ พร้อมเมนูครบทุกโมดูล" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
+                    </div>
+                    <ul class="space-y-2 text-slate-700 font-th text-sm">
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ครบทุกโมดูลควบคุม — ภาพ เสียง แสง กล้อง ซีน</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ตั้งค่าอุปกรณ์และซีนผ่านหน้าเว็บ ไม่ต้องเขียนโค้ด</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="text-center text-slate-500 text-sm font-th mt-6">ฟีเจอร์ด้านล่างนี้คือทั้งหมดที่อยู่ในโหมดช่าง — ส่วนหน้าผู้ใช้ ช่างเป็นคนเลือกว่าจะให้เห็นปุ่มไหนบ้าง</p>
+        </div>
+
         <div class="space-y-16">
             <!-- 1 Scene Control -->
             <div class="grid md:grid-cols-2 gap-10 items-center">

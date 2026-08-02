@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400"
+     role="img" aria-label="มีอุปกรณ์เดิมอยู่แล้ว — ของเดิมใช้ต่อได้ เพิ่มแค่จอควบคุม">
+  <!-- v2 คู่กับใบซ้าย · เล่าเรื่องด้วย "สี" ไม่ใช่ศัพท์ช่าง:
+       เทา = ของเดิมที่ลูกค้ามีอยู่แล้ว (มีเครื่องหมายถูก = ใช้ต่อได้)
+       น้ำเงิน+ปุ่มทอง = สิ่งเดียวที่เพิ่มเข้ามา
+       อุปกรณ์วาดตำแหน่งเดียวกับใบซ้ายเป๊ะ ๆ เพื่อให้เทียบกันได้ทันที -->
+  <defs>
+    <linearGradient id="tabE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#152C63"/>
+    </linearGradient>
+    <linearGradient id="goldE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3B34A"/><stop offset="1" stop-color="#C6922C"/>
+    </linearGradient>
+    <filter id="gE" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <path d="M64 322 H576" stroke="#1E3350" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- อุปกรณ์เดิม — สีเทา แปลว่า "ของที่คุณมีอยู่แล้ว" -->
+  <g fill="none" stroke="#7C90A8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <g>
+      <rect x="70" y="86" width="132" height="84" rx="9"/>
+      <path d="M120 170 h32"/><path d="M136 158 v12"/>
+    </g>
+    <g>
+      <rect x="252" y="70" width="136" height="86" rx="9"/>
+      <path d="M320 156 v10"/>
+      <circle cx="320" cy="196" r="16"/><circle cx="320" cy="196" r="6"/>
+    </g>
+    <g>
+      <rect x="452" y="86" width="86" height="120" rx="10"/>
+      <circle cx="495" cy="122" r="14"/><circle cx="495" cy="122" r="5"/>
+      <circle cx="495" cy="172" r="20"/><circle cx="495" cy="172" r="7"/>
+    </g>
+    <g>
+      <path d="M126 240 h64"/>
+      <path d="M140 240 v-12 a18 18 0 0 1 -12 -28 a30 30 0 0 1 60 0 a18 18 0 0 1 -12 28 v12"/>
+    </g>
+    <g>
+      <rect x="452" y="240" width="86" height="52" rx="9"/>
+      <path d="M470 254 h34 v24 h-34 z"/><path d="M504 260 l18 -9 v30 l-18 -9 z"/>
+    </g>
+  </g>
+
+  <!-- เครื่องหมายถูกเขียว = ของเดิมทุกตัวใช้ต่อได้ (ภาษาที่ทุกคนอ่านออกทันที) -->
+  <g>
+    <g fill="#1B5E3F" stroke="#34D399" stroke-width="1.6">
+      <circle cx="196" cy="86" r="13"/><circle cx="382" cy="70" r="13"/>
+      <circle cx="532" cy="86" r="13"/><circle cx="188" cy="216" r="13"/>
+      <circle cx="532" cy="240" r="13"/>
+    </g>
+    <g fill="none" stroke="#6EE7B7" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M190 86 l4 5 8 -9"/><path d="M376 70 l4 5 8 -9"/>
+      <path d="M526 86 l4 5 8 -9"/><path d="M182 216 l4 5 8 -9"/>
+      <path d="M526 240 l4 5 8 -9"/>
+    </g>
+  </g>
+
+  <!-- จอควบคุม — ชิ้นเดียวที่เป็นสีน้ำเงิน = สิ่งเดียวที่เพิ่มเข้ามา -->
+  <g filter="url(#gE)">
+    <rect x="238" y="236" width="164" height="112" rx="14" fill="url(#tabE)" stroke="#7FB3F5" stroke-width="2.6"/>
+    <rect x="262" y="272" width="116" height="40" rx="12" fill="url(#goldE)"/>
+    <g fill="#FFF6DF">
+      <rect x="286" y="286" width="9" height="9" rx="2"/><rect x="300" y="286" width="9" height="9" rx="2"/>
+      <rect x="286" y="299" width="9" height="9" rx="2"/><rect x="300" y="299" width="9" height="9" rx="2"/>
+    </g>
+    <rect x="322" y="288" width="44" height="7" rx="3.5" fill="#FFF6DF" opacity=".9"/>
+    <rect x="262" y="252" width="60" height="8" rx="4" fill="#7FB3F5" opacity=".55"/>
+  </g>
+
+  <!-- เครื่องหมายบวกบนจอควบคุม = "เพิ่มแค่ตัวนี้" -->
+  <g>
+    <circle cx="396" cy="240" r="15" fill="#1E3A8A" stroke="#7FB3F5" stroke-width="2"/>
+    <g stroke="#DBEAFE" stroke-width="3" stroke-linecap="round">
+      <path d="M396 233 v14"/><path d="M389 240 h14"/>
+    </g>
+  </g>
+</svg>

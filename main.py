@@ -75,6 +75,15 @@ async def home(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@app.get("/why", response_class=HTMLResponse)
+async def why_page(request: Request, db: Session = Depends(get_db)):
+    return templates.TemplateResponse("public/why.html", {
+        "request": request,
+        "c": load_content(db),
+        "settings": settings,
+    })
+
+
 @app.get("/features", response_class=HTMLResponse)
 async def features_page(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("public/features.html", {

@@ -157,6 +157,7 @@
         {% set p = request.url.path %}
         <div class="hidden md:flex items-center gap-6 text-sm">
             <a href="/" class="transition {% if p == '/' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">หน้าแรก</a>
+            <a href="/why" class="transition {% if p == '/why' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ทำไม Voscene</a>
             <a href="/features" class="transition {% if p == '/features' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ฟีเจอร์</a>
             <a href="/pricing" class="transition {% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">ราคา</a>
             <a href="/blog" class="transition {% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-300 hover:text-white{% endif %}">บทความ</a>
@@ -170,6 +171,7 @@
     <div id="m-menu" class="hidden md:hidden border-t border-white/10 bg-[#0a0a0f]">
         <div class="px-4 py-3 flex flex-col gap-3 text-sm">
             <a href="/" class="{% if p == '/' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">หน้าแรก</a>
+            <a href="/why" class="{% if p == '/why' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ทำไม Voscene</a>
             <a href="/features" class="{% if p == '/features' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ฟีเจอร์</a>
             <a href="/pricing" class="{% if p == '/pricing' %}text-electric font-semibold{% else %}text-slate-300{% endif %}">ราคา</a>
             <a href="/blog" class="{% if p.startswith('/blog') %}text-electric font-semibold{% else %}text-slate-300{% endif %}">บทความ</a>

@@ -34,6 +34,8 @@
     }
     .marquee-track { display: flex; width: max-content; animation: marquee-scroll 34s linear infinite; }
     .marquee-track:hover { animation-play-state: paused; }
+    /* the mission theme strip carries wider items than the hero icon strip — slow it to match perceived speed */
+    .marquee-track.marquee-slow { animation-duration: 72s; }
     .marquee-mask {
         -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
                 mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
@@ -197,6 +199,43 @@
                 <div class="text-center">
                     <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white">{{ c.stat_3_value }}</div>
                     <div class="text-slate-400 mt-3 text-sm font-th">{{ c.stat_3_label }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROOF — the mission, shown: one tablet on the table, one button to start the meeting -->
+        <div class="mt-14 md:mt-20">
+            <div class="relative mx-auto max-w-5xl">
+                <div class="absolute -inset-6 bg-electric/15 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
+                <div class="relative rounded-2xl md:rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl">
+                    <img src="/static/images/mission-room-tablet.jpg"
+                         alt="แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว"
+                         class="w-full block" loading="lazy" width="1600" height="900">
+                </div>
+            </div>
+            <p class="text-center text-slate-300 text-sm md:text-base font-th mt-6 max-w-2xl mx-auto">
+                หน้าจอต้อนรับหน้าห้อง — กดปุ่มเดียว จอ เสียง และไฟพร้อมเอง
+            </p>
+        </div>
+
+        <!-- THEME STRIP — the same welcome screen, themed per room -->
+        <div class="mt-10 md:mt-14">
+            <p class="hero-marquee-label text-center text-white/60 text-xs font-semibold tracking-[2px] mb-5 font-th">เลือกธีมหน้าจอให้เข้ากับแต่ละห้องได้</p>
+            {# Duplicated ×2 so the marquee loops seamlessly (translateX(-50%)). Ordered light↔dark + warm↔cool. #}
+            <div class="marquee-mask overflow-hidden">
+                <div class="marquee-track marquee-slow">
+                    {% for pass in [1, 2] %}
+                        {% for i in range(1, 12) %}
+                        <div class="shrink-0 px-2 md:px-2.5">
+                            <div class="w-[168px] md:w-[210px] rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg">
+                                <img src="/static/images/mission-theme-{{ '%02d'|format(i) }}.jpg"
+                                     alt="{% if pass == 1 %}ตัวอย่างธีมหน้าจอต้อนรับแบบที่ {{ i }}{% endif %}"
+                                     {% if pass == 2 %}aria-hidden="true"{% endif %}
+                                     class="w-full block" loading="lazy" width="560" height="389">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
                 </div>
             </div>
         </div>

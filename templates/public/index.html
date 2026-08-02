@@ -218,6 +218,37 @@
             </p>
         </div>
 
+        <!-- ...and what that one button opens: the user-facing control screen (same room, same theme) -->
+        <div class="mt-10 md:mt-12">
+            <div class="flex justify-center mb-6 text-white/35" aria-hidden="true">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="relative mx-auto max-w-5xl">
+                <div class="relative rounded-2xl md:rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl">
+                    <img src="/static/images/mission-user-mode.jpg"
+                         alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
+                         class="w-full block" loading="lazy" width="1600" height="1112">
+                </div>
+            </div>
+            <p class="text-center text-slate-300 text-sm md:text-base font-th mt-6 max-w-2xl mx-auto">
+                แล้วได้หน้านี้ — <span class="text-white font-medium">โหมดผู้ใช้</span> ปุ่มใหญ่ ชัดเจน คนใช้ห้องกดเองได้ แยกจากหน้าตั้งค่าของช่าง
+            </p>
+        </div>
+
+        <!-- sub-state of the screen above: the พักเบรก button, same room and theme -->
+        <div class="mt-10 md:mt-12">
+            <div class="relative mx-auto max-w-xl">
+                <div class="relative rounded-xl md:rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-xl">
+                    <img src="/static/images/mission-break.jpg"
+                         alt="หน้าจอพักเบรกของ Voscene — แสดงเวลาที่พักมาแล้ว พร้อมปุ่มกลับเข้าประชุม"
+                         class="w-full block" loading="lazy" width="1100" height="764">
+                </div>
+            </div>
+            <p class="text-center text-slate-400 text-sm font-th mt-5 max-w-2xl mx-auto">
+                กด <span class="text-slate-200">“พักเบรก”</span> — จอพัก เสียงเบาลง นับเวลาให้ แล้วกลับเข้าประชุมได้ในปุ่มเดียว
+            </p>
+        </div>
+
         <!-- THEME STRIP — the same welcome screen, themed per room -->
         <div class="mt-10 md:mt-14">
             <p class="hero-marquee-label text-center text-white/60 text-xs font-semibold tracking-[2px] mb-5 font-th">เลือกธีมหน้าจอให้เข้ากับแต่ละห้องได้</p>
@@ -766,7 +797,7 @@
 
             <div class="card rounded-2xl p-6">
                 <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 font-display font-bold flex items-center justify-center mb-3">S</div>
-                <h3 class="font-display font-semibold mb-1 text-navy">Simple Mode</h3>
+                <h3 class="font-display font-semibold mb-1 text-navy">โหมดผู้ใช้ (User Mode)</h3>
                 <p class="text-slate-600 text-sm font-th">หน้าจอปุ่มใหญ่สำหรับผู้ใช้ทั่วไป — เปิด/ปิด · เลือก source · ปรับเสียง — แยกจาก UI ฝั่งช่าง</p>
                 <div class="flex gap-1.5 mt-3">
                     <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-mono">BIG BUTTONS</span>

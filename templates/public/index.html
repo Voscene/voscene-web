@@ -36,6 +36,29 @@
     .marquee-track:hover { animation-play-state: paused; }
     /* the mission theme strip carries wider items than the hero icon strip — slow it to match perceived speed */
     .marquee-track.marquee-slow { animation-duration: 72s; }
+    /* Mission shots: --row drives every height so the section stays one screen on a windowed browser.
+       The side column's WIDTH is derived from --row too, so both columns end level:
+       row = w/1.778 (16:9 room shot) + w/1.439 (break screen) + gap  =>  w ≈ row * 0.75 */
+    .mission-shots { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
+    .mission-shots figure { margin: 0; }
+    .mission-side { display: flex; gap: 0.75rem; width: 100%; }
+    .mission-side > figure { flex: 1 1 0; min-width: 0; }
+    @media (min-width: 1024px) {
+        .mission-shots { --row: clamp(220px, 36vh, 360px); flex-direction: row; align-items: stretch; justify-content: center; gap: 1.25rem; }
+        .mission-main { height: var(--row); width: calc(var(--row) * 1.439); flex: none; }
+        .mission-side { flex-direction: column; width: calc(var(--row) * 0.75); flex: none; gap: 1rem; }
+        .mission-side > figure { flex: 1 1 0; }
+    }
+    /* short/windowed viewports: trim further so the section still ends inside one screen */
+    @media (min-width: 1024px) and (max-height: 780px) {
+        .mission-shots { --row: clamp(200px, 33vh, 300px); }
+    }
+    /* very short (e.g. 1024x700): the stat labels wrap in the narrow column, so trim the gaps too */
+    @media (min-width: 1024px) and (max-height: 720px) {
+        .mission-shots { --row: clamp(170px, 27vh, 240px); margin-top: 1.25rem; }
+        .mission-caption { margin-top: 0.75rem; font-size: 0.8125rem; }
+        .mission-strip-wrap { margin-top: 1.25rem; }
+    }
     .marquee-mask {
         -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
                 mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
@@ -163,8 +186,8 @@
   </div>
 </section>
 
-<!-- Mission + Stats — side-by-side row -->
-<section class="relative py-20 md:py-28 overflow-hidden bg-cloud">
+<!-- Mission + Stats — one-screen presentation of User Mode -->
+<section class="relative py-12 md:py-14 lg:py-10 overflow-hidden bg-cloud">
     <!-- Optional photo backdrop (falls back gracefully if file missing) -->
     <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/static/images/mission-bg.jpg')"></div>
     <!-- Subtle dot-grid texture so the section never feels flat -->
@@ -175,90 +198,64 @@
     <!-- Soft white-to-cloud wash on top of pattern -->
     <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#070711]/50"></div>
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-2 gap-10 md:gap-12 items-center">
-            <!-- LEFT: Mission quote -->
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:min-h-[calc(100vh-60px-2rem)] lg:flex lg:flex-col lg:justify-center">
+        <!-- ROW 1 — the claim, and the numbers behind it -->
+        <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div class="text-center md:text-left">
-                <div class="text-muted text-xs font-semibold tracking-[2px] mb-5">OUR MISSION</div>
-                <p class="font-th text-3xl md:text-4xl lg:text-5xl text-white leading-tight font-medium">
+                <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">OUR MISSION</div>
+                <p class="font-th text-3xl md:text-4xl text-white leading-tight font-medium">
                     <span class="font-display text-electric/70 align-middle mr-1">&#8220;</span>สัมผัสเดียว <span class="text-electric">คุมได้ทั้งห้อง</span><span class="font-display text-electric/70 align-middle ml-1">&#8221;</span>
                 </p>
-                <p class="font-th text-2xl md:text-3xl lg:text-4xl text-slate-100 mt-4 md:mt-5 font-medium">
-                    <span class="text-white/40 font-light">—</span>
-                    <span class="font-display font-bold text-electric tracking-tight">Voscene</span>
-                    <span class="font-light">จัดการที่เหลือให้</span>
-                </p>
             </div>
-
-            <!-- RIGHT: USP Stats -->
             <div class="grid grid-cols-2 gap-6 md:gap-10">
                 <div class="text-center">
-                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white">{{ c.stat_1_value }}</div>
-                    <div class="text-slate-400 mt-3 text-sm font-th">{{ c.stat_1_label }}</div>
+                    <div class="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-white">{{ c.stat_1_value }}</div>
+                    <div class="text-slate-400 mt-2 text-sm font-th">{{ c.stat_1_label }}</div>
                 </div>
                 <div class="text-center">
-                    <div class="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white">{{ c.stat_3_value }}</div>
-                    <div class="text-slate-400 mt-3 text-sm font-th">{{ c.stat_3_label }}</div>
+                    <div class="font-display text-4xl md:text-5xl lg:text-6xl font-semibold text-white">{{ c.stat_3_value }}</div>
+                    <div class="text-slate-400 mt-2 text-sm font-th">{{ c.stat_3_label }}</div>
                 </div>
             </div>
         </div>
 
-        <!-- PROOF — the mission, shown: one tablet on the table, one button to start the meeting -->
-        <div class="mt-14 md:mt-20">
-            <div class="relative mx-auto max-w-5xl">
-                <div class="absolute -inset-6 bg-electric/15 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
-                <div class="relative rounded-2xl md:rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl">
+        {# ROW 2 — two columns side by side. The control screen is the star, so it gets its own
+           column; the room shot and the break state stack in a narrower one. Heights are driven by
+           --row so the whole block scales with the viewport and the section stays one screen. #}
+        <div class="mission-shots mt-8 lg:mt-10">
+            <figure class="mission-main">
+                <img src="/static/images/mission-user-mode.jpg"
+                     alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
+                     class="w-full h-full object-contain rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl" loading="lazy" width="1600" height="1112">
+            </figure>
+            <div class="mission-side">
+                <figure class="min-h-0">
                     <img src="/static/images/mission-room-tablet.jpg"
                          alt="แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว"
-                         class="w-full block" loading="lazy" width="1600" height="900">
-                </div>
-            </div>
-            <p class="text-center text-slate-300 text-sm md:text-base font-th mt-6 max-w-2xl mx-auto">
-                หน้าจอต้อนรับหน้าห้อง — กดปุ่มเดียว จอ เสียง และไฟพร้อมเอง
-            </p>
-        </div>
-
-        <!-- ...and what that one button opens: the user-facing control screen (same room, same theme) -->
-        <div class="mt-10 md:mt-12">
-            <div class="flex justify-center mb-6 text-white/35" aria-hidden="true">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-            <div class="relative mx-auto max-w-5xl">
-                <div class="relative rounded-2xl md:rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-2xl">
-                    <img src="/static/images/mission-user-mode.jpg"
-                         alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
-                         class="w-full block" loading="lazy" width="1600" height="1112">
-                </div>
-            </div>
-            <p class="text-center text-slate-300 text-sm md:text-base font-th mt-6 max-w-2xl mx-auto">
-                แล้วได้หน้านี้ — <span class="text-white font-medium">โหมดผู้ใช้</span> ปุ่มใหญ่ ชัดเจน คนใช้ห้องกดเองได้ แยกจากหน้าตั้งค่าของช่าง
-            </p>
-        </div>
-
-        <!-- sub-state of the screen above: the พักเบรก button, same room and theme -->
-        <div class="mt-10 md:mt-12">
-            <div class="relative mx-auto max-w-xl">
-                <div class="relative rounded-xl md:rounded-2xl overflow-hidden ring-1 ring-white/10 shadow-xl">
+                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1600" height="900">
+                </figure>
+                <figure class="min-h-0">
                     <img src="/static/images/mission-break.jpg"
                          alt="หน้าจอพักเบรกของ Voscene — แสดงเวลาที่พักมาแล้ว พร้อมปุ่มกลับเข้าประชุม"
-                         class="w-full block" loading="lazy" width="1100" height="764">
-                </div>
+                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1100" height="764">
+                </figure>
             </div>
-            <p class="text-center text-slate-400 text-sm font-th mt-5 max-w-2xl mx-auto">
-                กด <span class="text-slate-200">“พักเบรก”</span> — จอพัก เสียงเบาลง นับเวลาให้ แล้วกลับเข้าประชุมได้ในปุ่มเดียว
-            </p>
         </div>
 
-        <!-- THEME STRIP — the same welcome screen, themed per room -->
-        <div class="mt-10 md:mt-14">
-            <p class="hero-marquee-label text-center text-white/60 text-xs font-semibold tracking-[2px] mb-5 font-th">เลือกธีมหน้าจอให้เข้ากับแต่ละห้องได้</p>
+        <p class="mission-caption text-center text-slate-300 text-sm md:text-base font-th mt-5 max-w-3xl mx-auto">
+            แตะปุ่มเดียวที่หน้าห้อง แล้วได้ <span class="text-white font-medium">โหมดผู้ใช้</span> — จอ เสียง แหล่งภาพ และพักเบรก อยู่ในหน้าจอเดียว คนใช้ห้องกดเองได้ แยกจากหน้าตั้งค่าของช่าง
+        </p>
+
+        <!-- ROW 3 — the same screen, themed per room -->
+        <div class="mission-strip-wrap mt-7 lg:mt-9">
+            <p class="hero-marquee-label text-center text-white/60 text-xs font-semibold tracking-[2px] mb-4 font-th">เลือกธีมหน้าจอให้เข้ากับแต่ละห้องได้</p>
             {# Duplicated ×2 so the marquee loops seamlessly (translateX(-50%)). Ordered light↔dark + warm↔cool. #}
             <div class="marquee-mask overflow-hidden">
                 <div class="marquee-track marquee-slow">
                     {% for pass in [1, 2] %}
                         {% for i in range(1, 11) %}
-                        <div class="shrink-0 px-2 md:px-2.5">
-                            <div class="w-[168px] md:w-[210px] rounded-xl overflow-hidden ring-1 ring-white/10 shadow-lg">
+                        <div class="shrink-0 px-2">
+                            <div class="w-[132px] md:w-[158px] rounded-lg overflow-hidden ring-1 ring-white/10 shadow-lg">
                                 <img src="/static/images/mission-theme-{{ '%02d'|format(i) }}.jpg"
                                      alt="{% if pass == 1 %}ตัวอย่างธีมหน้าจอต้อนรับแบบที่ {{ i }}{% endif %}"
                                      {% if pass == 2 %}aria-hidden="true"{% endif %}

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400"
+     role="img" aria-label="ขั้นที่ 2 — ตัวควบคุมในห้องรับคำสั่งเดียว แล้วแปลงเป็นโปรโตคอลที่อุปกรณ์แต่ละตัวเข้าใจ">
+  <!-- คำสั่งเดียวเข้า → ตัวควบคุม → แตกเป็นโปรโตคอลมาตรฐานออกไปหาอุปกรณ์
+       ชื่อโปรโตคอลใช้เฉพาะ 4 ตัวที่หน้า /features ระบุไว้จริง -->
+  <defs>
+    <linearGradient id="boxT" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#152C63"/>
+    </linearGradient>
+    <linearGradient id="goldT" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3B34A"/><stop offset="1" stop-color="#C6922C"/>
+    </linearGradient>
+    <filter id="gT" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- คำสั่งเดียวเข้าจากซ้าย -->
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="28" y="164" width="86" height="72" rx="12"/>
+    <rect x="46" y="186" width="50" height="8" rx="4"/>
+    <rect x="46" y="206" width="32" height="8" rx="4"/>
+  </g>
+  <path d="M124 200 H196" stroke="#5FA0F0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M186 191 l14 9 -14 9 z" fill="#5FA0F0"/>
+
+  <!-- ตัวควบคุมที่ติดตั้งในห้อง -->
+  <g filter="url(#gT)">
+    <rect x="208" y="140" width="152" height="120" rx="16" fill="url(#boxT)" stroke="#7FB3F5" stroke-width="2.8"/>
+    <rect x="230" y="166" width="108" height="34" rx="10" fill="url(#goldT)"/>
+    <g fill="#FFF6DF">
+      <rect x="252" y="177" width="8" height="8" rx="2"/><rect x="265" y="177" width="8" height="8" rx="2"/>
+      <rect x="252" y="188" width="8" height="8" rx="2"/><rect x="265" y="188" width="8" height="8" rx="2"/>
+    </g>
+    <rect x="286" y="179" width="38" height="7" rx="3.5" fill="#FFF6DF" opacity=".9"/>
+    <g fill="#7FB3F5">
+      <circle cx="238" cy="228" r="5"/><circle cx="256" cy="228" r="5" opacity=".6"/><circle cx="274" cy="228" r="5" opacity=".35"/>
+    </g>
+    <rect x="298" y="222" width="40" height="12" rx="6" fill="#7FB3F5" opacity=".35"/>
+  </g>
+
+  <!-- แตกออกเป็น 4 เส้นไปหาอุปกรณ์ พร้อมชื่อโปรโตคอล -->
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.6" stroke-linecap="round">
+    <path d="M368 176 C 412 176, 412 92, 452 92"/>
+    <path d="M368 190 C 412 190, 412 168, 452 168"/>
+    <path d="M368 212 C 412 212, 412 246, 452 246"/>
+    <path d="M368 226 C 412 226, 412 322, 452 322"/>
+  </g>
+
+  <g font-family="'JetBrains Mono','Consolas',monospace" font-size="15" fill="#7cb2ff">
+    <text x="392" y="82">PJLink</text>
+    <text x="392" y="158">VISCA</text>
+    <text x="392" y="286">DMX512</text>
+    <text x="384" y="356">RS232</text>
+  </g>
+
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- โปรเจกเตอร์ -->
+    <g><rect x="462" y="66" width="80" height="52" rx="9"/><circle cx="502" cy="92" r="13"/><circle cx="502" cy="92" r="5"/></g>
+    <!-- กล้อง -->
+    <g><rect x="462" y="142" width="80" height="52" rx="9"/><path d="M478 156 h32 v24 h-32 z"/><path d="M510 162 l18 -9 v30 l-18 -9 z"/></g>
+    <!-- ไฟ -->
+    <g><path d="M482 268 h40"/><path d="M492 268 v-10 a15 15 0 0 1 -10 -24 a25 25 0 0 1 50 0 a15 15 0 0 1 -10 24 v10"/></g>
+    <!-- ลำโพง -->
+    <g><rect x="466" y="296" width="72" height="76" rx="10"/><circle cx="502" cy="320" r="10"/><circle cx="502" cy="350" r="14"/></g>
+  </g>
+</svg>

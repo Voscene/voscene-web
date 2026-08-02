@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400"
+     role="img" aria-label="ขั้นที่ 1 — เปิดเบราว์เซอร์บนแท็บเล็ต มือถือ หรือคอมพิวเตอร์ที่มีอยู่แล้ว">
+  <!-- กติกาสีเดียวกับไดอะแกรม GETTING STARTED:
+       น้ำเงิน #5FA0F0 = เส้นหลัก · ทอง = ปุ่มบนจอควบคุม (ตัวเดียวกับในแอปจริง)
+       จงใจไม่ใส่ชื่อโดเมนบนแถบที่อยู่ — ของจริงเข้าผ่าน IP ของตัวควบคุมในวง LAN -->
+  <defs>
+    <linearGradient id="tabB1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#152C63"/>
+    </linearGradient>
+    <linearGradient id="goldB1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3B34A"/><stop offset="1" stop-color="#C6922C"/>
+    </linearGradient>
+    <filter id="gB1" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <path d="M96 344 H544" stroke="#1E3350" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- แท็บเล็ต: อุปกรณ์หลัก วางกลาง เปิดหน้าควบคุมค้างไว้ -->
+  <g filter="url(#gB1)">
+    <rect x="212" y="96" width="216" height="224" rx="18" fill="url(#tabB1)" stroke="#7FB3F5" stroke-width="2.6"/>
+    <!-- แถบเบราว์เซอร์ ไม่มีตัวหนังสือ -->
+    <rect x="232" y="118" width="176" height="26" rx="13" fill="#0E1E42" stroke="#5FA0F0" stroke-width="1.6"/>
+    <circle cx="248" cy="131" r="4" fill="#5FA0F0"/>
+    <rect x="262" y="127" width="86" height="8" rx="4" fill="#5FA0F0" opacity=".45"/>
+    <!-- ปุ่มเดียวบนหน้าจอ -->
+    <rect x="252" y="196" width="136" height="48" rx="14" fill="url(#goldB1)"/>
+    <g fill="#FFF6DF">
+      <rect x="282" y="212" width="10" height="10" rx="2.5"/><rect x="298" y="212" width="10" height="10" rx="2.5"/>
+      <rect x="282" y="227" width="10" height="10" rx="2.5"/><rect x="298" y="227" width="10" height="10" rx="2.5"/>
+    </g>
+    <rect x="322" y="215" width="48" height="8" rx="4" fill="#FFF6DF" opacity=".9"/>
+    <rect x="252" y="266" width="88" height="9" rx="4.5" fill="#7FB3F5" opacity=".5"/>
+    <rect x="252" y="286" width="136" height="9" rx="4.5" fill="#7FB3F5" opacity=".3"/>
+  </g>
+
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- มือถือ -->
+    <g>
+      <rect x="112" y="164" width="72" height="130" rx="12"/>
+      <path d="M138 180 h20"/>
+      <rect x="126" y="214" width="44" height="18" rx="9" stroke-width="2.2"/>
+    </g>
+    <!-- คอมพิวเตอร์ -->
+    <g>
+      <rect x="456" y="160" width="112" height="76" rx="9"/>
+      <path d="M496 236 h32"/><path d="M512 226 v10"/>
+      <path d="M446 254 h132" stroke-width="3"/>
+      <rect x="470" y="178" width="84" height="10" rx="5" stroke-width="2.2"/>
+      <rect x="470" y="198" width="52" height="10" rx="5" stroke-width="2.2"/>
+    </g>
+  </g>
+
+  <!-- ของที่มีอยู่แล้ว ใช้ได้ทันที: เครื่องหมายถูกที่อุปกรณ์ทุกตัว -->
+  <g fill="none" stroke="#5FA0F0" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M132 316 l12 12 22 -26"/>
+    <path d="M476 292 l12 12 22 -26"/>
+  </g>
+</svg>

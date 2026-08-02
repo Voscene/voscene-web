@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400"
+     role="img" aria-label="ขั้นที่ 3 — กดครั้งเดียว จอ เสียง แสง และกล้อง ปรับตามซีนที่ตั้งไว้พร้อมกัน">
+  <!-- อุปกรณ์ 4 กลุ่มที่ copy ระบุไว้: จอ เสียง แสง กล้อง — ทำงานพร้อมกันจากปุ่มเดียว
+       ไม่มีม่าน/blinds เพราะยังไม่มีไดรเวอร์ (SW ยืนยัน 2026-08-02) -->
+  <defs>
+    <linearGradient id="tabS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#152C63"/>
+    </linearGradient>
+    <linearGradient id="goldS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3B34A"/><stop offset="1" stop-color="#C6922C"/>
+    </linearGradient>
+    <filter id="gS" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <path d="M64 352 H576" stroke="#1E3350" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- อุปกรณ์ทั้งห้อง ติดพร้อมกัน -->
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- จอ -->
+    <g><rect x="72" y="60" width="150" height="94" rx="10"/><path d="M129 154 h36"/><path d="M147 142 v12"/></g>
+    <!-- ลำโพง -->
+    <g><rect x="262" y="52" width="84" height="112" rx="10"/><circle cx="304" cy="86" r="13"/><circle cx="304" cy="86" r="5"/><circle cx="304" cy="130" r="19"/><circle cx="304" cy="130" r="7"/></g>
+    <!-- ไฟ -->
+    <g><path d="M406 130 h60"/><path d="M419 130 v-11 a17 17 0 0 1 -11 -26 a28 28 0 0 1 56 0 a17 17 0 0 1 -11 26 v11"/></g>
+    <!-- กล้อง -->
+    <g><rect x="500" y="66" width="84" height="52" rx="9"/><path d="M517 80 h33 v24 h-33 z"/><path d="M550 86 l19 -9 v30 l-19 -9 z"/></g>
+  </g>
+
+  <!-- ทุกตัวติดพร้อมกัน: ขีดรัศมีสั้น ๆ รอบอุปกรณ์ -->
+  <g stroke="#7cb2ff" stroke-width="2.6" stroke-linecap="round" opacity=".85">
+    <path d="M236 74 h16"/><path d="M236 96 h10"/>
+    <path d="M360 70 h16"/><path d="M360 92 h10"/>
+    <path d="M436 62 v-16"/><path d="M470 74 l12 -11"/><path d="M402 74 l-12 -11"/>
+    <path d="M598 80 h16"/><path d="M598 102 h10"/>
+  </g>
+
+  <!-- เส้นเชื่อมจากปุ่มเดียวขึ้นไปหาอุปกรณ์ทุกตัว -->
+  <g fill="none" stroke="#5FA0F0" stroke-width="2.2" stroke-linecap="round" opacity=".55">
+    <path d="M320 236 C 200 236, 150 200, 147 168"/>
+    <path d="M320 236 C 306 220, 304 200, 304 178"/>
+    <path d="M320 236 C 400 236, 430 190, 436 146"/>
+    <path d="M320 236 C 470 236, 520 180, 542 132"/>
+  </g>
+
+  <!-- ปุ่มเดียว -->
+  <g filter="url(#gS)">
+    <rect x="238" y="242" width="164" height="112" rx="16" fill="url(#tabS)" stroke="#7FB3F5" stroke-width="2.8"/>
+    <rect x="262" y="278" width="116" height="42" rx="13" fill="url(#goldS)"/>
+    <g fill="#FFF6DF">
+      <rect x="286" y="292" width="9" height="9" rx="2"/><rect x="300" y="292" width="9" height="9" rx="2"/>
+      <rect x="286" y="305" width="9" height="9" rx="2"/><rect x="300" y="305" width="9" height="9" rx="2"/>
+    </g>
+    <rect x="322" y="294" width="44" height="7" rx="3.5" fill="#FFF6DF" opacity=".9"/>
+    <rect x="262" y="258" width="60" height="8" rx="4" fill="#7FB3F5" opacity=".55"/>
+  </g>
+</svg>

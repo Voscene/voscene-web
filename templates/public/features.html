@@ -35,7 +35,7 @@
             <div class="text-center max-w-3xl mx-auto mb-10">
                 <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-semibold tracking-wider mb-3">TWO MODES</div>
                 <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">ห้องเดียวกัน ใช้งานได้ <span class="text-electric">2 โหมด</span></h2>
-                <p class="text-slate-600 font-th">คนใช้ห้องได้หน้าปุ่มใหญ่ที่กดเองได้ทันที ช่างได้หน้าควบคุมครบทุกโมดูล — สลับกันได้จากปุ่มบนหน้าจอ</p>
+                <p class="text-slate-600 font-th">คนใช้ห้องได้หน้าปุ่มใหญ่ที่กดเองได้ทันที ช่างได้หน้าควบคุมครบทุกโมดูล — ห้องเดียวกัน จอเดียวกัน</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-6 items-start">
@@ -44,9 +44,13 @@
                         <h3 class="font-display font-semibold text-xl text-navy">โหมดผู้ใช้</h3>
                         <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-mono font-semibold tracking-wider">USER MODE</span>
                     </div>
-                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-4">
-                        <img src="/static/images/feature-simple-mode.png" alt="โหมดผู้ใช้ — ปุ่มใหญ่ เปิด/ปิดจอ เลือกแหล่งภาพ ปรับเสียง พร้อมช่องสั่งงาน AI และปุ่มสลับไปโหมดช่าง" class="w-full h-auto" loading="lazy">
+                    {# Tap-to-swap: the welcome screen IS one button, so the card re-enacts the
+                       real flow — tap, get the control page. Both frames share 2360×1640. #}
+                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-2 cursor-pointer" onclick="for(const i of this.children) i.classList.toggle('hidden')">
+                        <img src="/static/images/feature-user-welcome.jpg" alt="หน้าต้อนรับโหมดผู้ใช้ — นาฬิกา สถานะห้อง และปุ่มเดียว แตะเพื่อประชุม" class="w-full h-auto" loading="lazy">
+                        <img src="/static/images/feature-user-control.jpg" alt="หน้าควบคุมโหมดผู้ใช้ — ซีนการใช้ห้อง เสียง แหล่งสัญญาณภาพ จอแสดงผล และผู้ช่วยในห้อง" class="w-full h-auto hidden" loading="lazy">
                     </div>
+                    <p class="text-slate-400 text-xs font-th text-center mb-4">แตะที่รูป — เหมือนแตะจอจริงหน้าห้อง: ปุ่มเดียว → หน้าควบคุม</p>
                     <ul class="space-y-2 text-slate-700 font-th text-sm">
                         <li class="flex gap-2"><span class="text-electric">✓</span> ปุ่มใหญ่ กดเองได้ทันที — เปิด/ปิดจอ เลือกแหล่งภาพ ปรับเสียง</li>
                         <li class="flex gap-2"><span class="text-electric">✓</span> เห็นเฉพาะสิ่งที่ต้องใช้ ไม่ต้องอบรมก่อนใช้ห้อง</li>
@@ -59,9 +63,15 @@
                         <h3 class="font-display font-semibold text-xl text-navy">โหมดช่าง</h3>
                         <span class="px-2 py-0.5 rounded bg-electric/10 text-electric text-[10px] font-mono font-semibold tracking-wider">ENGINEER MODE</span>
                     </div>
-                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-4">
-                        <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Switcher-light.jpg" alt="โหมดช่าง — ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ พร้อมเมนูครบทุกโมดูล" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
+                    {# Same tap-to-swap. Frames differ in height (1700×827 vs 1700×980), so the
+                       container is fixed-aspect + object-contain on the console's own dark field
+                       — no layout jump on tap. Toggle replaces the theme-swap pair: both frames
+                       here are the dark console, which is what the site (dark-locked) shows. #}
+                    <div class="rounded-xl overflow-hidden border border-slate-200 mb-2 cursor-pointer bg-[#0d1526] aspect-[1700/980]" onclick="for(const i of this.children) i.classList.toggle('hidden')">
+                        <img src="/static/images/feature-scene.jpg" alt="โหมดช่าง — หน้าซีน สั่งจอ เสียง แสง กล้อง ทั้งห้องเป็นชุดเดียว" class="w-full h-full object-contain" loading="lazy">
+                        <img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="โหมดช่าง — ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ" class="w-full h-full object-contain hidden" loading="lazy">
                     </div>
+                    <p class="text-slate-400 text-xs font-th text-center mb-4">แตะที่รูป — หน้าซีน → ผังห้องแบบกราฟิก</p>
                     <ul class="space-y-2 text-slate-700 font-th text-sm">
                         <li class="flex gap-2"><span class="text-electric">✓</span> ครบทุกโมดูลควบคุม — ภาพ เสียง แสง กล้อง ซีน</li>
                         <li class="flex gap-2"><span class="text-electric">✓</span> ผังห้องแบบกราฟิก ลากแหล่งสัญญาณไปวางบนจอ</li>

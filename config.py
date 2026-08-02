@@ -4,7 +4,11 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     APP_NAME: str = "Voscene"
-    APP_URL: str = "http://localhost:8000"
+    # Absolute origin used to build og:url / og:image. The Render env var still
+    # wins when set; the default is the live domain rather than localhost so a
+    # forgotten dashboard entry cannot point every share preview at the
+    # visitor's own machine. Override in .env for local work if needed.
+    APP_URL: str = "https://www.voscene.com"
     SECRET_KEY: str = "change-this-to-random-string-min-32-chars"
     DEBUG: bool = True
 

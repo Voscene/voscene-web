@@ -6,9 +6,12 @@
 <section class="py-8 md:py-10 relative overflow-hidden bg-white lg:min-h-[calc(100vh-60px)] lg:flex lg:flex-col lg:justify-center">
     <div class="absolute top-0 -right-40 w-96 h-96 bg-electric/10 rounded-full blur-3xl"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full">
+        {# The modes ARE the page's opening category now (hero cross-fade cut), so this is the h1.
+           "ฟีเจอร์ครบครัน" moved down to head the module list where its content actually starts. #}
         <div class="text-center max-w-3xl mx-auto mb-8 md:mb-10">
-            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-navy">ฟีเจอร์<span class="text-electric">ครบครัน</span></h1>
-            <p class="text-slate-600 text-lg font-th">18 control modules ครอบคลุมการควบคุมห้องประชุมที่ต้องการ</p>
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">TWO MODES</div>
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-navy font-th">ห้องเดียวกัน ใช้งานได้ <span class="text-electric">2 โหมด</span></h1>
+            <p class="text-slate-600 text-lg font-th">คนใช้ห้องได้หน้าปุ่มใหญ่ที่กดเองได้ทันที ช่างได้หน้าควบคุมครบทุกโมดูล — ห้องเดียวกัน จอเดียวกัน</p>
         </div>
 
         <!-- TWO MODES — the same room drives two screens. Explains up front why the
@@ -16,12 +19,7 @@
              engineer console. Mode names match the actual in-app buttons
              ("โหมดช่าง" / "ล็อก" are visible in the user-mode screenshot). -->
         <div class="max-w-6xl mx-auto mb-24 md:mb-32">
-            <div class="text-center max-w-3xl mx-auto mb-10">
-                <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-semibold tracking-wider mb-3">TWO MODES</div>
-                <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">ห้องเดียวกัน ใช้งานได้ <span class="text-electric">2 โหมด</span></h2>
-                <p class="text-slate-600 font-th">คนใช้ห้องได้หน้าปุ่มใหญ่ที่กดเองได้ทันที ช่างได้หน้าควบคุมครบทุกโมดูล — ห้องเดียวกัน จอเดียวกัน</p>
-            </div>
-
+            {# Header lives in the hero h1 above — this block goes straight to the cards #}
             <div class="grid md:grid-cols-2 gap-6 items-start">
                 <div class="card rounded-2xl p-6">
                     <div class="flex items-center gap-2.5 mb-4">
@@ -62,7 +60,13 @@
                 </div>
             </div>
 
-            <p class="text-center text-slate-500 text-sm font-th mt-6">ฟีเจอร์ด้านล่างนี้คือทั้งหมดที่อยู่ในโหมดช่าง — ส่วนหน้าผู้ใช้ ช่างเป็นคนเลือกว่าจะให้เห็นปุ่มไหนบ้าง</p>
+        </div>
+
+        {# "ฟีเจอร์ครบครัน" now heads the module list itself — moved down from the page top #}
+        <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">ALL MODULES</div>
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-navy">ฟีเจอร์<span class="text-electric">ครบครัน</span></h2>
+            <p class="text-slate-600 text-lg font-th">18 control modules ครอบคลุมการควบคุมห้องประชุมที่ต้องการ — ทั้งหมดนี้อยู่ในโหมดช่าง ส่วนหน้าผู้ใช้ ช่างเป็นคนเลือกว่าจะให้เห็นปุ่มไหนบ้าง</p>
         </div>
 
         <div class="space-y-16">

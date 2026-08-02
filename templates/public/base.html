@@ -66,16 +66,11 @@
       p.font-th, li.font-th, .font-th p, .font-th li { line-height: 1.85; }
       .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
       /* Screenshot dark↔light crossfade. Base img = light (sets height); overlay = dark on top.
-         Desktop: hover previews the light theme. Every device: tap/click toggles (.swapped, set by
-         the script before </body>) — the old hover-only rule left phones stuck on the dark frame.
-         The :hover rule sits behind (hover:hover) so touch tap-sticky-hover can't fight the toggle. */
+         Tap/click toggles (.swapped, set by the script before </body>) on every device — hover was
+         removed on purpose: hover + click fighting over the same fade read as flicker (owner). */
       .theme-swap { position: relative; cursor: pointer; }
       .theme-swap > img { display: block; width: 100%; height: auto; }
       .theme-swap > img.swap-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity .45s ease; }
-      @media (hover: hover) {
-        .theme-swap:hover > img.swap-dark { opacity: 0; }
-        .theme-swap.swapped:hover > img.swap-dark { opacity: 1; } /* hover always previews the OTHER theme */
-      }
       .theme-swap.swapped > img.swap-dark { opacity: 0; }
       @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
       /* Cross-fading 2-image showcase (pure CSS): slide 2 sits underneath, slide 1 fades in/out on top */

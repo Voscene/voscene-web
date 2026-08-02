@@ -11,22 +11,6 @@
             <p class="text-slate-600 text-lg font-th">18 control modules ครอบคลุมการควบคุมห้องประชุมที่ต้องการ</p>
         </div>
 
-        <!-- Video Demo — muted autoplay loop; shows the poster until static/videos/voscene-demo.mp4 is added -->
-        <div class="max-w-4xl mx-auto mb-24 md:mb-32">
-            {# Two real screenshots cross-fading (pure CSS). Different aspect ratios, so the frame is
-               fixed and both are object-contain — nothing gets cropped and the layout never shifts. #}
-            <div class="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl bg-[#0d1526] aspect-[1700/1050]">
-                <div class="absolute -inset-1 bg-gradient-to-tr from-electric/20 via-transparent to-signal/20 blur-2xl -z-10"></div>
-                <div class="absolute inset-0 bg-[#0d1526]">
-                    <img src="/static/images/feature-pa-graphic-site.jpg" alt="Graphic Paging — เลือกโซนประกาศจากผังอาคารจริง" class="w-full h-full object-contain" loading="eager">
-                </div>
-                <div class="demo-slide-top absolute inset-0 bg-[#0d1526]">
-                    <img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="Graphic Video Switcher — ลากแหล่งสัญญาณไปวางบนผังห้อง" class="w-full h-full object-contain" loading="eager">
-                </div>
-            </div>
-            <p class="text-center text-slate-500 text-sm font-th mt-4">ตัวอย่างการควบคุมแบบกราฟิก — ลากแหล่งสัญญาณไปวางบนผังห้อง และเลือกโซนประกาศจากผังอาคารจริง</p>
-        </div>
-
         <!-- TWO MODES — the same room drives two screens. Explains up front why the
              feature shots below alternate between the light user page and the dark
              engineer console. Mode names match the actual in-app buttons
@@ -147,7 +131,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> Status Monitor: Lamp Hours / Error / Connection</li>
                     </ul>
                 </div>
-                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                {# max-w-sm: this is a tall compact panel — full column width dwarfed the copy (owner) #}
+                <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg max-w-sm w-full mx-auto">
                     <div class="theme-swap"><img src="/static/images/feature-projector-light.jpg" alt="Projector Control — เปิด/ปิด + สถานะผ่าน PJLink" class="w-full h-auto" loading="lazy"><img src="/static/images/feature-projector.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
                 </div>
             </div>
@@ -163,7 +148,8 @@
                         <li class="flex gap-2"><span class="text-electric">✓</span> เลือก Input Source</li>
                     </ul>
                 </div>
-                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
+                {# max-w-sm: same tall compact panel as FEATURE 04 #}
+                <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg max-w-sm w-full mx-auto">
                     <div class="theme-swap"><img src="/static/images/feature-smart-tv-light.jpg" alt="Smart TV Control — WebOS / Tizen / Android TV" class="w-full h-auto" loading="lazy"><img src="/static/images/feature-smart-tv.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
                 </div>
             </div>

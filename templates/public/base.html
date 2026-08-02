@@ -65,12 +65,18 @@
       /* Thai needs more leading than Latin — upper/lower vowel marks collide at default line-height */
       p.font-th, li.font-th, .font-th p, .font-th li { line-height: 1.85; }
       .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-      /* Hover dark→light screenshot crossfade (pure CSS). Base img = light (sets height); overlay = dark on top, fades out on hover. */
-      .theme-swap { position: relative; }
+      /* Screenshot dark↔light crossfade. Base img = light (sets height); overlay = dark on top.
+         Desktop: hover previews the light theme. Every device: tap/click toggles (.swapped, set by
+         the script before </body>) — the old hover-only rule left phones stuck on the dark frame.
+         The :hover rule sits behind (hover:hover) so touch tap-sticky-hover can't fight the toggle. */
+      .theme-swap { position: relative; cursor: pointer; }
       .theme-swap > img { display: block; width: 100%; height: auto; }
       .theme-swap > img.swap-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity .45s ease; }
-      .theme-swap:hover > img.swap-dark { opacity: 0; }
-      @media (hover: none) { .theme-swap > img.swap-dark { opacity: 1 !important; } }
+      @media (hover: hover) {
+        .theme-swap:hover > img.swap-dark { opacity: 0; }
+        .theme-swap.swapped:hover > img.swap-dark { opacity: 1; } /* hover always previews the OTHER theme */
+      }
+      .theme-swap.swapped > img.swap-dark { opacity: 0; }
       @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
       /* Cross-fading 2-image showcase (pure CSS): slide 2 sits underneath, slide 1 fades in/out on top */
       @keyframes demo-cycle { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
@@ -240,6 +246,15 @@
     </div>
 </footer>
 
+<script>
+/* Dark↔light screenshot pairs: tap/click flips any of them (phones have no hover — see .theme-swap
+   CSS), and the initial state alternates down the page (odd starts dark, even starts light) so a
+   phone reader scrolling past sees both themes without ever tapping. */
+document.querySelectorAll('.theme-swap').forEach(function (el, i) {
+    if (i % 2 === 1) el.classList.add('swapped');
+    el.addEventListener('click', function () { el.classList.toggle('swapped'); });
+});
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

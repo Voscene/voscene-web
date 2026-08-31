@@ -140,6 +140,7 @@ form.addEventListener('submit', async (e) => {
         const j = await r.json();
 
         if (j.ok) {
+            if (window.trackLead) window.trackLead('contact-page');
             const inScope = j.in_scope;
             const badge = inScope
                 ? '<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">✓ อยู่ในขอบเขตให้บริการ</span>'

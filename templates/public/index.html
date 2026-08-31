@@ -723,6 +723,7 @@
                     const cr = await fetch('/api/lead', { method: 'POST', body: cd });
                     const cj = await cr.json();
                     if (cj.ok) {
+                        if (window.trackLead) window.trackLead('homepage-ai-consult');
                         contactForm.classList.add('hidden');
                         contactSuccess.classList.remove('hidden');
                     } else {

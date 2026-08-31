@@ -27,6 +27,40 @@
     <meta name="twitter:title" content="{{ self.title() }}">
     <meta name="twitter:description" content="{{ self.description() }}">
     <meta name="twitter:image" content="{{ settings.APP_URL }}/static/images/og-image.jpg">
+    {# === Analytics / ad tracking — rendered only when the IDs are configured === #}
+    {% if settings.GA4_ID %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.GA4_ID }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ settings.GA4_ID }}');
+    </script>
+    {% endif %}
+    {% if settings.META_PIXEL_ID %}
+    <script>{% raw %}
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    {% endraw %}
+      fbq('init', '{{ settings.META_PIXEL_ID }}');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" alt=""
+      src="https://www.facebook.com/tr?id={{ settings.META_PIXEL_ID }}&ev=PageView&noscript=1"/></noscript>
+    {% endif %}
+    <script>
+      // One call site for the conversion both forms share. No-ops when no tag is
+      // installed, so the forms never depend on tracking being configured.
+      window.trackLead = function (source) {
+        try {
+          if (typeof gtag === 'function') gtag('event', 'generate_lead', { method: source });
+          if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: source });
+        } catch (e) { /* tracking must never break the form */ }
+      };
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">

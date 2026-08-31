@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
+    # Analytics / ad tracking. Empty = nothing is injected at all (no requests,
+    # no cookies). Paste the IDs into the Render dashboard to switch them on
+    # without a code change or redeploy.
+    GA4_ID: str = ""            # e.g. G-XXXXXXXXXX
+    META_PIXEL_ID: str = ""     # e.g. 1234567890123456
+
     NOTIFY_EMAIL: str = ""
     NOTIFY_LINE_TOKEN: str = ""
 

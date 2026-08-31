@@ -63,7 +63,7 @@
             <!-- Form -->
             <div class="md:col-span-2">
                 <form id="lead-form" class="card rounded-2xl p-6 md:p-8 space-y-5">
-                    <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                    {# ช่องล่อบอท — คอมเมนต์ Jinja เพราะคำอธิบายกับดักต้องไม่ถูกส่งไปให้บอทอ่าน #}
                     <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
                         <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
                     </div>
@@ -125,8 +125,7 @@
 </section>
 
 <script>
-// ที่ปรึกษา AI เปิดอยู่หรือไม่ — มาจากสวิตช์ AI_CONSULT_ENABLED ฝั่งเซิร์ฟเวอร์
-// ตอนปิด: ฟอร์มเดิมทุกอย่าง เพียงแต่เลิกโชว์ผลวิเคราะห์ เหลือคำขอบคุณธรรมดา
+{# ตอนปิด: ฟอร์มเดิมทุกอย่าง เพียงแต่เลิกโชว์ผลวิเคราะห์ เหลือคำขอบคุณธรรมดา #}
 const AI_CONSULT = {% if settings.AI_CONSULT_ENABLED %}true{% else %}false{% endif %};
 const SUBMIT_LABEL = AI_CONSULT ? 'ส่งให้ AI วิเคราะห์ความต้องการ' : 'ส่งให้ทีมงานประเมิน';
 

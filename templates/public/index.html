@@ -548,10 +548,10 @@
     </div>
 </section>
 
-<!-- ส่วนปรึกษาฟรี — สลับได้ด้วยสวิตช์ AI_CONSULT_ENABLED (ตั้งใน Render ไม่ต้องแก้โค้ด)
-     เปิด = ฟอร์ม 2 ขั้น ให้ AI วิเคราะห์ทันที · ปิด = ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงาน -->
+{# ส่วนปรึกษาฟรี — สลับด้วย AI_CONSULT_ENABLED
+   เปิด = ฟอร์ม 2 ขั้น ให้ AI วิเคราะห์ทันที · ปิด = ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงาน #}
 {% if settings.AI_CONSULT_ENABLED %}
-<!-- AI Lead Analysis — 2 Step Flow -->
+{# AI Lead Analysis — 2 Step Flow #}
 <section id="ai-consult" class="py-20 md:py-28 bg-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
@@ -566,7 +566,7 @@
 
             <!-- STEP 1: Analyze Form -->
             <form id="analyze-form" class="relative space-y-5">
-                <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                {# ช่องล่อบอท — คอมเมนต์ Jinja เพราะคำอธิบายกับดักต้องไม่ถูกส่งไปให้บอทอ่าน #}
                 <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
                     <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
                 </div>
@@ -679,7 +679,7 @@
                     </div>
 
                     <form id="contact-form" class="grid md:grid-cols-2 gap-4 mt-4">
-                        <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                        {# ช่องล่อบอท — คอมเมนต์ Jinja เพราะคำอธิบายกับดักต้องไม่ถูกส่งไปให้บอทอ่าน #}
                         <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
                             <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
                         </div>
@@ -765,7 +765,7 @@
 </script>
 
 {% else %}
-<!-- ที่ปรึกษา AI ปิดอยู่ → ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงานโดยตรง ไม่เรียก AI -->
+{# ที่ปรึกษา AI ปิดอยู่ → ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงานโดยตรง ไม่เรียก AI #}
 <section id="ai-consult" class="py-20 md:py-28 bg-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
@@ -779,7 +779,7 @@
             <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-signal/15 rounded-full blur-3xl"></div>
 
             <form id="consult-form" class="relative space-y-5">
-                <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                {# ช่องล่อบอท — คอมเมนต์ Jinja เพราะคำอธิบายกับดักต้องไม่ถูกส่งไปให้บอทอ่าน #}
                 <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
                     <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
                 </div>

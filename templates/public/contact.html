@@ -63,6 +63,10 @@
             <!-- Form -->
             <div class="md:col-span-2">
                 <form id="lead-form" class="card rounded-2xl p-6 md:p-8 space-y-5">
+                    <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                    <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+                        <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
+                    </div>
                     <div class="grid md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-medium mb-2 text-navy font-th">ชื่อ-นามสกุล <span class="text-red-500">*</span></label>

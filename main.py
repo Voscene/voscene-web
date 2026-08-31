@@ -25,8 +25,13 @@ from auth import (
     authenticate_user, create_session_token, get_current_user, require_admin,
     pwd_context, COOKIE_NAME, TOKEN_EXPIRE_HOURS,
 )
-from ai_service import analyze_requirement
+from ai_service import analyze_requirement, _unavailable as ai_unavailable
 from seed import run_seed
+from security import (
+    SecurityHeadersMiddleware, client_ip, rate_limited, honeypot_tripped,
+    contact_format_error, login_lock_remaining, record_login_failure,
+    clear_login_failures, ANALYZE_RULES, LEAD_RULES, LOGIN_RULES,
+)
 
 
 @asynccontextmanager
@@ -37,6 +42,7 @@ async def lifespan(app: FastAPI):
 
 settings = get_settings()
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
+app.add_middleware(SecurityHeadersMiddleware)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -191,18 +197,34 @@ async def sitemap_xml(db: Session = Depends(get_db)):
 
 @app.post("/api/analyze", response_class=JSONResponse)
 async def analyze_only(
+    request: Request,
     requirement: str = Form(...),
     room_size: str = Form(""),
     budget: str = Form(""),
+    fax_number: str = Form(""),  # honeypot — คนจริงมองไม่เห็นช่องนี้
     db: Session = Depends(get_db),
 ):
     """วิเคราะห์อย่างเดียว ยังไม่บันทึก Lead — บันทึกเป็น anonymous lead เพื่อเก็บสถิติ"""
     if not requirement.strip():
         return JSONResponse({"ok": False, "error": "กรุณากรอกความต้องการ"}, status_code=400)
 
-    analysis = await analyze_requirement(
-        requirement=requirement, room_size=room_size, budget=budget, company="",
-    )
+    ip = client_ip(request)
+    if rate_limited("analyze", ip, ANALYZE_RULES):
+        return JSONResponse({
+            "ok": False,
+            "error": "คุณส่งคำขอถี่เกินไป กรุณารอสักครู่แล้วลองอีกครั้ง "
+                     "หรือติดต่อทีมงานโดยตรงจากเบอร์โทรที่หน้าติดต่อเรา",
+        }, status_code=429)
+
+    # บอทกรอกช่องล่อ → ไม่เรียก AI (ไม่เผาโควตา) แต่ยังเก็บลง DB เป็นสถานะ spam
+    # เผื่อเป็นคนจริงที่ระบบเดาผิด ข้อมูลจะได้ไม่หายไปเฉย ๆ แอดมินยังตามเจอ
+    if honeypot_tripped(fax_number):
+        analysis, lead_status = ai_unavailable("honeypot", detail=f"ip={ip}"), "spam"
+    else:
+        analysis = await analyze_requirement(
+            requirement=requirement, room_size=room_size, budget=budget, company="",
+        )
+        lead_status = "anonymous"
 
     # บันทึก anonymous lead (ยังไม่มีข้อมูลติดต่อ) เพื่อให้ admin เห็น
     lead = Lead(
@@ -217,7 +239,7 @@ async def analyze_only(
         ai_in_scope=bool(analysis.get("in_scope", False)),
         ai_confidence=float(analysis.get("confidence", 0.0)),
         ai_recommended_package=str(analysis.get("recommended_package", "")),
-        status="anonymous",
+        status=lead_status,
     )
     db.add(lead)
     db.commit()
@@ -237,6 +259,7 @@ async def analyze_only(
 
 @app.post("/api/lead", response_class=JSONResponse)
 async def submit_lead(
+    request: Request,
     name: str = Form(...),
     company: str = Form(""),
     phone: str = Form(""),
@@ -245,11 +268,26 @@ async def submit_lead(
     budget: str = Form(""),
     requirement: str = Form(...),
     lead_id: str = Form(""),
+    fax_number: str = Form(""),  # honeypot — คนจริงมองไม่เห็นช่องนี้
     db: Session = Depends(get_db),
 ):
     """บันทึก/อัปเดต Lead เมื่อมีข้อมูลติดต่อแล้ว — รองรับทั้ง flow ใหม่ (อัปเดต anonymous lead) และ flow เดิม (สร้างใหม่)"""
     if not name.strip() or not requirement.strip():
         return JSONResponse({"ok": False, "error": "กรุณากรอกชื่อและความต้องการ"}, status_code=400)
+
+    ip = client_ip(request)
+    if rate_limited("lead", ip, LEAD_RULES):
+        return JSONResponse({
+            "ok": False,
+            "error": "คุณส่งข้อมูลถี่เกินไป กรุณารอสักครู่แล้วลองอีกครั้ง "
+                     "หรือติดต่อทีมงานโดยตรงจากเบอร์โทรที่หน้าติดต่อเรา",
+        }, status_code=429)
+
+    format_error = contact_format_error(phone, email)
+    if format_error:
+        return JSONResponse({"ok": False, "error": format_error}, status_code=400)
+
+    is_spam = honeypot_tripped(fax_number)
 
     # ถ้ามี lead_id แปลว่า analyze มาแล้ว ให้ update lead เดิม
     lead = None
@@ -264,7 +302,7 @@ async def submit_lead(
         lead.company = company.strip()
         lead.phone = phone.strip()
         lead.email = email.strip()
-        lead.status = "new_in_scope" if lead.ai_in_scope else "new_out_scope"
+        lead.status = "spam" if is_spam else ("new_in_scope" if lead.ai_in_scope else "new_out_scope")
         db.commit()
         return {
             "ok": True,
@@ -276,9 +314,12 @@ async def submit_lead(
         }
 
     # Flow เดิม: ไม่มี lead_id → วิเคราะห์ + สร้าง lead ใหม่
-    analysis = await analyze_requirement(
-        requirement=requirement, room_size=room_size, budget=budget, company=company,
-    )
+    if is_spam:
+        analysis = ai_unavailable("honeypot", detail=f"ip={ip}")
+    else:
+        analysis = await analyze_requirement(
+            requirement=requirement, room_size=room_size, budget=budget, company=company,
+        )
 
     lead = Lead(
         name=name.strip(),
@@ -292,7 +333,7 @@ async def submit_lead(
         ai_in_scope=bool(analysis.get("in_scope", False)),
         ai_confidence=float(analysis.get("confidence", 0.0)),
         ai_recommended_package=str(analysis.get("recommended_package", "")),
-        status="new_in_scope" if analysis.get("in_scope") else "new_out_scope",
+        status="spam" if is_spam else ("new_in_scope" if analysis.get("in_scope") else "new_out_scope"),
     )
     db.add(lead)
     db.commit()
@@ -310,21 +351,36 @@ async def submit_lead(
 # ============ ADMIN AUTH ============
 
 @app.get("/admin/login", response_class=HTMLResponse)
-async def login_page(request: Request, error: Optional[str] = None):
+async def login_page(request: Request, error: Optional[str] = None, wait: int = 0):
     return templates.TemplateResponse("admin/login.html", {
-        "request": request, "error": error, "settings": settings,
+        "request": request, "error": error, "wait": wait, "settings": settings,
     })
 
 
 @app.post("/admin/login")
 async def login_submit(
+    request: Request,
     username: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    # ล็อกตาม IP หลังเดารหัสผิดติดกันหลายครั้ง — username เป็น "admin" ตายตัว
+    # ช่องนี้จึงเป็นทางเดียวที่คนนอกใช้ยิงเดารหัสได้
+    ip = client_ip(request)
+    locked_for = login_lock_remaining(ip)
+    if locked_for:
+        return RedirectResponse(
+            f"/admin/login?error=locked&wait={(locked_for + 59) // 60}", status_code=303
+        )
+    if rate_limited("login", ip, LOGIN_RULES):
+        return RedirectResponse("/admin/login?error=too_many", status_code=303)
+
     user = authenticate_user(db, username, password)
     if not user:
+        record_login_failure(ip)
         return RedirectResponse("/admin/login?error=invalid", status_code=303)
+
+    clear_login_failures(ip)
     token = create_session_token(user.id)
     resp = RedirectResponse("/admin", status_code=303)
     resp.set_cookie(
@@ -332,6 +388,7 @@ async def login_submit(
         max_age=TOKEN_EXPIRE_HOURS * 3600,
         httponly=True,
         samesite="lax",
+        secure=not settings.DEBUG,  # dev รันบน http ล้วน จึงปิดเฉพาะตอน DEBUG
     )
     return resp
 

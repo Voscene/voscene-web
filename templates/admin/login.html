@@ -20,7 +20,10 @@
 
             {% if error %}
             <div class="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-                {% if error == 'invalid' %}ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง{% else %}เกิดข้อผิดพลาด{% endif %}
+                {% if error == 'invalid' %}ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
+                {% elif error == 'locked' %}ใส่รหัสผิดหลายครั้งเกินไป — ระบบล็อกการเข้าสู่ระบบจาก IP นี้ไว้ชั่วคราว กรุณารออีกประมาณ {{ wait or 15 }} นาทีแล้วลองใหม่
+                {% elif error == 'too_many' %}มีการพยายามเข้าสู่ระบบถี่เกินไป กรุณารอสักครู่แล้วลองใหม่
+                {% else %}เกิดข้อผิดพลาด{% endif %}
             </div>
             {% endif %}
 

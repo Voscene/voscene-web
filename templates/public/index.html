@@ -563,6 +563,10 @@
 
             <!-- STEP 1: Analyze Form -->
             <form id="analyze-form" class="relative space-y-5">
+                <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+                    <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
+                </div>
                 <div>
                     <label class="block text-sm font-medium mb-2 text-sky font-th">เล่าความต้องการของคุณ <span class="text-electric-300">*</span></label>
                     <textarea name="requirement" required rows="5" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-4 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition text-base" placeholder="เช่น มีห้องประชุมขนาดกลาง 20 คน ใช้โปรเจคเตอร์ 1 เครื่อง + Smart TV 1 เครื่อง ต้องการระบบควบคุมไฟ DMX และเสียงผ่านหน้าจอเดียว อยากสั่งงานด้วยภาษาไทยได้ งบประมาณ ~150,000 บาท..."></textarea>
@@ -672,6 +676,10 @@
                     </div>
 
                     <form id="contact-form" class="grid md:grid-cols-2 gap-4 mt-4">
+                        <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                        <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+                            <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
+                        </div>
                         <input type="hidden" name="lead_id" value="${j.lead_id || ''}">
                         <input type="hidden" name="requirement" value="">
                         <div>

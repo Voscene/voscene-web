@@ -548,6 +548,9 @@
     </div>
 </section>
 
+<!-- ส่วนปรึกษาฟรี — สลับได้ด้วยสวิตช์ AI_CONSULT_ENABLED (ตั้งใน Render ไม่ต้องแก้โค้ด)
+     เปิด = ฟอร์ม 2 ขั้น ให้ AI วิเคราะห์ทันที · ปิด = ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงาน -->
+{% if settings.AI_CONSULT_ENABLED %}
 <!-- AI Lead Analysis — 2 Step Flow -->
 <section id="ai-consult" class="py-20 md:py-28 bg-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -760,6 +763,136 @@
     });
 })();
 </script>
+
+{% else %}
+<!-- ที่ปรึกษา AI ปิดอยู่ → ฟอร์มฝากความต้องการธรรมดา ส่งถึงทีมงานโดยตรง ไม่เรียก AI -->
+<section id="ai-consult" class="py-20 md:py-28 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3 inline-flex items-center gap-1.5"><span class="vico w-3.5 h-3.5" style="-webkit-mask-image:url('/static/images/voscene-icons/chat.svg');mask-image:url('/static/images/voscene-icons/chat.svg')"></span>FREE CONSULTATION</div>
+            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ปรึกษาฟรี — ทีมงานช่วยประเมินให้</h2>
+            <p class="text-slate-600 text-lg font-th">เล่าความต้องการของคุณมาเลย ทีมงานจะประเมินและแนะนำ Package ที่เหมาะสมให้</p>
+        </div>
+
+        <div class="bg-navy rounded-3xl p-6 md:p-10 shadow-2xl shadow-navy/20 relative overflow-hidden">
+            <div class="absolute top-0 -right-20 w-64 h-64 bg-electric/15 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-signal/15 rounded-full blur-3xl"></div>
+
+            <form id="consult-form" class="relative space-y-5">
+                <!-- ช่องล่อบอท: ซ่อนนอกจอ คนจริงมองไม่เห็นและ tab ไปไม่ถึง ถ้ามีค่าส่งมา = บอท -->
+                <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+                    <label>Fax<input type="text" name="fax_number" tabindex="-1" autocomplete="off" value=""></label>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-sky font-th">เล่าความต้องการของคุณ <span class="text-electric-300">*</span></label>
+                    <textarea name="requirement" required rows="5" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-4 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition text-base" placeholder="เช่น มีห้องประชุมขนาดกลาง 20 คน ใช้โปรเจคเตอร์ 1 เครื่อง + Smart TV 1 เครื่อง ต้องการระบบควบคุมไฟ DMX และเสียงผ่านหน้าจอเดียว งบประมาณ ~150,000 บาท..."></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">ชื่อ-นามสกุล <span class="text-electric-300">*</span></label>
+                        <input type="text" name="name" required class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="ชื่อ-นามสกุล">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">บริษัท/หน่วยงาน <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <input type="text" name="company" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="ชื่อบริษัทหรือหน่วยงาน">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">โทรศัพท์ <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <input type="tel" name="phone" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="08x-xxx-xxxx">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">อีเมล <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <input type="email" name="email" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition" placeholder="you@example.com">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">ขนาดห้องประชุม <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <select name="room_size" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition">
+                            <option value="">เลือก...</option>
+                            <option>เล็ก (1-10 คน)</option>
+                            <option>กลาง (10-30 คน)</option>
+                            <option>ใหญ่ (30-50 คน)</option>
+                            <option>ห้องสัมมนา (50+ คน)</option>
+                            <option>หลายห้อง</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-sky font-th">งบประมาณ <span class="text-sky/40 text-xs">(ไม่บังคับ)</span></label>
+                        <select name="budget" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-3 text-navy focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition">
+                            <option value="">เลือก...</option>
+                            <option>น้อยกว่า 50,000 บาท</option>
+                            <option>50,000 - 100,000 บาท</option>
+                            <option>100,000 - 200,000 บาท</option>
+                            <option>200,000+ บาท</option>
+                            <option>เช่ารายเดือน/ปี</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="consult-error" class="hidden bg-red-500/20 border border-red-500/30 rounded-xl px-4 py-3 text-red-200 text-sm font-th"></div>
+
+                <div>
+                    <button type="submit" id="consult-btn" class="w-full py-4 rounded-xl bg-electric hover:bg-electric-600 transition font-semibold text-lg text-white flex items-center justify-center gap-2 shadow-lg shadow-electric/40">
+                        <span class="vico w-5 h-5" style="-webkit-mask-image:url('/static/images/voscene-icons/chat.svg');mask-image:url('/static/images/voscene-icons/chat.svg')"></span><span id="consult-btn-text">ส่งให้ทีมงานประเมิน</span>
+                        <svg id="consult-btn-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                    </button>
+                    <p class="text-center text-sky/70 text-xs mt-3 font-th">ฟรี · ไม่มีข้อผูกมัด · ทีมงานติดต่อกลับโดยเร็ว</p>
+                </div>
+            </form>
+
+            <div id="consult-success" class="hidden relative text-center py-6">
+                <h3 class="font-display text-2xl md:text-3xl font-semibold text-white mb-3">ขอบคุณครับ — ทีมงานได้รับข้อมูลของคุณแล้ว</h3>
+                <p class="text-sky/80 font-th mb-5">ทีมงานจะประเมินความต้องการและติดต่อกลับโดยเร็ว</p>
+                <p class="text-sky/70 text-sm font-th">อยากคุยเลยตอนนี้ โทร {{ c.contact_phone | linkify_phone }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+(function () {
+    const form = document.getElementById('consult-form');
+    if (!form) return;
+    const btn = document.getElementById('consult-btn');
+    const btnText = document.getElementById('consult-btn-text');
+    const btnSpinner = document.getElementById('consult-btn-spinner');
+    const success = document.getElementById('consult-success');
+    const errorBox = document.getElementById('consult-error');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btn.disabled = true;
+        btnText.textContent = 'กำลังส่ง...';
+        btnSpinner.classList.remove('hidden');
+        errorBox.classList.add('hidden');
+
+        try {
+            const r = await fetch('/api/lead', { method: 'POST', body: new FormData(form) });
+            const j = await r.json();
+            if (j.ok) {
+                if (window.trackLead) window.trackLead('homepage-consult');
+                form.classList.add('hidden');
+                success.classList.remove('hidden');
+            } else {
+                errorBox.textContent = j.error || 'ส่งข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง';
+                errorBox.classList.remove('hidden');
+            }
+        } catch (err) {
+            errorBox.textContent = 'ไม่สามารถส่งข้อมูลได้ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองอีกครั้ง';
+            errorBox.classList.remove('hidden');
+        } finally {
+            btn.disabled = false;
+            btnText.textContent = 'ส่งให้ทีมงานประเมิน';
+            btnSpinner.classList.add('hidden');
+        }
+    });
+})();
+</script>
+{% endif %}
 
 {% if posts %}
 <section class="py-20 bg-cloud border-t border-slate-200">

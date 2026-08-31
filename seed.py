@@ -52,7 +52,7 @@ DEFAULT_CONTENT = [
 
     # ===== Contact =====
     ("contact_title", "Let's talk.", "หัวข้อ Contact", "contact", "text"),
-    ("contact_subtitle", "Ready to transform your AV experience? — กรอกความต้องการของคุณ AI จะวิเคราะห์และแนะนำ Edition ที่เหมาะสมให้ทันที", "คำอธิบาย Contact", "contact", "textarea"),
+    ("contact_subtitle", "Ready to transform your AV experience? — กรอกความต้องการของคุณ ทีมงานจะประเมินและแนะนำ Edition ที่เหมาะสมให้", "คำอธิบาย Contact", "contact", "textarea"),
     ("contact_phone", "088-886-4660", "เบอร์โทร (ใส่หลายเบอร์ได้ ขึ้นบรรทัดใหม่)", "contact", "textarea"),
     ("contact_email", "hello@voscene.com", "อีเมล", "contact", "text"),
     ("contact_address", "Bangkok, Thailand · Serving Southeast Asia", "ที่อยู่ (รองรับ 2-3 บรรทัด)", "contact", "textarea"),
@@ -159,10 +159,16 @@ def run_seed():
             "seo_description": "17 โมดูลควบคุม",
             "stat_3_label": "AI-Driven",
         }
+        # 2026-08-31: ปิดที่ปรึกษา AI บนเว็บไว้ก่อน (AI_CONSULT_ENABLED=False) จึงต้องเลิก
+        # โฆษณาว่า "AI วิเคราะห์ให้ทันที" บนหน้า /contact ด้วย ไม่งั้นเว็บสัญญาสิ่งที่ไม่มี
+        # บังคับค่าใหม่เฉพาะตอนที่สวิตช์ยังปิด และเฉพาะขณะที่ค่าเดิมยังมีคำที่เลิกใช้ —
+        # พอแอดมินแก้ข้อความเองแล้วก็หยุดบังคับ (รูปแบบเดียวกับ REPOSITION_FORCE)
+        AI_CONSULT_RETIRE = {} if settings.AI_CONSULT_ENABLED else {"contact_subtitle": "วิเคราะห์"}
         added = 0
         migrated = 0
         legal_forced = 0
         reposition_forced = 0
+        ai_retired = 0
         for key, value, label, section, field_type in DEFAULT_CONTENT:
             existing = db.query(Content).filter_by(key=key).first()
             if existing:
@@ -192,12 +198,17 @@ def run_seed():
                     existing.value = value
                     reposition_forced += 1
                     changed = True
+                # เลิกข้อความที่อ้าง AI วิเคราะห์ ตอนที่ปิดที่ปรึกษา AI ไว้
+                if key in AI_CONSULT_RETIRE and AI_CONSULT_RETIRE[key] in (existing.value or ""):
+                    existing.value = value
+                    ai_retired += 1
+                    changed = True
                 if changed:
                     migrated += 1
             else:
                 db.add(Content(key=key, value=value, label=label, section=section, field_type=field_type))
                 added += 1
-        print(f"[seed] content: +{added} new · ~{migrated} migrated · {legal_forced} legal-forced · {reposition_forced} reposition-forced ({len(DEFAULT_CONTENT)} total defined)")
+        print(f"[seed] content: +{added} new · ~{migrated} migrated · {legal_forced} legal-forced · {reposition_forced} reposition-forced · {ai_retired} ai-consult-retired ({len(DEFAULT_CONTENT)} total defined)")
 
         # Default packages — add new, and migrate features of core editions (starter/pro/enterprise)
         # to keep them aligned with the latest catalog. Add-on kits are NOT auto-migrated

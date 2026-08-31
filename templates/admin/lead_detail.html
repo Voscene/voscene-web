@@ -58,7 +58,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1.5">สถานะ</label>
                     <select name="status" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
-                        {% for opt in ['new_in_scope', 'new_out_scope', 'contacted', 'quoted', 'won', 'lost', 'spam'] %}
+                        {% for opt in ['new', 'anonymous', 'new_in_scope', 'new_out_scope', 'contacted', 'quoted', 'won', 'lost', 'spam'] %}
                         <option value="{{ opt }}" {% if lead.status == opt %}selected{% endif %}>{{ opt }}</option>
                         {% endfor %}
                     </select>

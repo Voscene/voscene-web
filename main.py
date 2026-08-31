@@ -25,7 +25,7 @@ from auth import (
     authenticate_user, create_session_token, get_current_user, require_admin,
     pwd_context, COOKIE_NAME, TOKEN_EXPIRE_HOURS,
 )
-from ai_service import analyze_requirement, _unavailable as ai_unavailable
+from ai_service import analyze_requirement, consult_disabled, _unavailable as ai_unavailable
 from seed import run_seed
 from security import (
     SecurityHeadersMiddleware, client_ip, rate_limited, honeypot_tripped,
@@ -220,6 +220,10 @@ async def analyze_only(
     # เผื่อเป็นคนจริงที่ระบบเดาผิด ข้อมูลจะได้ไม่หายไปเฉย ๆ แอดมินยังตามเจอ
     if honeypot_tripped(fax_number):
         analysis, lead_status = ai_unavailable("honeypot", detail=f"ip={ip}"), "spam"
+    elif not settings.AI_CONSULT_ENABLED:
+        # ที่ปรึกษา AI ปิดอยู่ — หน้าเว็บไม่เรียก endpoint นี้แล้ว แต่กันหน้าเก่าที่ค้าง
+        # ในแคชผู้ใช้ยิงเข้ามา ยังต้องเก็บ lead ไว้ ไม่ทิ้งข้อมูลลูกค้า
+        analysis, lead_status = consult_disabled(), "anonymous"
     else:
         analysis = await analyze_requirement(
             requirement=requirement, room_size=room_size, budget=budget, company="",
@@ -302,7 +306,12 @@ async def submit_lead(
         lead.company = company.strip()
         lead.phone = phone.strip()
         lead.email = email.strip()
-        lead.status = "spam" if is_spam else ("new_in_scope" if lead.ai_in_scope else "new_out_scope")
+        if is_spam:
+            lead.status = "spam"
+        elif not settings.AI_CONSULT_ENABLED:
+            lead.status = "new"
+        else:
+            lead.status = "new_in_scope" if lead.ai_in_scope else "new_out_scope"
         db.commit()
         return {
             "ok": True,
@@ -315,11 +324,16 @@ async def submit_lead(
 
     # Flow เดิม: ไม่มี lead_id → วิเคราะห์ + สร้าง lead ใหม่
     if is_spam:
-        analysis = ai_unavailable("honeypot", detail=f"ip={ip}")
+        analysis, lead_status = ai_unavailable("honeypot", detail=f"ip={ip}"), "spam"
+    elif not settings.AI_CONSULT_ENABLED:
+        # ปิดที่ปรึกษา AI ไว้ → ไม่เรียก Groq เลย เก็บเป็น lead ธรรมดารอทีมงานประเมิน
+        # ใช้สถานะ "new" ไม่ใช่ new_out_scope เพราะยังไม่มีใครตัดสินขอบเขตให้
+        analysis, lead_status = consult_disabled(), "new"
     else:
         analysis = await analyze_requirement(
             requirement=requirement, room_size=room_size, budget=budget, company=company,
         )
+        lead_status = "new_in_scope" if analysis.get("in_scope") else "new_out_scope"
 
     lead = Lead(
         name=name.strip(),
@@ -333,7 +347,7 @@ async def submit_lead(
         ai_in_scope=bool(analysis.get("in_scope", False)),
         ai_confidence=float(analysis.get("confidence", 0.0)),
         ai_recommended_package=str(analysis.get("recommended_package", "")),
-        status="spam" if is_spam else ("new_in_scope" if analysis.get("in_scope") else "new_out_scope"),
+        status=lead_status,
     )
     db.add(lead)
     db.commit()

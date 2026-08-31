@@ -82,6 +82,24 @@ def _unavailable(reason: str, detail: str = "", busy: bool = False) -> dict:
     }
 
 
+def consult_disabled() -> dict:
+    """ผลลัพธ์ตอนปิดที่ปรึกษา AI ไว้เอง (AI_CONSULT_ENABLED=False)
+
+    ต่างจาก `_unavailable` ตรงที่ "ปิดไว้" ไม่ใช่ "ขัดข้อง" จึงไม่พูดว่าระบบมีปัญหา
+    ให้พูดตรง ๆ ว่าข้อมูลถึงทีมงานแล้ว ซึ่งเป็นเรื่องจริง (lead ถูกเขียนลง DB เสมอ)
+    """
+    return {
+        "ai_ok": False,
+        "in_scope": False,
+        "confidence": 0.0,
+        "recommended_package": "",
+        "summary": "ทีมงานได้รับข้อมูลของคุณแล้ว",
+        "fit_reason": "ข้อมูลที่คุณกรอกถูกส่งให้ทีมงานเรียบร้อยแล้ว",
+        "next_action": "ทีมงานจะประเมินความต้องการและติดต่อกลับโดยเร็ว",
+        "raw": "ai consult disabled",
+    }
+
+
 async def analyze_requirement(
     requirement: str,
     room_size: str = "",

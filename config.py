@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
+    # ที่ปรึกษา AI บนหน้าเว็บ (ฟอร์มหน้าแรก + /contact) — ปิดไว้ก่อนช่วงยิงโฆษณา
+    # ตามคำสั่งเจ้าของ 2026-08-31: ให้ฟอร์มเป็นช่องกรอกข้อมูลธรรมดาส่งทีมงานไปก่อน
+    # ตั้งเป็น True ใน Render เมื่อไหร่ ฟอร์มกลับไปเป็นแบบ AI วิเคราะห์ทันที
+    # ไม่ต้องแก้โค้ด ไม่ต้อง deploy (รูปแบบเดียวกับ GA4_ID / META_PIXEL_ID)
+    AI_CONSULT_ENABLED: bool = False
+
     # Analytics / ad tracking. Empty = nothing is injected at all (no requests,
     # no cookies). Paste the IDs into the Render dashboard to switch them on
     # without a code change or redeploy.

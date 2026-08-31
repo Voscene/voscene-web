@@ -75,6 +75,39 @@ def linkify_phone(value) -> Markup:
 templates.env.filters["linkify_phone"] = linkify_phone
 
 
+# ===== โค้ดติดตามโฆษณา =====
+# เก็บในตาราง Content เหมือนเนื้อหาอื่น แอดมินจึงแก้เองได้จากหลังบ้าน
+# โดยไม่ต้องแก้ env ใน Render และไม่ต้อง deploy ใหม่
+TRACKING_KEYS = ("gtm_id", "ga4_id", "meta_pixel_id")
+TRACKING_LABELS = {
+    "gtm_id": "Google Tag Manager ID",
+    "ga4_id": "Google Analytics 4 ID",
+    "meta_pixel_id": "Meta (Facebook) Pixel ID",
+}
+_TRACKING_PATTERNS = {
+    "gtm_id": re.compile(r"GTM-[A-Z0-9]{4,12}", re.I),
+    "ga4_id": re.compile(r"G-[A-Z0-9]{6,12}", re.I),
+    "meta_pixel_id": re.compile(r"\d{10,20}"),
+}
+
+
+def clean_tracking_id(key: str, raw: str) -> tuple:
+    """ดึงเฉพาะ ID ออกจากสิ่งที่แอดมินวางมา — คืน (id, รูปแบบถูกไหม)
+
+    รับได้ทั้ง ID เปล่า ๆ และสคริปต์เต็ม ๆ ที่ก๊อปมาจากหน้า Google/Meta
+    เพราะคนส่วนใหญ่กดคัดลอกทั้งก้อนมามากกว่าจะไล่หาเฉพาะ ID · หาไม่เจอคืน ("", False)
+    เพื่อให้หน้าเว็บไม่มีทางฝังค่ามั่ว ๆ ลงใน <script> ได้เลย
+    """
+    raw = (raw or "").strip()
+    if not raw:
+        return "", True  # ล้างค่า = ตั้งใจปิด ไม่ใช่กรอกผิด
+    found = _TRACKING_PATTERNS[key].search(raw)
+    if not found:
+        return "", False
+    value = found.group(0)
+    return (value if key == "meta_pixel_id" else value.upper()), True
+
+
 def load_content(db: Session) -> dict:
     """โหลดเนื้อหาทั้งหมดเป็น dict { key: value }"""
     rows = db.query(Content).all()
@@ -455,7 +488,14 @@ async def admin_content(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
-    rows = db.query(Content).order_by(Content.section, Content.id).all()
+    # tracking มีหน้าของตัวเองที่ /admin/tracking (มีตัวตรวจรูปแบบ ID ให้)
+    # จึงกันออกจากหน้านี้ ไม่งั้นจะมีสองที่แก้ค่าเดียวกัน
+    rows = (
+        db.query(Content)
+        .filter(Content.section != "tracking")
+        .order_by(Content.section, Content.id)
+        .all()
+    )
     grouped: dict = {}
     for row in rows:
         grouped.setdefault(row.section, []).append(row)
@@ -480,6 +520,58 @@ async def admin_content_update(
                 row.value = str(value)
     db.commit()
     return RedirectResponse("/admin/content?saved=1", status_code=303)
+
+
+@app.get("/admin/tracking", response_class=HTMLResponse)
+async def admin_tracking(
+    request: Request, saved: int = 0, invalid: str = "", db: Session = Depends(get_db),
+):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+
+    content = load_content(db)
+    return templates.TemplateResponse("admin/tracking.html", {
+        "request": request, "user": user, "settings": settings,
+        "values": {key: content.get(key, "") for key in TRACKING_KEYS},
+        "env_values": {
+            "gtm_id": settings.GTM_ID,
+            "ga4_id": settings.GA4_ID,
+            "meta_pixel_id": settings.META_PIXEL_ID,
+        },
+        "labels": TRACKING_LABELS,
+        "saved": saved,
+        "invalid": [k for k in invalid.split(",") if k in TRACKING_KEYS],
+    })
+
+
+@app.post("/admin/tracking")
+async def admin_tracking_update(request: Request, db: Session = Depends(get_db)):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+
+    form = await request.form()
+    invalid = []
+    for key in TRACKING_KEYS:
+        value, ok = clean_tracking_id(key, str(form.get(key, "")))
+        if not ok:
+            # กรอกมาแต่หา ID ไม่เจอ — เก็บค่าเดิมไว้ อย่าล้างของที่ทำงานอยู่ทิ้ง
+            invalid.append(key)
+            continue
+        row = db.query(Content).filter_by(key=key).first()
+        if row:
+            row.value = value
+        else:
+            db.add(Content(
+                key=key, value=value, label=TRACKING_LABELS[key],
+                section="tracking", field_type="text",
+            ))
+    db.commit()
+
+    if invalid:
+        return RedirectResponse(f"/admin/tracking?invalid={','.join(invalid)}", status_code=303)
+    return RedirectResponse("/admin/tracking?saved=1", status_code=303)
 
 
 @app.get("/admin/packages", response_class=HTMLResponse)

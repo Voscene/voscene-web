@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     # Analytics / ad tracking. Empty = nothing is injected at all (no requests,
     # no cookies). Paste the IDs into the Render dashboard to switch them on
     # without a code change or redeploy.
+    # ตั้งจากหลังบ้าน /admin/tracking ได้เลย ค่าใน env เหล่านี้เป็นแค่ตัวสำรอง
+    # สำหรับค่าที่เคยตั้งไว้ใน Render — หลังบ้านชนะเสมอถ้ากรอกไว้
+    GTM_ID: str = ""            # e.g. GTM-XXXXXXX
     GA4_ID: str = ""            # e.g. G-XXXXXXXXXX
     META_PIXEL_ID: str = ""     # e.g. 1234567890123456
 

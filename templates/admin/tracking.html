@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+{% block title %}โค้ดติดตามโฆษณา{% endblock %}
+{% block page_title %}โค้ดติดตามโฆษณา{% endblock %}
+
+{% block content %}
+{% if invalid %}
+<div class="mb-6 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+    หา ID ในช่องต่อไปนี้ไม่เจอ จึงยังไม่ได้บันทึก (ช่องอื่นบันทึกแล้ว):
+    {% for key in invalid %}<strong>{{ labels[key] }}</strong>{% if not loop.last %} · {% endif %}{% endfor %}
+</div>
+{% endif %}
+
+<div class="mb-6 px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 text-slate-700 text-sm space-y-1">
+    <p>วาง <strong>ID</strong> หรือจะก๊อปี้<strong>สคริปต์ทั้งก้อน</strong>ที่ Google/Meta ให้มาวางเลยก็ได้ ระบบจะดึงเฉพาะ ID ออกมาเอง</p>
+    <p>ลบข้อความในช่องให้ว่าง = ปิดการเก็บข้อมูลของตัวนั้น — เว็บจะไม่โหลดสคริปต์นั้นเลย ไม่มีคุกกี้</p>
+    <p>กดบันทึกแล้ว<strong>ทำงานทันที ไม่ต้อง deploy ใหม่</strong> · ถ้าเปิดหน้าเว็บแล้วยังไม่เห็น ให้กด Ctrl+F5</p>
+</div>
+
+<form method="post" action="/admin/tracking" class="space-y-6">
+    {% for key in ['gtm_id', 'ga4_id', 'meta_pixel_id'] %}
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+            <h2 class="font-semibold">{{ labels[key] }}</h2>
+            {% if values[key] %}
+            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">ทำงานอยู่</span>
+            {% elif env_values[key] %}
+            <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">ใช้ค่าจาก Render</span>
+            {% else %}
+            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-xs font-medium">ยังไม่ได้ตั้ง</span>
+            {% endif %}
+        </div>
+        <div class="p-6 space-y-2">
+            <input type="text" name="{{ key }}" value="{{ values[key] }}"
+                   class="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none"
+                   placeholder="{% if key == 'gtm_id' %}GTM-XXXXXXX{% elif key == 'ga4_id' %}G-XXXXXXXXXX{% else %}1234567890123456{% endif %}">
+            <p class="text-xs text-slate-500">
+                {% if key == 'gtm_id' %}
+                หาจาก Google Tag Manager → มุมขวาบน ข้างชื่อ Container · ขึ้นต้นด้วย <code class="font-mono">GTM-</code>
+                {% elif key == 'ga4_id' %}
+                หาจาก Google Analytics → Admin → Data streams → Measurement ID · ขึ้นต้นด้วย <code class="font-mono">G-</code>
+                {% else %}
+                หาจาก Meta Events Manager → Data sources · เป็นตัวเลขล้วน 15-16 หลัก
+                {% endif %}
+            </p>
+            {% if not values[key] and env_values[key] %}
+            <p class="text-xs text-amber-700">ตอนนี้ใช้ค่า <code class="font-mono">{{ env_values[key] }}</code> ที่ตั้งไว้ใน Render — ถ้ากรอกช่องนี้ ค่าในช่องจะถูกใช้แทน</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if (values.gtm_id or env_values.gtm_id) and (values.ga4_id or env_values.ga4_id) %}
+    <div class="px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+        ตอนนี้ใส่ทั้ง Tag Manager และ GA4 ไว้พร้อมกัน — ถ้าใน Tag Manager มีแท็ก GA4 อยู่แล้ว
+        ยอดจะถูกนับซ้ำสองเท่า เลือกอย่างใดอย่างหนึ่งก็พอ
+    </div>
+    {% endif %}
+
+    <div class="sticky bottom-0 bg-white border-t border-slate-200 -mx-8 px-8 py-4 flex justify-end">
+        <button type="submit" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium">บันทึก</button>
+    </div>
+</form>
+
+<div class="mt-8 bg-white rounded-xl border border-slate-200 p-6 text-sm text-slate-600 space-y-2">
+    <h3 class="font-semibold text-slate-800">ตรวจว่าติดจริงหรือไม่</h3>
+    <p>เปิดหน้าแรกของเว็บ → คลิกขวา → View page source → ค้นหา ID ที่ใส่ไว้ ถ้าเจอคือติดแล้ว</p>
+    <p>ดูแบบเรียลทายม์: Google Tag Manager มีโหมด Preview · Meta มี Test Events ใน Events Manager</p>
+    <p class="text-slate-500">หมายเหตุ: หน้าหลังบ้าน (/admin) ไม่มีโค้ดติดตาม — ติดเฉพาะหน้าเว็บส่วนที่ลูกค้าเห็น</p>
+</div>
+{% endblock %}

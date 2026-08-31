@@ -145,16 +145,26 @@ def contact_format_error(phone: str, email: str) -> str | None:
 # (คอมไพล์ในเบราว์เซอร์) และมี <script>/style= inline อยู่ทั่วทุกหน้า จึงกัน XSS ได้
 # ไม่เต็มที่ — ที่ได้เต็ม ๆ คือจำกัดโดเมนปลายทาง + frame-ancestors + form-action
 # ถ้าจะให้แน่นกว่านี้ต้องเลิกใช้ Tailwind CDN ไปเป็นไฟล์ CSS ที่ build ไว้ก่อน
+# โฮสต์ของ Google Tag Manager / GA4 / Meta Pixel — แยกไว้เพราะต้องใช้ซ้ำหลาย directive
+# ⚠️ ถ้าวันหนึ่งเพิ่มแท็กของเจ้าอื่นใน Tag Manager (TikTok, LINE, Hotjar ฯลฯ)
+# ต้องเติมโฮสต์ของเจ้านั้นที่นี่ด้วย ไม่งั้น CSP จะบล็อกเงียบ ๆ และแท็กนั้นจะไม่ทำงาน
+_GOOGLE_TAGS = "https://www.googletagmanager.com https://www.google-analytics.com"
+_GOOGLE_MEASURE = ("https://www.google-analytics.com https://analytics.google.com "
+                   "https://region1.google-analytics.com https://stats.g.doubleclick.net")
+_META_TAGS = "https://connect.facebook.net https://www.facebook.com"
+
 _CSP = "; ".join([
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com "
-    "https://www.googletagmanager.com https://connect.facebook.net",
+    f"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com "
+    f"{_GOOGLE_TAGS} https://connect.facebook.net",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "img-src 'self' data: https://www.facebook.com https://www.google-analytics.com "
-    "https://www.googletagmanager.com",
-    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com "
-    "https://region1.google-analytics.com https://connect.facebook.net",
+    f"img-src 'self' data: {_GOOGLE_TAGS} {_META_TAGS} https://td.doubleclick.net "
+    "https://stats.g.doubleclick.net",
+    f"connect-src 'self' {_GOOGLE_TAGS} {_GOOGLE_MEASURE} {_META_TAGS}",
+    # GTM โหลด ns.html ตอน noscript และใช้ iframe ตอนเปิดโหมด Preview
+    # ถ้าไม่เปิด frame-src ไว้ มันจะตกไปที่ default-src 'self' แล้วโดนบล็อก
+    f"frame-src 'self' {_GOOGLE_TAGS} https://td.doubleclick.net {_META_TAGS}",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -52,6 +52,10 @@ DEFAULT_CONTENT = [
 
     # ===== Contact =====
     ("contact_title", "Let's talk.", "หัวข้อ Contact", "contact", "text"),
+    # โค้ดติดตามโฆษณา — แก้ที่หน้า /admin/tracking ไม่ใช่หน้าเนื้อหา (ถูกกรองออกจาก /admin/content)
+    ("gtm_id", "", "Google Tag Manager ID", "tracking", "text"),
+    ("ga4_id", "", "Google Analytics 4 ID", "tracking", "text"),
+    ("meta_pixel_id", "", "Meta (Facebook) Pixel ID", "tracking", "text"),
     ("contact_subtitle", "Ready to transform your AV experience? — กรอกความต้องการของคุณ ทีมงานจะประเมินและแนะนำ Edition ที่เหมาะสมให้", "คำอธิบาย Contact", "contact", "textarea"),
     ("contact_phone", "088-886-4660", "เบอร์โทร (ใส่หลายเบอร์ได้ ขึ้นบรรทัดใหม่)", "contact", "textarea"),
     ("contact_email", "hello@voscene.com", "อีเมล", "contact", "text"),

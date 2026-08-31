@@ -27,17 +27,31 @@
     <meta name="twitter:title" content="{{ self.title() }}">
     <meta name="twitter:description" content="{{ self.description() }}">
     <meta name="twitter:image" content="{{ settings.APP_URL }}/static/images/og-image.jpg">
-    {# === Analytics / ad tracking — rendered only when the IDs are configured === #}
-    {% if settings.GA4_ID %}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.GA4_ID }}"></script>
+    {# === Analytics / ad tracking =================================================
+       ID มาจากหลังบ้าน /admin/tracking ก่อน ถ้าช่องนั้นว่างค่อยใช้ env ของ Render
+       (ของเดิมที่ตั้งทาง env ไว้จึงทำงานต่อได้โดยไม่ต้องย้าย)
+       ค่าจากหลังบ้านถูกกรองรูปแบบ ID ตั้งแต่ตอนบันทึก จึงไม่มีทางฝังค่ามั่วลงมาตรงนี้
+    #}
+    {% set gtm_id = c.gtm_id or settings.GTM_ID %}
+    {% set ga4_id = c.ga4_id or settings.GA4_ID %}
+    {% set pixel_id = c.meta_pixel_id or settings.META_PIXEL_ID %}
+    {% if gtm_id %}
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
+    {% endif %}
+    {% if ga4_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', '{{ settings.GA4_ID }}');
+      gtag('config', '{{ ga4_id }}');
     </script>
     {% endif %}
-    {% if settings.META_PIXEL_ID %}
+    {% if pixel_id %}
     <script>{% raw %}
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -45,17 +59,18 @@
       t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
       document,'script','https://connect.facebook.net/en_US/fbevents.js');
     {% endraw %}
-      fbq('init', '{{ settings.META_PIXEL_ID }}');
+      fbq('init', '{{ pixel_id }}');
       fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none" alt=""
-      src="https://www.facebook.com/tr?id={{ settings.META_PIXEL_ID }}&ev=PageView&noscript=1"/></noscript>
+      src="https://www.facebook.com/tr?id={{ pixel_id }}&ev=PageView&noscript=1"/></noscript>
     {% endif %}
     <script>
       // One call site for the conversion both forms share. No-ops when no tag is
       // installed, so the forms never depend on tracking being configured.
       window.trackLead = function (source) {
         try {
+          if (window.dataLayer) window.dataLayer.push({ event: 'generate_lead', lead_source: source });
           if (typeof gtag === 'function') gtag('event', 'generate_lead', { method: source });
           if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: source });
         } catch (e) { /* tracking must never break the form */ }
@@ -182,6 +197,8 @@
     </style>
 </head>
 <body class="{% block body_class %}bg-white text-navy{% endblock %} antialiased">
+{% if gtm_id %}<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}"
+  height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>{% endif %}
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-[#070711]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">

@@ -1,14 +1,16 @@
 """AV Control System — Marketing Website + Admin CMS"""
 import os
+import re
 import shutil
 from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, UploadFile, File
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import Optional
+from markupsafe import Markup, escape
 
 # ===== File Uploads =====
 # Use persistent disk on Render, local folder for dev
@@ -42,6 +44,29 @@ templates = Jinja2Templates(directory="templates")
 # the APP_VERSION env var (e.g. in Render); defaults to the baseline below.
 APP_VERSION = os.getenv("APP_VERSION", "2.0.0")
 templates.env.globals["APP_VERSION"] = APP_VERSION
+
+
+# Contact numbers are free text from the CMS (may hold a name and several lines),
+# so linkify the number runs instead of wrapping the whole field.
+_PHONE_RE = re.compile(r"0\d[\d\s\-]{7,12}\d")
+
+
+def linkify_phone(value) -> Markup:
+    """ทำเบอร์โทรในข้อความให้กดโทรได้บนมือถือ (tel:) โดยคงข้อความรอบ ๆ ไว้"""
+    if not value:
+        return Markup("")
+    text, out, last = str(value), [], 0
+    for m in _PHONE_RE.finditer(text):
+        out.append(escape(text[last:m.start()]))
+        raw = m.group(0)
+        digits = re.sub(r"\D", "", raw)
+        out.append(Markup('<a href="tel:{}" class="hover:text-electric">{}</a>').format(digits, raw))
+        last = m.end()
+    out.append(escape(text[last:]))
+    return Markup("").join(out)
+
+
+templates.env.filters["linkify_phone"] = linkify_phone
 
 
 def load_content(db: Session) -> dict:
@@ -138,6 +163,32 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@app.get("/robots.txt", response_class=PlainTextResponse)
+async def robots_txt():
+    base = (settings.APP_URL or "").rstrip("/")
+    lines = ["User-agent: *", "Allow: /", "Disallow: /admin", ""]
+    if base:
+        lines.append(f"Sitemap: {base}/sitemap.xml")
+    return "\n".join(lines) + "\n"
+
+
+@app.get("/sitemap.xml")
+async def sitemap_xml(db: Session = Depends(get_db)):
+    base = (settings.APP_URL or "").rstrip("/")
+    urls = [(f"{base}/", "1.0"), (f"{base}/why", "0.8"), (f"{base}/features", "0.8"),
+            (f"{base}/pricing", "0.8"), (f"{base}/blog", "0.6"), (f"{base}/contact", "0.6")]
+    parts = ['<?xml version="1.0" encoding="UTF-8"?>',
+             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for loc, pri in urls:
+        parts.append(f"  <url><loc>{loc}</loc><priority>{pri}</priority></url>")
+    for post in db.query(BlogPost).filter_by(is_published=True).all():
+        lastmod = (post.updated_at or post.created_at)
+        mod = f"<lastmod>{lastmod.date().isoformat()}</lastmod>" if lastmod else ""
+        parts.append(f"  <url><loc>{base}/blog/{post.slug}</loc>{mod}<priority>0.5</priority></url>")
+    parts.append("</urlset>")
+    return Response("\n".join(parts), media_type="application/xml")
+
+
 @app.post("/api/analyze", response_class=JSONResponse)
 async def analyze_only(
     requirement: str = Form(...),
@@ -175,6 +226,7 @@ async def analyze_only(
     return {
         "ok": True,
         "lead_id": lead.id,
+        "ai_ok": analysis.get("ai_ok", True),
         "in_scope": analysis.get("in_scope", False),
         "summary": analysis.get("summary", ""),
         "recommended_package": analysis.get("recommended_package", ""),

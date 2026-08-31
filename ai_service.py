@@ -55,6 +55,33 @@ Edition ที่มี:
 ตอบเป็น JSON เท่านั้น ห้ามมีข้อความอื่นนอก JSON"""
 
 
+def _unavailable(reason: str, detail: str = "", busy: bool = False) -> dict:
+    """ข้อความสำรองที่ผู้ใช้เห็นเมื่อระบบวิเคราะห์ไม่พร้อม.
+
+    หลักการ: ไม่โชว์ชื่อ config/exception ให้ลูกค้า · บอกตามจริงว่าข้อมูลถูกบันทึกแล้ว
+    (lead ถูกเขียนลง DB เสมอแม้ AI ล้ม) · ชี้ทางไปต่อเสมอ · เก็บรายละเอียดเทคนิคไว้ใน raw
+    ให้แอดมินดูหลังบ้าน
+    """
+    if busy:
+        summary = "ขณะนี้มีผู้ใช้งานระบบวิเคราะห์พร้อมกันจำนวนมาก"
+        fit = "ขออภัย ระบบวิเคราะห์อัตโนมัติไม่ว่างชั่วคราว — ข้อมูลที่คุณกรอกถูกบันทึกไว้เรียบร้อยแล้ว"
+        nxt = "ลองกดวิเคราะห์อีกครั้งในอีกสักครู่ หรือฝากข้อมูลติดต่อไว้ด้านล่าง ทีมงานจะติดต่อกลับโดยเร็ว"
+    else:
+        summary = "ระบบวิเคราะห์อัตโนมัติขัดข้องชั่วคราว"
+        fit = "ข้อมูลที่คุณกรอกถูกบันทึกไว้เรียบร้อยแล้ว ทีมงานจะนำไปประเมินให้"
+        nxt = "ฝากข้อมูลติดต่อไว้ด้านล่าง ทีมงานจะติดต่อกลับโดยเร็ว"
+    return {
+        "ai_ok": False,
+        "in_scope": False,
+        "confidence": 0.0,
+        "recommended_package": "",
+        "summary": summary,
+        "fit_reason": fit,
+        "next_action": nxt,
+        "raw": f"{reason}: {detail}" if detail else reason,
+    }
+
+
 async def analyze_requirement(
     requirement: str,
     room_size: str = "",
@@ -63,15 +90,7 @@ async def analyze_requirement(
 ) -> dict:
     """ส่งความต้องการลูกค้าให้ Groq วิเคราะห์"""
     if not settings.GROQ_API_KEY:
-        return {
-            "in_scope": False,
-            "confidence": 0.0,
-            "recommended_package": "",
-            "summary": "ยังไม่ได้ตั้งค่า GROQ_API_KEY",
-            "fit_reason": "ระบบ AI ยังไม่พร้อมใช้งาน",
-            "next_action": "ติดต่อทีมขายโดยตรง",
-            "raw": "",
-        }
+        return _unavailable("GROQ_API_KEY not configured")
 
     user_msg = f"""ข้อมูลลูกค้า:
 - บริษัท/หน่วยงาน: {company or 'ไม่ระบุ'}
@@ -103,14 +122,15 @@ async def analyze_requirement(
             content = data["choices"][0]["message"]["content"]
             parsed = json.loads(content)
             parsed["raw"] = content
+            parsed["ai_ok"] = True
             return parsed
-    except (httpx.HTTPError, json.JSONDecodeError, KeyError) as e:
-        return {
-            "in_scope": False,
-            "confidence": 0.0,
-            "recommended_package": "",
-            "summary": "ไม่สามารถวิเคราะห์อัตโนมัติได้",
-            "fit_reason": f"AI Error: {type(e).__name__}",
-            "next_action": "ติดต่อลูกค้าโดยตรงเพื่อสอบถามเพิ่ม",
-            "raw": str(e),
-        }
+    except httpx.HTTPStatusError as e:
+        # 429 = เกินโควตา/ต่อคิว · 5xx = ฝั่งผู้ให้บริการล่ม — ทั้งคู่คือ "ไม่ว่าง ลองใหม่ได้"
+        code = e.response.status_code
+        return _unavailable(
+            f"HTTP {code}", str(e), busy=(code == 429 or code >= 500)
+        )
+    except httpx.TimeoutException as e:
+        return _unavailable("timeout", str(e), busy=True)
+    except (httpx.HTTPError, json.JSONDecodeError, KeyError, ValueError) as e:
+        return _unavailable(type(e).__name__, str(e))

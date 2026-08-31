@@ -211,7 +211,7 @@
                 <h4 class="font-semibold mb-3 text-navy">ติดต่อ</h4>
                 <ul class="space-y-2 text-sm text-slate-600">
                     {% if c.contact_phone %}
-                    <li class="whitespace-pre-line"><span class="vico w-4 h-4 align-[-3px] mr-1.5" style="-webkit-mask-image:url('/static/images/voscene-icons/mobile.svg');mask-image:url('/static/images/voscene-icons/mobile.svg')"></span>{{ c.contact_phone }}</li>
+                    <li class="whitespace-pre-line"><span class="vico w-4 h-4 align-[-3px] mr-1.5" style="-webkit-mask-image:url('/static/images/voscene-icons/mobile.svg');mask-image:url('/static/images/voscene-icons/mobile.svg')"></span>{{ c.contact_phone | linkify_phone }}</li>
                     {% endif %}
                     {% if c.contact_email %}<li><span class="vico w-4 h-4 align-[-3px] mr-1.5" style="-webkit-mask-image:url('/static/images/voscene-icons/chat.svg');mask-image:url('/static/images/voscene-icons/chat.svg')"></span><a href="mailto:{{ c.contact_email }}" class="hover:text-electric">{{ c.contact_email }}</a></li>{% endif %}
                     {% if c.contact_address %}<li class="whitespace-pre-line"><span class="vico w-4 h-4 align-[-3px] mr-1.5" style="-webkit-mask-image:url('/static/images/voscene-icons/room.svg');mask-image:url('/static/images/voscene-icons/room.svg')"></span>{{ c.contact_address }}</li>{% endif %}

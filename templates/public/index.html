@@ -635,7 +635,11 @@
             }
 
             const inScope = j.in_scope;
-            const badge = inScope
+            // ai_ok === false = ตัววิเคราะห์ไม่ว่าง/ขัดข้อง — lead ถูกบันทึกแล้ว อย่าขึ้น badge ขอบเขตให้สับสน
+            const aiOk = j.ai_ok !== false;
+            const badge = !aiOk
+                ? '<span class="px-3 py-1 rounded-full bg-slate-500/20 text-slate-200 text-xs font-medium border border-slate-400/30">ระบบวิเคราะห์ไม่พร้อมชั่วคราว</span>'
+                : inScope
                 ? '<span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium border border-emerald-500/30">✓ อยู่ในขอบเขตให้บริการ</span>'
                 : '<span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium border border-amber-500/30">⚠ ต้องการคุยรายละเอียดเพิ่ม</span>';
 
@@ -643,7 +647,7 @@
                 <div class="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6">
                     <div class="flex items-center gap-3 mb-4 flex-wrap">
                         ${badge}
-                        <span class="text-sky/80 text-sm">Voscene AI วิเคราะห์เสร็จแล้ว</span>
+                        <span class="text-sky/80 text-sm">${aiOk ? 'Voscene AI วิเคราะห์เสร็จแล้ว' : 'ข้อมูลของคุณถูกบันทึกไว้แล้ว'}</span>
                     </div>
                     <h3 class="font-display font-semibold text-lg mb-2 text-white inline-flex items-center gap-2"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/doc.svg');mask-image:url('/static/images/voscene-icons/doc.svg')"></span>สรุปความต้องการ</h3>
                     <p class="text-sky mb-4">${j.summary || '-'}</p>

@@ -437,3 +437,35 @@ def test_existing_pages_still_work(admin):
     home = admin.get("/").text
     assert "/static/js/vs-track.js" in home and 'name="request_type"' in home
     assert admin.get("/static/js/vs-track.js").status_code == 200
+
+
+def test_ad_tags_wait_for_consent(client):
+    """ไม่มี ID = ไม่มีแบนเนอร์ · มี ID = แท็กอยู่ในฟังก์ชันที่รอกดยอมรับ ไม่ยิงเอง ไม่มี noscript"""
+    from database import Content
+    html = client.get("/").text
+    assert "consent-banner" not in html and "googletagmanager.com" not in html
+
+    s = db()
+    for key, value in (("ga4_id", "G-TEST123456"), ("meta_pixel_id", "1234567890123456"),
+                       ("gtm_id", "GTM-TEST123")):
+        row = s.query(Content).filter_by(key=key).first()
+        if row:
+            row.value = value
+        else:
+            s.add(Content(key=key, value=value, label=key, section="tracking", field_type="text"))
+    s.commit()
+    try:
+        html = client.get("/contact").text
+        assert 'id="consent-banner"' in html and "ตั้งค่าคุกกี้" in html
+        head = html.split("</head>")[0]
+        # โหลดแท็กได้ทางเดียวคือ loadTags() ซึ่งเรียกเมื่อ state === 'granted' เท่านั้น
+        assert head.count("function loadTags()") == 1
+        assert "if (window.vsConsent.state === 'granted') loadTags();" in head
+        assert '<script async src="https://www.googletagmanager.com' not in html
+        assert "ns.html?id=" not in html and "noscript=1" not in html
+        assert '"G-TEST123456"' in head  # ID ผ่าน tojson
+    finally:
+        for key in ("ga4_id", "meta_pixel_id", "gtm_id"):
+            s.query(Content).filter_by(key=key).update({"value": ""})
+        s.commit()
+        s.close()

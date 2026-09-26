@@ -35,35 +35,78 @@
     {% set gtm_id = c.gtm_id or settings.GTM_ID %}
     {% set ga4_id = c.ga4_id or settings.GA4_ID %}
     {% set pixel_id = c.meta_pixel_id or settings.META_PIXEL_ID %}
-    {% if gtm_id %}
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','{{ gtm_id }}');</script>
-    {% endif %}
-    {% if ga4_id %}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id }}"></script>
+    {# PDPA: แท็กของ Google/Meta โหลด "หลังผู้ชมกดยอมรับ" เท่านั้น (basic consent)
+       ยังไม่ยอมรับ / ปฏิเสธ = ไม่มี request ไปหา Google/Meta และไม่มีคุกกี้โฆษณาเลย
+       ตัดแท็ก <noscript> ของ GTM/Pixel ออก เพราะมันยิงโดยไม่ถามความยินยอม
+       ตัวนับของเว็บเอง (vs-track.js) ไม่ใช้คุกกี้ จึงไม่ต้องรอความยินยอม #}
+    {% set has_tags = gtm_id or ga4_id or pixel_id %}
+    {% if has_tags %}
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '{{ ga4_id }}');
+    (function () {
+      var KEY = 'vs_consent', MAX_AGE = 365 * 864e5;
+      function stored() {
+        try {
+          var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+          if (v && (v.s === 'granted' || v.s === 'denied') && Date.now() - v.t < MAX_AGE) return v.s;
+        } catch (e) { /* ignore */ }
+        return null;
+      }
+      function clearAdCookies() {
+        var host = location.hostname, bare = host.replace(/^www\./, '');
+        document.cookie.split(';').forEach(function (c) {
+          var name = c.split('=')[0].trim();
+          if (!/^(_ga|_gid|_gat|_gcl|_fbp|_fbc)/.test(name)) return;
+          ['', '; domain=' + host, '; domain=.' + bare].forEach(function (d) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
+          });
+        });
+      }
+      function loadTags() {
+        if (window.vsConsent.loaded) return;
+        window.vsConsent.loaded = true;
+        window.dataLayer = window.dataLayer || [];
+        {% if gtm_id %}
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer',{{ gtm_id | tojson }});
+        {% endif %}
+        {% if ga4_id %}
+        var g = document.createElement('script');
+        g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent({{ ga4_id | tojson }});
+        document.head.appendChild(g);
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', {{ ga4_id | tojson }});
+        {% endif %}
+        {% if pixel_id %}{% raw %}
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        {% endraw %}
+        fbq('init', {{ pixel_id | tojson }});
+        fbq('track', 'PageView');
+        {% endif %}
+      }
+      window.vsConsent = {
+        state: stored(),
+        loaded: false,
+        set: function (s) {
+          try { localStorage.setItem(KEY, JSON.stringify({ s: s, t: Date.now() })); } catch (e) { /* ignore */ }
+          var wasLoaded = this.loaded;
+          this.state = s;
+          if (s === 'granted') { loadTags(); return; }
+          clearAdCookies();
+          if (wasLoaded) location.reload(); // แท็กที่โหลดไปแล้วถอดออกจากหน้าไม่ได้ — โหลดหน้าใหม่แบบไม่มีแท็ก
+        }
+      };
+      if (window.vsConsent.state === 'granted') loadTags();
+    })();
     </script>
-    {% endif %}
-    {% if pixel_id %}
-    <script>{% raw %}
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-      document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    {% endraw %}
-      fbq('init', '{{ pixel_id }}');
-      fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none" alt=""
-      src="https://www.facebook.com/tr?id={{ pixel_id }}&ev=PageView&noscript=1"/></noscript>
     {% endif %}
     <script>
       // One call site for the conversion both forms share. No-ops when no tag is
@@ -199,8 +242,6 @@
     </style>
 </head>
 <body class="{% block body_class %}bg-white text-navy{% endblock %} antialiased">
-{% if gtm_id %}<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_id }}"
-  height="0" width="0" style="display:none;visibility:hidden" title="Google Tag Manager"></iframe></noscript>{% endif %}
 
 <nav class="fixed top-0 left-0 right-0 z-50 bg-[#070711]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">
@@ -290,10 +331,35 @@
         </div>
         <div class="border-t border-slate-200 mt-10 pt-6 text-center text-sm text-slate-500 relative">
             {{ c.footer_copyright or '' }}
+            {% if has_tags %}<button type="button" onclick="vsShowConsent()" class="block mx-auto mt-2 md:mt-0 md:absolute md:right-0 md:top-6 text-xs text-slate-400 hover:text-electric underline underline-offset-2">ตั้งค่าคุกกี้</button>{% endif %}
             <span class="block mt-2 md:mt-0 md:absolute md:left-0 md:top-6 text-xs text-slate-400 font-mono">v{{ APP_VERSION }}</span>
         </div>
     </div>
 </footer>
+
+{% if has_tags %}
+{# ปุ่มยอมรับ/ปฏิเสธ ขนาดและน้ำหนักเท่ากัน — ปฏิเสธต้องง่ายเท่ายอมรับ · ปิดหน้าโดยไม่เลือก = ถือว่าไม่ยินยอม #}
+<div id="consent-banner" role="dialog" aria-live="polite" aria-labelledby="consent-title" hidden
+     class="fixed z-[60] bottom-3 inset-x-3 md:inset-x-auto md:right-6 md:bottom-6 md:max-w-md rounded-2xl border border-white/15 bg-[#0d1523] text-white shadow-2xl p-5">
+    <h2 id="consent-title" class="font-semibold mb-1.5 font-th">เว็บไซต์นี้ขออนุญาตใช้คุกกี้</h2>
+    <p class="text-sm text-slate-300 font-th leading-relaxed">
+        เราใช้คุกกี้ของ Google และ Meta เพื่อวัดผลการเข้าชมและปรับปรุงโฆษณา — จะเริ่มทำงานเมื่อคุณกดยอมรับเท่านั้น
+        ถ้าปฏิเสธ ยังใช้งานเว็บและส่งฟอร์มได้ตามปกติ · เปลี่ยนใจได้ทุกเมื่อที่ "ตั้งค่าคุกกี้" ท้ายหน้า
+    </p>
+    <div class="grid grid-cols-2 gap-2 mt-4">
+        <button type="button" onclick="vsChooseConsent('denied')" class="py-2.5 rounded-xl border border-white/40 hover:bg-white/10 text-sm font-semibold font-th">ปฏิเสธ</button>
+        <button type="button" onclick="vsChooseConsent('granted')" class="py-2.5 rounded-xl border border-white/40 bg-white text-[#0d1523] hover:bg-slate-200 text-sm font-semibold font-th">ยอมรับ</button>
+    </div>
+</div>
+<script>
+function vsShowConsent() { document.getElementById('consent-banner').hidden = false; }
+function vsChooseConsent(s) {
+    document.getElementById('consent-banner').hidden = true;
+    if (window.vsConsent) window.vsConsent.set(s);
+}
+if (window.vsConsent && !window.vsConsent.state) vsShowConsent();
+</script>
+{% endif %}
 
 <script>
 /* Dark↔light screenshot pairs: tap/click flips any of them (phones have no hover — see .theme-swap

@@ -853,6 +853,7 @@
                         <svg id="consult-btn-spinner" class="hidden animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
                     </button>
                     <p class="text-center text-sky/70 text-xs mt-3 font-th">ฟรี · ไม่มีข้อผูกมัด · ทีมงานติดต่อกลับโดยเร็ว</p>
+                    {% if c.privacy_policy %}<p class="text-center text-sky/60 text-xs mt-1 font-th">ข้อมูลที่ส่งใช้เพื่อติดต่อกลับเท่านั้น · <a href="/privacy" target="_blank" class="underline underline-offset-2 hover:text-white">นโยบายความเป็นส่วนตัว</a></p>{% endif %}
                 </div>
             </form>
 

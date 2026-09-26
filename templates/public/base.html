@@ -331,7 +331,12 @@
         </div>
         <div class="border-t border-slate-200 mt-10 pt-6 text-center text-sm text-slate-500 relative">
             {{ c.footer_copyright or '' }}
-            {% if has_tags %}<button type="button" onclick="vsShowConsent()" class="block mx-auto mt-2 md:mt-0 md:absolute md:right-0 md:top-6 text-xs text-slate-400 hover:text-electric underline underline-offset-2">ตั้งค่าคุกกี้</button>{% endif %}
+            {% if has_tags or c.privacy_policy %}
+            <span class="flex justify-center gap-4 mt-2 md:mt-0 md:absolute md:right-0 md:top-6 text-xs text-slate-400">
+                {% if c.privacy_policy %}<a href="/privacy" class="hover:text-electric underline underline-offset-2">นโยบายความเป็นส่วนตัว</a>{% endif %}
+                {% if has_tags %}<button type="button" onclick="vsShowConsent()" class="hover:text-electric underline underline-offset-2">ตั้งค่าคุกกี้</button>{% endif %}
+            </span>
+            {% endif %}
             <span class="block mt-2 md:mt-0 md:absolute md:left-0 md:top-6 text-xs text-slate-400 font-mono">v{{ APP_VERSION }}</span>
         </div>
     </div>
@@ -344,7 +349,7 @@
     <h2 id="consent-title" class="font-semibold mb-1.5 font-th">เว็บไซต์นี้ขออนุญาตใช้คุกกี้</h2>
     <p class="text-sm text-slate-300 font-th leading-relaxed">
         เราใช้คุกกี้ของ Google และ Meta เพื่อวัดผลการเข้าชมและปรับปรุงโฆษณา — จะเริ่มทำงานเมื่อคุณกดยอมรับเท่านั้น
-        ถ้าปฏิเสธ ยังใช้งานเว็บและส่งฟอร์มได้ตามปกติ · เปลี่ยนใจได้ทุกเมื่อที่ "ตั้งค่าคุกกี้" ท้ายหน้า
+        ถ้าปฏิเสธ ยังใช้งานเว็บและส่งฟอร์มได้ตามปกติ · เปลี่ยนใจได้ทุกเมื่อที่ "ตั้งค่าคุกกี้" ท้ายหน้า{% if c.privacy_policy %} · <a href="/privacy" class="underline underline-offset-2 hover:text-white">นโยบายความเป็นส่วนตัว</a>{% endif %}
     </p>
     <div class="grid grid-cols-2 gap-2 mt-4">
         <button type="button" onclick="vsChooseConsent('denied')" class="py-2.5 rounded-xl border border-white/40 hover:bg-white/10 text-sm font-semibold font-th">ปฏิเสธ</button>

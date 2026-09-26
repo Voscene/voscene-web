@@ -1,31 +1,43 @@
 # Render Infrastructure as Code
 # See: https://render.com/docs/blueprint-spec
+#
+# ⚠️ service จริงถูกตั้งค่าผ่าน Render dashboard ไม่ได้สร้างจากไฟล์นี้ — ไฟล์นี้บันทึกค่าให้ตรงกับของจริง
+# (ยืนยันจาก /admin/settings บน production 2026-09-26: DB อยู่ที่ /var/data/data.db บน disk ถาวร)
+# ก่อน apply blueprint นี้ ให้เทียบ "ชื่อแผน" และ "ขนาด disk" กับหน้า Render ก่อนเสมอ — สองค่านั้นยังไม่ได้ตรวจ
+# ห้ามเปลี่ยน DATABASE_URL กลับเป็น ./data.db — ไฟล์นอก /var/data หายทุกครั้งที่ deploy/restart
 services:
   - type: web
-    name: voscene
+    name: voscene-web
     runtime: python
     region: singapore   # closest to Thailand
-    plan: free          # free tier (spins down after 15min idle)
+    plan: starter       # ต้องเป็นแผนเสียเงิน เพราะแผนฟรีต่อ disk ไม่ได้ (ตรวจชื่อแผนจริงก่อน apply)
     pythonVersion: "3.11"
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /
+    disk:
+      name: data
+      mountPath: /var/data   # ฐานข้อมูล + ไฟล์อัปโหลด (main.py เลือก /var/data/uploads เองเมื่อมีโฟลเดอร์นี้)
+      sizeGB: 1              # ตรวจขนาดจริงก่อน apply — Render ลดขนาด disk ไม่ได้
     envVars:
       - key: APP_NAME
         value: Voscene
       - key: APP_URL
-        sync: false  # set in dashboard (e.g. https://voscene.onrender.com)
+        value: https://www.voscene.com
       - key: SECRET_KEY
         generateValue: true  # Render auto-generates secure 32-char string
       - key: DEBUG
         value: "False"
       - key: DATABASE_URL
-        value: sqlite:///./data.db
+        value: sqlite:////var/data/data.db   # 4 ขีด = path เต็มบน disk ถาวร
       - key: ADMIN_USERNAME
         value: admin
       - key: ADMIN_PASSWORD
-        sync: false  # set in dashboard (CHANGE FROM "changeme"!)
+        sync: false  # ใช้ตอนสร้างบัญชีครั้งแรกเท่านั้น — หลังจากนั้นเปลี่ยนรหัสที่ /admin/settings
+      - key: AI_CONSULT_ENABLED
+        value: "False"  # ที่ปรึกษา AI บนเว็บปิดไว้ (เปิด = "True")
       - key: GROQ_API_KEY
         sync: false  # set in dashboard
       - key: GROQ_MODEL
         value: llama-3.3-70b-versatile
+      # GTM / GA4 / Meta Pixel ตั้งที่ /admin/tracking แทน env แล้ว (env ยังใช้เป็นค่าสำรองได้)

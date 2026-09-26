@@ -51,7 +51,7 @@
             <div class="flex justify-between"><dt class="text-slate-500">App URL</dt><dd class="font-mono">{{ settings.APP_URL }}</dd></div>
             <div class="flex justify-between gap-4"><dt class="text-slate-500">Database</dt><dd class="font-mono break-all text-right">{{ storage.db_url }}</dd></div>
             <div class="flex justify-between"><dt class="text-slate-500">AI Model</dt><dd class="font-mono">{{ settings.GROQ_MODEL }}</dd></div>
-            <div class="flex justify-between"><dt class="text-slate-500">Groq API</dt><dd>{% if settings.GROQ_API_KEY %}<span class="text-emerald-600">เชื่อมต่อแล้ว</span>{% else %}<span class="text-red-600">ยังไม่ได้ตั้งค่า</span>{% endif %}</dd></div>
+            <div class="flex justify-between"><dt class="text-slate-500">Groq API</dt><dd>{% if settings.GROQ_API_KEY %}<span class="text-emerald-600">ตั้งคีย์แล้ว</span> <span class="text-xs text-slate-400">(ยังไม่ได้ทดสอบว่าใช้ได้ — ลองกด "ให้ AI ช่วยร่าง" ในหน้าเนื้อหา)</span>{% else %}<span class="text-red-600">ยังไม่ได้ตั้งค่า</span>{% endif %}</dd></div>
         </dl>
         <p class="text-xs text-slate-500 pt-2 border-t">แก้ไขค่าเหล่านี้ได้ที่ไฟล์ <code class="bg-slate-100 px-1.5 py-0.5 rounded">.env</code> บนเซิร์ฟเวอร์</p>
     </div>

@@ -570,3 +570,40 @@ def test_privacy_page_hidden_until_filled(admin):
         real.value = ""
         s.commit()
         s.close()
+
+
+def test_ai_draft_grounded_and_checked(admin, monkeypatch):
+    import marketing_ai
+    sent = {}
+
+    async def fake_llm(messages):
+        sent["messages"] = messages
+        return "ควบคุมห้องประชุมได้ทุกยี่ห้อ พร้อมระบบไฟและประกาศเสียงตามสาย ดูที่ https://x.com"
+
+    monkeypatch.setattr(marketing_ai, "call_llm", fake_llm)
+    r = admin.post("/admin/marketing/ai/draft", json={"service": "multi_room", "channel": "facebook_page",
+                                                      "goal": "demo", "notes": "เน้นผู้บริหาร"})
+    j = r.json()
+    assert r.status_code == 200 and j["ok"]
+    system = sent["messages"][0]["content"]
+    assert "สูงสุด 20 ห้อง" in system and "PA" in system  # ข้อเท็จจริง + ข้อห้ามอยู่ในพรอมต์
+    assert "20 ห้อง" in sent["messages"][1]["content"]     # เงื่อนไขของบริการถูกบังคับใส่
+    joined = " ".join(j["warnings"])
+    for expect in ("เกินจริง", "ระบบไฟ", "PA", "ลิงก์", "20 ห้อง"):
+        assert expect in joined, expect
+
+    # บริการที่ยังไม่ยืนยัน → ไม่ร่าง และไม่เรียก AI
+    sent.clear()
+    r = admin.post("/admin/marketing/ai/draft", json={"service": "integrator", "channel": "facebook_page"})
+    assert r.status_code == 400 and "ยังไม่ได้รับการยืนยัน" in r.json()["error"] and not sent
+
+    # ข้อความสะอาด → ไม่มีคำเตือน
+    async def clean_llm(messages):
+        return "เข้าห้องแล้วแตะปุ่มเดียว จอ ไมค์ เสียง พร้อมประชุม — ขอนัดสาธิตได้เลย"
+    monkeypatch.setattr(marketing_ai, "call_llm", clean_llm)
+    r = admin.post("/admin/marketing/ai/draft", json={"service": "one_touch", "channel": "line_oa"})
+    assert r.json()["ok"] and r.json()["warnings"] == []
+
+    with TestClient(main.app) as anon:
+        r = anon.post("/admin/marketing/ai/draft", json={"service": "one_touch"}, follow_redirects=False)
+        assert r.status_code == 303

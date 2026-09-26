@@ -29,7 +29,8 @@ class Connector:
             return "not_connected", "ยังไม่เชื่อมต่อ"
         if not self.implemented:
             return "credentials_only", "ตั้งรหัสแล้ว แต่รุ่นนี้ยังไม่ดึงข้อมูล"
-        return "connected", "เชื่อมต่อแล้ว"
+        # ตรวจแค่ว่ามีคีย์ ไม่ได้ลองเรียกจริง — คีย์หมดอายุก็ยังขึ้นสถานะนี้
+        return "connected", "ตั้งรหัสแล้ว"
 
     def fetch_spend(self, start, end) -> list:  # pragma: no cover - ระยะ 2
         raise NotImplementedError(f"{self.label}: ยังไม่ได้เชื่อมต่อจริง (ระยะ 2)")
@@ -63,10 +64,11 @@ CONNECTORS = [
         notes="ต้องสมัคร TikTok for Business developer และรออนุมัติแอป",
     ),
     Connector(
-        key="ai_assist", label="ผู้ช่วย AI (ร่างเนื้อหา · คัด Lead · สรุปผล)", channels=(),
-        env_keys=("MARKETING_AI_API_KEY",),
-        provides="ร่างข้อความจากข้อมูลบริการที่อนุมัติแล้ว · เสนอผลคัดกรองให้คนยืนยัน",
-        notes="ระยะ 3 · AI จะไม่มีสิทธิ์เผยแพร่หรือปรับงบเอง",
+        key="ai_assist", label="ผู้ช่วย AI ร่างข้อความ (Groq)", channels=(),
+        env_keys=("GROQ_API_KEY",),
+        provides="ร่างโพสต์/โฆษณาจากข้อมูลบริการที่ยืนยันแล้ว ในหน้าเนื้อหา · คนตรวจและบันทึกเอง",
+        notes="ระยะ 3 ทำแล้วเฉพาะการร่างข้อความ · คัด Lead / สรุปผลยังไม่ทำ · AI ไม่มีสิทธิ์เผยแพร่หรือปรับงบ",
+        implemented=True,
     ),
 ]
 CONNECTOR_MAP = {c.key: c for c in CONNECTORS}

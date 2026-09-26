@@ -862,6 +862,40 @@ async def media_file(stored: str, download: int = 0):
     return FileResponse(path, media_type=mime)
 
 
+# ============ ผู้ช่วย AI ร่างข้อความ ============
+
+AI_DRAFT_RULES = ((6, 60), (60, 86400))  # ต่อบัญชี — กันกดรัวเผาโควตา Groq ที่แชร์กันทั้งระบบ
+
+
+@router.post("/ai/draft")
+async def ai_draft(request: Request, db: Session = Depends(get_db),
+                   user: User = Depends(require_admin)):
+    """ร่างข้อความ — คืน JSON ให้หน้าเว็บแสดง ไม่บันทึกลงเนื้อหาเอง (คนต้องกดใส่และบันทึกเอง)"""
+    import marketing_ai
+    from fastapi.responses import JSONResponse
+    if rate_limited("ai_draft", f"user:{user.id}", AI_DRAFT_RULES):
+        return JSONResponse({"ok": False, "error": "ขอร่างถี่เกินไป รอสักครู่แล้วลองใหม่"}, status_code=429)
+    try:
+        data = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False, "error": "คำขอไม่ถูกต้อง"}, status_code=400)
+    service = str(data.get("service") or "")
+    channel = str(data.get("channel") or "other")
+    if channel not in mc.CHANNEL_MAP:
+        channel = "other"
+    goal = str(data.get("goal") or "lead")
+    item_id = mc.parse_int(data.get("item_id"))
+    result = await marketing_ai.draft(service, channel, goal,
+                                      audience=str(data.get("audience") or ""),
+                                      notes=str(data.get("notes") or ""))
+    # บันทึกว่ามีการใช้ AI (ไม่เก็บข้อความ — ข้อความจริงอยู่ในเนื้อหาถ้าคนกดใช้)
+    _audit(db, user, "ai_draft", "content", item_id,
+           {"service": service, "channel": channel, "goal": goal, "ok": result.get("ok"),
+            "warnings": len(result.get("warnings") or []), "error": result.get("error", "")})
+    db.commit()
+    return JSONResponse(result, status_code=200 if result.get("ok") else 400)
+
+
 # ============ หน้า: กลุ่ม Facebook ============
 
 FB_HOSTS = ("facebook.com", "fb.com")

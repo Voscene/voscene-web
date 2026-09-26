@@ -28,7 +28,7 @@
             <label class="block text-sm font-medium mb-1">แคมเปญ</label>
             <select name="campaign_id" class="{{ ui.input_cls }}">
                 <option value="">— ไม่ผูก —</option>
-                {% for c in campaigns %}<option value="{{ c.id }}" {% if v('campaign_id') | string == c.id | string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+                {% for c in campaigns %}<option value="{{ c.id }}" data-service="{{ c.service }}" data-goal="{{ c.goal }}" data-audience="{{ c.audience }}" {% if v('campaign_id') | string == c.id | string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
             </select>
         </div>
     </div>
@@ -37,7 +37,34 @@
             <label class="block text-sm font-medium">ข้อความ / แคปชัน</label>
             {% if item %}{{ ui.copy_button('#copy-text', 'คัดลอกข้อความ + ลิงก์') }}{% endif %}
         </div>
-        <textarea name="body" rows="8" class="{{ ui.input_cls }}">{{ v('body') }}</textarea>
+        <textarea id="body-text" name="body" rows="8" class="{{ ui.input_cls }}">{{ v('body') }}</textarea>
+        <details id="ai-panel" class="mt-2 rounded-lg border border-violet-200 bg-violet-50/50">
+            <summary class="cursor-pointer px-3 py-2 text-sm font-medium text-violet-800">✦ ให้ AI ช่วยร่างข้อความ</summary>
+            <div class="px-3 pb-3 space-y-2">
+                <p class="text-[11px] text-slate-500">AI เขียนจากข้อมูลบริการที่ยืนยันแล้วเท่านั้น และไม่บันทึกเอง — ตรวจทุกครั้งก่อนกดใส่ แล้วกดบันทึก · ใช้ช่องทางที่เลือกด้านบนกำหนดรูปแบบ</p>
+                <div class="grid sm:grid-cols-2 gap-2">
+                    <select id="ai-service" class="{{ ui.input_cls }}">
+                        <option value="">— บริการที่จะโปรโมต —</option>
+                        {% for s in mk.SERVICES if s.key != 'other' %}<option value="{{ s.key }}" {% if s.claim == 'unconfirmed' %}disabled{% endif %}>{{ s.label }}{% if s.claim == 'unconfirmed' %} (ยังไม่ยืนยัน){% elif s.claim == 'conditions' %} (มีเงื่อนไข){% endif %}</option>{% endfor %}
+                    </select>
+                    <select id="ai-goal" class="{{ ui.input_cls }}">
+                        {% for k, label in mk.CAMPAIGN_GOALS %}<option value="{{ k }}">{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <input id="ai-notes" class="{{ ui.input_cls }}" maxlength="800" placeholder="บอก AI เพิ่ม (ไม่บังคับ) เช่น เน้นห้องประชุมผู้บริหาร / โทนเป็นกันเอง">
+                <button type="button" id="ai-go" class="{{ ui.btn_cls }} !bg-violet-600 hover:!bg-violet-700">ร่างข้อความ</button>
+                <div id="ai-error" class="hidden text-sm text-red-700"></div>
+                <div id="ai-result" class="hidden space-y-2">
+                    <textarea id="ai-text" rows="8" class="{{ ui.input_cls }} bg-white"></textarea>
+                    <ul id="ai-warnings" class="hidden text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded p-2 space-y-0.5 list-disc pl-5"></ul>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" id="ai-replace" class="{{ ui.btn2_cls }}">ใส่แทนข้อความเดิม</button>
+                        <button type="button" id="ai-append" class="{{ ui.btn2_cls }}">ต่อท้ายข้อความเดิม</button>
+                        <button type="button" id="ai-again" class="{{ ui.btn2_cls }}">ร่างใหม่</button>
+                    </div>
+                </div>
+            </div>
+        </details>
         <p class="text-[11px] text-slate-400 mt-1">ฟีเจอร์ที่ยังพัฒนาอยู่ห้ามเขียนว่าพร้อมส่งมอบ — ตรวจกับ docs/MARKETING-GUIDE.md ก่อนเปลี่ยนเป็น "พร้อมลง"</p>
     </div>
     <div>
@@ -145,4 +172,59 @@
 </div>
 </div>
 {{ ui.copy_script() }}
+<script>
+(function () {
+    const $ = (id) => document.getElementById(id);
+    const campaignSel = document.querySelector('select[name="campaign_id"]');
+    // ค่าเริ่มต้นของ AI ตามแคมเปญที่เลือก (บริการ + เป้าหมาย + กลุ่มเป้าหมาย)
+    function syncFromCampaign() {
+        const opt = campaignSel && campaignSel.selectedOptions[0];
+        if (!opt || !opt.dataset.service) return;
+        const s = $('ai-service').querySelector(`option[value="${opt.dataset.service}"]`);
+        if (s && !s.disabled) $('ai-service').value = opt.dataset.service;
+        if (opt.dataset.goal) $('ai-goal').value = opt.dataset.goal;
+    }
+    if (campaignSel) { campaignSel.addEventListener('change', syncFromCampaign); syncFromCampaign(); }
+
+    async function run() {
+        const btn = $('ai-go');
+        $('ai-error').classList.add('hidden');
+        if (!$('ai-service').value) { $('ai-error').textContent = 'เลือกบริการที่จะโปรโมตก่อน'; $('ai-error').classList.remove('hidden'); return; }
+        btn.disabled = true; btn.textContent = 'กำลังร่าง...';
+        const opt = campaignSel && campaignSel.selectedOptions[0];
+        try {
+            const r = await fetch('/admin/marketing/ai/draft', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service: $('ai-service').value, goal: $('ai-goal').value,
+                    channel: document.querySelector('select[name="channel"]').value || 'other',
+                    audience: (opt && opt.dataset.audience) || '', notes: $('ai-notes').value,
+                    item_id: {{ item.id if item else 'null' }},
+                }),
+            });
+            const j = await r.json().catch(() => ({ ok: false, error: 'ระบบตอบกลับผิดพลาด' }));
+            if (!j.ok) throw new Error(j.error || 'ร่างไม่สำเร็จ');
+            $('ai-text').value = j.text;
+            const ul = $('ai-warnings');
+            ul.innerHTML = '';
+            (j.warnings || []).forEach((w) => { const li = document.createElement('li'); li.textContent = w; ul.appendChild(li); });
+            ul.classList.toggle('hidden', !(j.warnings || []).length);
+            $('ai-result').classList.remove('hidden');
+        } catch (e) {
+            $('ai-error').textContent = e.message;
+            $('ai-error').classList.remove('hidden');
+        } finally {
+            btn.disabled = false; btn.textContent = 'ร่างข้อความ';
+        }
+    }
+    $('ai-go').addEventListener('click', run);
+    $('ai-again').addEventListener('click', run);
+    $('ai-replace').addEventListener('click', () => { $('body-text').value = $('ai-text').value; $('body-text').focus(); });
+    $('ai-append').addEventListener('click', () => {
+        const b = $('body-text');
+        b.value = (b.value ? b.value.replace(/\s+$/, '') + '\n\n' : '') + $('ai-text').value;
+        b.focus();
+    });
+})();
+</script>
 {% endblock %}

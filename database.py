@@ -19,6 +19,19 @@ class User(Base):
     username = Column(String(64), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    # owner = ทำได้ทุกอย่าง + จัดการบัญชี · staff = Lead / การตลาด / บทความ
+    # ค่าเริ่มต้น staff (ปลอดภัยกว่า) — migration 002 ตั้งบัญชีที่มีอยู่เดิมเป็น owner
+    display_name = Column(String(100), default="")
+    role = Column(String(16), default="staff")
+    is_active = Column(Boolean, default=True)
+
+    @property
+    def is_owner(self) -> bool:
+        return self.role == "owner"
+
+    @property
+    def label(self) -> str:
+        return self.display_name or self.username
 
 
 class Content(Base):
@@ -97,6 +110,7 @@ class Lead(Base):
     duplicate_of = Column(Integer, nullable=True)
     not_duplicate = Column(Boolean, default=False)
     updated_at = Column(DateTime, nullable=True)
+    assigned_to = Column(Integer, nullable=True)  # users.id ของผู้รับผิดชอบ
 
 
 class LeadNote(Base):

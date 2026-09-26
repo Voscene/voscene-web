@@ -95,8 +95,21 @@ def _m001_marketing(conn, Base) -> str:
     return f"leads +{len(added)} columns, {len(rows)} rows mapped, {dupes} duplicates flagged"
 
 
+def _m002_users_roles(conn, Base) -> str:
+    """บัญชีรายคน + สิทธิ์ · ผู้รับผิดชอบ Lead
+
+    บัญชีที่มีอยู่ก่อนขั้นนี้ (admin เดิม) ต้องเป็น owner ไม่งั้นเจ้าของจะล็อกตัวเอง
+    ออกจากหน้าตั้งค่าทันทีหลัง deploy
+    """
+    added = _add_columns(conn, "users", Base.metadata.tables["users"])
+    added += _add_columns(conn, "leads", Base.metadata.tables["leads"])
+    owners = conn.execute(text("UPDATE users SET role='owner', is_active=:t"), {"t": True}).rowcount
+    return f"+{len(added)} columns, {owners} existing users set to owner"
+
+
 MIGRATIONS = [
     ("001_marketing", _m001_marketing),
+    ("002_users_roles", _m002_users_roles),
 ]
 
 

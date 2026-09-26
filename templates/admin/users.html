@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}บัญชีผู้ใช้{% endblock %}
+{% block page_title %}บัญชีผู้ใช้{% endblock %}
+
+{% block content %}
+{% if error %}{{ ui.alert(error) }}{% endif %}
+
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-4">
+        {% for u in users %}
+        <form method="post" action="/admin/users/{{ u.id }}/update" class="bg-white rounded-xl border border-slate-200 p-4 {% if not u.is_active %}opacity-60{% endif %}">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div>
+                    <span class="font-semibold">{{ u.label }}</span>
+                    <span class="text-xs text-slate-500 font-mono ml-1">{{ u.username }}</span>
+                    {% if u.id == user.id %}{{ ui.badge('คุณ', 'blue') }}{% endif %}
+                </div>
+                <div class="flex items-center gap-2">
+                    {{ ui.badge(ROLE_LABELS.get(u.role, u.role), 'violet' if u.role == 'owner' else 'slate') }}
+                    {% if not u.is_active %}{{ ui.badge('ปิดใช้งาน', 'red') }}{% endif %}
+                    <a href="/admin/leads?owner={{ u.id }}" class="text-xs text-blue-600 hover:underline">Lead ที่ดูแล {{ assigned.get(u.id, 0) }}</a>
+                </div>
+            </div>
+            <div class="grid sm:grid-cols-4 gap-3 items-end">
+                <div class="sm:col-span-2">
+                    <label class="block text-xs text-slate-500 mb-1">ชื่อที่แสดง</label>
+                    <input name="display_name" value="{{ u.display_name or '' }}" class="{{ ui.input_cls }}" placeholder="เช่น รจนา (ฝ่ายขาย)">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">สิทธิ์</label>
+                    <select name="role" class="{{ ui.input_cls }}" {% if u.id == user.id %}disabled{% endif %}>
+                        {% for k, label in ROLE_LABELS.items() %}<option value="{{ k }}" {% if u.role == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                    {% if u.id == user.id %}<input type="hidden" name="role" value="{{ u.role }}">{% endif %}
+                </div>
+                <label class="flex items-center gap-2 text-sm pb-2">
+                    <input type="checkbox" name="is_active" {% if u.is_active %}checked{% endif %} {% if u.id == user.id %}disabled{% endif %}> ใช้งานได้
+                    {% if u.id == user.id %}<input type="hidden" name="is_active" value="on">{% endif %}
+                </label>
+                <div class="sm:col-span-3">
+                    <label class="block text-xs text-slate-500 mb-1">ตั้งรหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)</label>
+                    <input type="password" name="new_password" minlength="{{ MIN_PASSWORD }}" autocomplete="new-password" class="{{ ui.input_cls }}">
+                </div>
+                <button class="{{ ui.btn_cls }}">บันทึก</button>
+            </div>
+        </form>
+        {% endfor %}
+    </div>
+
+    <div class="space-y-4">
+        <form method="post" action="/admin/users/create" class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+            <h2 class="font-semibold text-sm">เพิ่มบัญชีทีมงาน</h2>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">ชื่อผู้ใช้ (ใช้ล็อกอิน)</label>
+                <input name="username" required pattern="[a-z0-9][a-z0-9._\-]{2,31}" class="{{ ui.input_cls }} font-mono" placeholder="เช่น rotjana">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">ชื่อที่แสดง</label>
+                <input name="display_name" class="{{ ui.input_cls }}" placeholder="เช่น รจนา (ฝ่ายขาย)">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">สิทธิ์</label>
+                <select name="role" class="{{ ui.input_cls }}">
+                    <option value="staff">ทีมงาน</option>
+                    <option value="owner">เจ้าของ</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">รหัสผ่านเริ่มต้น (อย่างน้อย {{ MIN_PASSWORD }} ตัว)</label>
+                <input type="password" name="password" required minlength="{{ MIN_PASSWORD }}" autocomplete="new-password" class="{{ ui.input_cls }}">
+                <p class="text-[11px] text-slate-400 mt-1">แจ้งให้เจ้าของบัญชีเปลี่ยนเองที่ "ตั้งค่า" หลังเข้าครั้งแรก</p>
+            </div>
+            <button class="{{ ui.btn_cls }} w-full">สร้างบัญชี</button>
+        </form>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <h2 class="font-semibold mb-2">สิทธิ์แต่ละระดับ</h2>
+            <dl class="space-y-2 text-slate-600">
+                <div><dt class="font-medium text-slate-800">เจ้าของ</dt><dd>ทุกเมนู + จัดการบัญชี</dd></div>
+                <div><dt class="font-medium text-slate-800">ทีมงาน</dt><dd>Dashboard · Lead · การตลาด · บทความ · เปลี่ยนรหัสผ่านตัวเอง<br><span class="text-xs text-slate-500">แก้เนื้อหาหน้าเว็บ ราคา ไฟล์ดาวน์โหลด โค้ดติดตาม และบัญชีไม่ได้</span></dd></div>
+            </dl>
+            <p class="text-[11px] text-slate-400 mt-3">ปิดบัญชีแทนการลบ — ประวัติการแก้ไขของคนนั้นยังอยู่ · ปิดแล้วเข้าระบบไม่ได้ทันที</p>
+        </div>
+
+        {% if history %}
+        <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="cursor-pointer font-semibold">ประวัติ</summary>
+            <ul class="mt-2 space-y-1 text-xs text-slate-600">
+                {% for h in history %}<li>{{ h.created_at | bkk }} · {{ h.username }} · {{ h.action }} · <span class="font-mono break-all">{{ h.detail }}</span></li>{% endfor %}
+            </ul>
+        </details>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

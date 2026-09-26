@@ -9,6 +9,7 @@ from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, Uplo
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import Optional
 from markupsafe import Markup, escape
@@ -90,6 +91,34 @@ def _bkk(dt, fmt: str = "%d/%m/%y %H:%M") -> str:
     return mc.utc_to_bkk(dt).strftime(fmt) if dt else "—"
 
 
+def _simple_doc(value) -> Markup:
+    """ข้อความยาวจาก CMS → HTML แบบปลอดภัย: บรรทัด "## " = หัวข้อ · "- " = รายการ · อื่น ๆ = ย่อหน้า
+
+    escape ทุกบรรทัดก่อน — แอดมินใส่ HTML/สคริปต์ลงไปก็แสดงเป็นตัวอักษรเฉย ๆ
+    """
+    out, items = [], []
+
+    def flush():
+        if items:
+            out.append(Markup("<ul>") + Markup("").join(Markup("<li>{}</li>").format(i) for i in items)
+                       + Markup("</ul>"))
+            items.clear()
+
+    for line in str(value or "").splitlines():
+        text = line.strip()
+        if text.startswith("- "):
+            items.append(text[2:].strip())
+            continue
+        flush()
+        if text.startswith("## "):
+            out.append(Markup("<h2>{}</h2>").format(text[3:].strip()))
+        elif text:
+            out.append(Markup("<p>{}</p>").format(text))
+    flush()
+    return Markup("\n").join(out)
+
+
+templates.env.filters["simple_doc"] = _simple_doc
 templates.env.filters["money"] = _money
 templates.env.filters["bkk"] = _bkk
 
@@ -226,6 +255,17 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy_page(request: Request, db: Session = Depends(get_db)):
+    content = load_content(db)
+    # ยังไม่ได้ใส่ข้อความจริงในหลังบ้าน = ยังไม่มีหน้านี้ (ร่างไม่ถูกเผยแพร่)
+    if not (content.get("privacy_policy") or "").strip():
+        raise HTTPException(status_code=404)
+    return templates.TemplateResponse("public/privacy.html", {
+        "request": request, "c": content, "settings": settings,
+    })
+
+
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():
     base = (settings.APP_URL or "").rstrip("/")
@@ -242,6 +282,9 @@ async def sitemap_xml(db: Session = Depends(get_db)):
             (f"{base}/pricing", "0.8"), (f"{base}/blog", "0.6"), (f"{base}/contact", "0.6")]
     parts = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    privacy = db.query(Content).filter_by(key="privacy_policy").first()
+    if privacy and (privacy.value or "").strip():
+        urls.append((f"{base}/privacy", "0.3"))
     for loc, pri in urls:
         parts.append(f"  <url><loc>{loc}</loc><priority>{pri}</priority></url>")
     for post in db.query(BlogPost).filter_by(is_published=True).all():
@@ -479,10 +522,18 @@ async def logout():
 
 # ============ ADMIN PAGES ============
 
-def _check_admin(request: Request, db: Session):
+def _check_admin(request: Request, db: Session, owner_only: bool = False):
+    """ผู้ใช้ที่ล็อกอินอยู่ หรือ None (→ หน้า login) · owner_only: ทีมงานถูกส่งกลับ Dashboard
+
+    หน้าที่แตะหน้าเว็บสาธารณะหรือโค้ดติดตาม (เนื้อหา · ราคา · ไฟล์ · tracking)
+    เป็นของเจ้าของเท่านั้น — ตรวจที่เซิร์ฟเวอร์ ไม่ได้แค่ซ่อนเมนู
+    """
     user = get_current_user(request, db)
     if not user:
         return None
+    if owner_only and not user.is_owner:
+        raise HTTPException(status_code=303, detail="Owner only",
+                            headers={"Location": "/admin?denied=owner"})
     return user
 
 
@@ -517,7 +568,7 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
 
 @app.get("/admin/content", response_class=HTMLResponse)
 async def admin_content(request: Request, db: Session = Depends(get_db)):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -541,7 +592,7 @@ async def admin_content(request: Request, db: Session = Depends(get_db)):
 async def admin_content_update(
     request: Request, db: Session = Depends(get_db),
 ):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
     form = await request.form()
@@ -559,7 +610,7 @@ async def admin_content_update(
 async def admin_tracking(
     request: Request, saved: int = 0, invalid: str = "", db: Session = Depends(get_db),
 ):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -580,7 +631,7 @@ async def admin_tracking(
 
 @app.post("/admin/tracking")
 async def admin_tracking_update(request: Request, db: Session = Depends(get_db)):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -609,7 +660,7 @@ async def admin_tracking_update(request: Request, db: Session = Depends(get_db))
 
 @app.get("/admin/packages", response_class=HTMLResponse)
 async def admin_packages(request: Request, db: Session = Depends(get_db)):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
     packages = db.query(Package).order_by(Package.category, Package.sort_order).all()
@@ -624,7 +675,7 @@ async def admin_package_update(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
     form = await request.form()
@@ -658,11 +709,18 @@ def _lead_ctx() -> dict:
 
 @app.get("/admin/leads", response_class=HTMLResponse)
 async def admin_leads(request: Request, db: Session = Depends(get_db), filter: str = "all",
-                      stage: str = "", qual: str = "", channel: str = "", dup: str = ""):
+                      stage: str = "", qual: str = "", channel: str = "", dup: str = "",
+                      owner: str = ""):
     user = _check_admin(request, db)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
     q = db.query(Lead)
+    if owner == "me":
+        q = q.filter(Lead.assigned_to == user.id)
+    elif owner == "none":
+        q = q.filter(Lead.assigned_to.is_(None))
+    elif mc.parse_int(owner):
+        q = q.filter(Lead.assigned_to == mc.parse_int(owner))
     if filter == "anonymous":
         q = q.filter(Lead.status == "anonymous")
     else:
@@ -693,8 +751,8 @@ async def admin_leads(request: Request, db: Session = Depends(get_db), filter: s
     campaigns = {c.id: c for c in db.query(Campaign).all()}
     return templates.TemplateResponse("admin/leads.html", {
         "request": request, "user": user, "leads": leads, "filter": filter, "settings": settings,
-        "f": {"stage": stage, "qual": qual, "channel": channel, "dup": dup},
-        "campaigns": campaigns, **_lead_ctx(),
+        "f": {"stage": stage, "qual": qual, "channel": channel, "dup": dup, "owner": owner},
+        "campaigns": campaigns, "team": {u.id: u for u in db.query(User).all()}, **_lead_ctx(),
     })
 
 
@@ -718,6 +776,8 @@ async def admin_lead_detail(lead_id: int, request: Request, db: Session = Depend
         "content_item": db.get(ContentItem, lead.content_item_id) if lead.content_item_id else None,
         "group_post": db.get(FbGroupPost, lead.group_post_id) if lead.group_post_id else None,
         "error": request.query_params.get("error", ""),
+        "team": db.query(User).filter(
+            (User.is_active.is_(True)) | (User.id == lead.assigned_to)).order_by(User.username).all(),
         **_lead_ctx(),
     })
 
@@ -767,9 +827,14 @@ async def admin_lead_update(
         return RedirectResponse(f"/admin/leads/{lead_id}?error={quote(' · '.join(errors))}",
                                 status_code=303)
 
+    assignee = mc.parse_int(form.get("assigned_to"))
+    if assignee and not db.query(User).filter_by(id=assignee, is_active=True).first():
+        assignee = lead.assigned_to  # ไม่ยอมมอบให้บัญชีที่ไม่มี/ถูกปิด
     before = {"sales_stage": lead.sales_stage, "qualification": lead.qualification,
               "quote_value": lead.quote_value, "won_value": lead.won_value,
-              "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up}
+              "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up,
+              "assigned_to": lead.assigned_to}
+    lead.assigned_to = assignee or None
     lead.sales_stage, lead.qualification, lead.service_interest = stage, qual, service
     lead.quote_value, lead.won_value = values["quote_value"], values["won_value"]
     lead.next_follow_up = next_date
@@ -781,7 +846,8 @@ async def admin_lead_update(
     lead.updated_at = datetime.utcnow()
     after = {"sales_stage": lead.sales_stage, "qualification": lead.qualification,
              "quote_value": lead.quote_value, "won_value": lead.won_value,
-             "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up}
+             "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up,
+             "assigned_to": lead.assigned_to}
     changed = {k: {"from": before[k], "to": after[k]} for k in after if before[k] != after[k]}
     if changed:
         _lead_audit(db, user, "lead_update", lead.id, changed)
@@ -916,7 +982,7 @@ async def serve_upload(filename: str):
 
 @app.get("/admin/files", response_class=HTMLResponse)
 async def admin_files(request: Request, db: Session = Depends(get_db)):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -945,7 +1011,7 @@ async def admin_files_upload(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -1002,7 +1068,7 @@ async def admin_files_delete(
     slot: str = Form(...),
     db: Session = Depends(get_db),
 ):
-    user = _check_admin(request, db)
+    user = _check_admin(request, db, owner_only=True)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
@@ -1031,7 +1097,139 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse("/admin/login", status_code=303)
     return templates.TemplateResponse("admin/settings.html", {
         "request": request, "user": user, "settings": settings,
+        "storage": _storage_status() if user.is_owner else None,
     })
+
+
+def _storage_status() -> dict:
+    """ข้อมูลเก็บถาวรไหม — ตอบคำถามที่ค้างมาตั้งแต่ Phase 23 จากในหลังบ้านเลย
+
+    Render: ไฟล์นอก disk ที่ต่อไว้ (/var/data) หายทุกครั้งที่ deploy/restart
+    """
+    url = settings.DATABASE_URL or ""
+    masked = re.sub(r"//([^:/@]+):[^@/]*@", r"//\1:***@", url)  # ซ่อนรหัสผ่านใน URL
+    if url.startswith("sqlite"):
+        raw = url.split("///", 1)[-1]
+        path = Path(raw).resolve() if raw and raw != ":memory:" else None
+        disk = Path("/var/data")
+        persistent = bool(path) and disk.exists() and str(path).startswith(str(disk))
+        where = str(path) if path else raw
+    else:
+        persistent, where = True, "ฐานข้อมูลภายนอก (ไม่ใช่ไฟล์บนเครื่อง)"
+    return {
+        "db_url": masked, "db_where": where, "db_persistent": persistent,
+        "disk_mounted": Path("/var/data").exists(),
+        "uploads": str(UPLOAD_DIR.resolve()),
+        "uploads_persistent": str(UPLOAD_DIR.resolve()).startswith("/var/data"),
+    }
+
+
+# ============ บัญชีผู้ใช้ (เจ้าของเท่านั้น) ============
+
+ROLE_LABELS = {"owner": "เจ้าของ", "staff": "ทีมงาน"}
+_USERNAME_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{2,31}$")
+MIN_PASSWORD = 8
+
+
+def _active_owner_count(db: Session, exclude_id: Optional[int] = None) -> int:
+    q = db.query(User).filter(User.role == "owner", User.is_active.is_(True))
+    if exclude_id:
+        q = q.filter(User.id != exclude_id)
+    return q.count()
+
+
+def _user_audit(db: Session, actor: User, action: str, target_id: int, detail: dict) -> None:
+    import json as _json
+    db.add(AuditLog(username=actor.username, action=action, entity="user", entity_id=target_id,
+                    detail=_json.dumps(detail, ensure_ascii=False, default=str)))
+
+
+@app.get("/admin/users", response_class=HTMLResponse)
+async def admin_users(request: Request, db: Session = Depends(get_db)):
+    user = _check_admin(request, db, owner_only=True)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+    users = db.query(User).order_by(User.is_active.desc(), User.role, User.username).all()
+    assigned = dict(db.query(Lead.assigned_to, func.count(Lead.id))
+                    .filter(Lead.assigned_to.isnot(None), Lead.sales_stage.notin_(("won", "lost")))
+                    .group_by(Lead.assigned_to).all())
+    history = (db.query(AuditLog).filter_by(entity="user")
+               .order_by(AuditLog.created_at.desc()).limit(20).all())
+    return templates.TemplateResponse("admin/users.html", {
+        "request": request, "user": user, "settings": settings, "users": users,
+        "assigned": assigned, "history": history, "ROLE_LABELS": ROLE_LABELS,
+        "error": request.query_params.get("error", ""), "MIN_PASSWORD": MIN_PASSWORD,
+    })
+
+
+@app.post("/admin/users/create")
+async def admin_user_create(request: Request, db: Session = Depends(get_db)):
+    actor = _check_admin(request, db, owner_only=True)
+    if not actor:
+        return RedirectResponse("/admin/login", status_code=303)
+    form = await request.form()
+    username = str(form.get("username") or "").strip().lower()
+    display = str(form.get("display_name") or "").strip()[:100]
+    role = str(form.get("role") or "staff")
+    password = str(form.get("password") or "")
+    err = ""
+    if not _USERNAME_RE.match(username):
+        err = "ชื่อผู้ใช้ 3-32 ตัว ใช้ a-z 0-9 . _ - (ขึ้นต้นด้วยตัวอักษรหรือตัวเลข)"
+    elif db.query(User).filter_by(username=username).first():
+        err = f"ชื่อผู้ใช้ {username} มีอยู่แล้ว"
+    elif role not in ROLE_LABELS:
+        err = "สิทธิ์ไม่ถูกต้อง"
+    elif len(password) < MIN_PASSWORD:
+        err = f"รหัสผ่านเริ่มต้นต้องมีอย่างน้อย {MIN_PASSWORD} ตัว"
+    if err:
+        from urllib.parse import quote
+        return RedirectResponse(f"/admin/users?error={quote(err)}", status_code=303)
+    new = User(username=username, display_name=display, role=role, is_active=True,
+               password_hash=pwd_context.hash(password))
+    db.add(new)
+    db.flush()
+    _user_audit(db, actor, "user_create", new.id, {"username": username, "role": role})
+    db.commit()
+    return RedirectResponse("/admin/users?saved=1", status_code=303)
+
+
+@app.post("/admin/users/{uid}/update")
+async def admin_user_update(uid: int, request: Request, db: Session = Depends(get_db)):
+    actor = _check_admin(request, db, owner_only=True)
+    if not actor:
+        return RedirectResponse("/admin/login", status_code=303)
+    target = db.get(User, uid)
+    if not target:
+        raise HTTPException(status_code=404)
+    form = await request.form()
+    role = str(form.get("role") or target.role)
+    active = form.get("is_active") == "on"
+    new_password = str(form.get("new_password") or "")
+    err = ""
+    if role not in ROLE_LABELS:
+        err = "สิทธิ์ไม่ถูกต้อง"
+    elif target.id == actor.id and (role != "owner" or not active):
+        err = "ลดสิทธิ์หรือปิดบัญชีตัวเองไม่ได้ — ให้เจ้าของอีกคนทำ"
+    elif (target.role == "owner" and target.is_active and (role != "owner" or not active)
+          and _active_owner_count(db, exclude_id=target.id) == 0):
+        err = "ต้องเหลือเจ้าของที่ใช้งานได้อย่างน้อย 1 คน"
+    elif new_password and len(new_password) < MIN_PASSWORD:
+        err = f"รหัสผ่านใหม่ต้องมีอย่างน้อย {MIN_PASSWORD} ตัว"
+    if err:
+        from urllib.parse import quote
+        return RedirectResponse(f"/admin/users?error={quote(err)}", status_code=303)
+    before = {"role": target.role, "is_active": target.is_active, "display_name": target.display_name}
+    target.display_name = str(form.get("display_name") or "").strip()[:100]
+    target.role, target.is_active = role, active
+    after = {"role": target.role, "is_active": target.is_active, "display_name": target.display_name}
+    changed = {k: {"from": before[k], "to": after[k]} for k in after if before[k] != after[k]}
+    if new_password:
+        target.password_hash = pwd_context.hash(new_password)
+        changed["password"] = "reset"  # บันทึกว่ารีเซ็ต ไม่บันทึกค่า
+    if changed:
+        _user_audit(db, actor, "user_update", target.id, changed)
+    db.commit()
+    return RedirectResponse("/admin/users?saved=1", status_code=303)
 
 
 @app.post("/admin/settings/password")

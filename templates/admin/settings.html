@@ -27,15 +27,34 @@
         <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">เปลี่ยนรหัสผ่าน</button>
     </form>
 
+    {% if storage %}
+    <div class="bg-white rounded-xl border {% if storage.db_persistent %}border-emerald-300{% else %}border-red-300{% endif %} p-6 space-y-3">
+        <h2 class="font-semibold">การเก็บข้อมูลถาวร</h2>
+        {% if storage.db_persistent %}
+        <p class="text-sm text-emerald-700">✓ ฐานข้อมูลอยู่บนที่เก็บถาวร — Lead และข้อมูลการตลาดไม่หายตอน deploy/restart</p>
+        {% else %}
+        <p class="text-sm text-red-700 font-medium">⚠ ฐานข้อมูลไม่ได้อยู่บน disk ถาวร — ข้อมูลที่บันทึกหลังบ้านอาจหายเมื่อ deploy หรือ restart</p>
+        <p class="text-xs text-slate-600">แก้: Render → service → Disks ต่อ disk ที่ <code class="bg-slate-100 px-1 rounded">/var/data</code> แล้วตั้ง Environment <code class="bg-slate-100 px-1 rounded">DATABASE_URL = sqlite:////var/data/data.db</code> (สำรองข้อมูลเดิมก่อน)</p>
+        {% endif %}
+        <dl class="text-sm space-y-2">
+            <div class="flex justify-between gap-4"><dt class="text-slate-500">ไฟล์ฐานข้อมูล</dt><dd class="font-mono text-xs break-all text-right">{{ storage.db_where }}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-slate-500">Disk /var/data</dt><dd>{% if storage.disk_mounted %}<span class="text-emerald-600">มี</span>{% else %}<span class="text-red-600">ไม่มี</span>{% endif %}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-slate-500">ไฟล์อัปโหลด</dt><dd class="font-mono text-xs break-all text-right">{{ storage.uploads }} {% if storage.uploads_persistent %}<span class="text-emerald-600">(ถาวร)</span>{% else %}<span class="text-red-600">(ไม่ถาวร)</span>{% endif %}</dd></div>
+        </dl>
+    </div>
+    {% endif %}
+
+    {% if user.is_owner %}
     <div class="bg-white rounded-xl border border-slate-200 p-6 space-y-3">
         <h2 class="font-semibold">ข้อมูลระบบ</h2>
         <dl class="text-sm space-y-2">
             <div class="flex justify-between"><dt class="text-slate-500">App URL</dt><dd class="font-mono">{{ settings.APP_URL }}</dd></div>
-            <div class="flex justify-between"><dt class="text-slate-500">Database</dt><dd class="font-mono">{{ settings.DATABASE_URL }}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-slate-500">Database</dt><dd class="font-mono break-all text-right">{{ storage.db_url }}</dd></div>
             <div class="flex justify-between"><dt class="text-slate-500">AI Model</dt><dd class="font-mono">{{ settings.GROQ_MODEL }}</dd></div>
             <div class="flex justify-between"><dt class="text-slate-500">Groq API</dt><dd>{% if settings.GROQ_API_KEY %}<span class="text-emerald-600">เชื่อมต่อแล้ว</span>{% else %}<span class="text-red-600">ยังไม่ได้ตั้งค่า</span>{% endif %}</dd></div>
         </dl>
         <p class="text-xs text-slate-500 pt-2 border-t">แก้ไขค่าเหล่านี้ได้ที่ไฟล์ <code class="bg-slate-100 px-1.5 py-0.5 rounded">.env</code> บนเซิร์ฟเวอร์</p>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

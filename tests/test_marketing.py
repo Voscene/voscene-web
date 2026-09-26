@@ -106,6 +106,7 @@ def test_migration_keeps_legacy_data_and_is_idempotent():
     for r in rows:
         con.execute("INSERT INTO leads (id,name,phone,email,status,notes,created_at,requirement,"
                     "ai_in_scope,ai_confidence) VALUES (?,?,?,?,?,?,?,'x',1,0.9)", r)
+    con.execute("INSERT INTO users (id, username, password_hash) VALUES (1, 'admin', 'x')")
     con.commit()
     con.close()
 
@@ -136,6 +137,9 @@ def test_migration_keeps_legacy_data_and_is_idempotent():
     assert got[5][5] == 1
     assert got[4][5] is None  # anonymous ไม่ถูกจับคู่
 
+    con = sqlite3.connect(path)
+    assert con.execute("SELECT role, is_active FROM users WHERE id=1").fetchone() == ("owner", 1),         "บัญชีเดิมต้องเป็นเจ้าของ ไม่งั้นล็อกตัวเองออกหลัง deploy"
+    con.close()
     assert run_migrations(engine, Base) == []  # รันซ้ำไม่ทำอะไร
 
 
@@ -467,5 +471,102 @@ def test_ad_tags_wait_for_consent(client):
     finally:
         for key in ("ga4_id", "meta_pixel_id", "gtm_id"):
             s.query(Content).filter_by(key=key).update({"value": ""})
+        s.commit()
+        s.close()
+
+
+def _login(username, password):
+    c = TestClient(main.app)
+    r = c.post("/admin/login", data={"username": username, "password": password}, follow_redirects=False)
+    assert r.headers["location"] == "/admin", (username, r.headers["location"])
+    return c
+
+
+def test_roles_accounts_and_assignment(admin):
+    from database import User
+    # เจ้าของสร้างบัญชีทีมงาน
+    r = admin.post("/admin/users/create", data={"username": "rotjana", "display_name": "รจนา (ขาย)",
+                                                 "role": "staff", "password": "short"}, follow_redirects=False)
+    assert "error=" in r.headers["location"]
+    r = admin.post("/admin/users/create", data={"username": "rotjana", "display_name": "รจนา (ขาย)",
+                                                 "role": "staff", "password": "staff-pass-123"},
+                   follow_redirects=False)
+    assert r.headers["location"].endswith("saved=1")
+    s = db()
+    staff = s.query(User).filter_by(username="rotjana").one()
+    owner = s.query(User).filter_by(username="admin").one()
+    assert staff.role == "staff" and owner.role == "owner"
+
+    sc = _login("rotjana", "staff-pass-123")
+    # ทีมงาน: หน้าเจ้าของถูกปฏิเสธที่เซิร์ฟเวอร์ ทั้ง GET และ POST
+    for url in ["/admin/content", "/admin/tracking", "/admin/packages", "/admin/files", "/admin/users"]:
+        r = sc.get(url, follow_redirects=False)
+        assert r.status_code == 303 and r.headers["location"] == "/admin?denied=owner", url
+    for url in ["/admin/content/update", "/admin/tracking", "/admin/packages/1/update",
+                "/admin/files/delete", "/admin/users/create", f"/admin/users/{owner.id}/update"]:
+        r = sc.post(url, data={"slot": "brochure", "role": "staff"}, follow_redirects=False)
+        assert r.status_code == 303 and r.headers["location"] == "/admin?denied=owner", url
+    s.expire_all()
+    assert s.get(User, owner.id).role == "owner"
+    # ทีมงาน: ใช้ Lead / การตลาด / บทความได้ · ไม่เห็นเมนูเจ้าของ · ไม่เห็น DATABASE_URL
+    for url in ["/admin", "/admin/leads", "/admin/marketing", "/admin/marketing/campaigns", "/admin/blog",
+                "/admin/settings"]:
+        assert sc.get(url).status_code == 200, url
+    page = sc.get("/admin/settings").text
+    assert "sqlite" not in page and 'href="/admin/tracking"' not in page
+    assert "การเก็บข้อมูลถาวร" in admin.get("/admin/settings").text
+
+    # กันล็อกตัวเองออก: ลดสิทธิ์ตัวเอง / เจ้าของคนสุดท้าย
+    r = admin.post(f"/admin/users/{owner.id}/update", data={"role": "staff", "is_active": "on"},
+                   follow_redirects=False)
+    assert "error=" in r.headers["location"]
+    s.expire_all()
+    assert s.get(User, owner.id).role == "owner"
+
+    # มอบหมาย Lead + กรอง "ของฉัน"
+    lead = submit_lead(admin, name="มอบหมายทดสอบ", phone="0861112222")
+    admin.post(f"/admin/leads/{lead.id}/update", data={"sales_stage": "contacted", "qualification": "pending",
+                                                       "assigned_to": str(staff.id)})
+    s.expire_all()
+    assert s.get(Lead, lead.id).assigned_to == staff.id
+    assert "มอบหมายทดสอบ" in sc.get("/admin/leads?owner=me").text
+    assert "มอบหมายทดสอบ" not in admin.get("/admin/leads?owner=me").text
+    assert s.query(AuditLog).filter_by(entity="lead", entity_id=lead.id).count() >= 1
+
+    # ปิดบัญชี → cookie เดิมใช้ไม่ได้ทันที และล็อกอินใหม่ไม่ได้
+    r = admin.post(f"/admin/users/{staff.id}/update", data={"role": "staff", "display_name": "รจนา"},
+                   follow_redirects=False)
+    assert r.headers["location"].endswith("saved=1")
+    r = sc.get("/admin/leads", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/admin/login"
+    r = TestClient(main.app).post("/admin/login", data={"username": "rotjana", "password": "staff-pass-123"},
+                                  follow_redirects=False)
+    assert r.headers["location"].startswith("/admin/login?error")
+    s.close()
+
+
+def test_privacy_page_hidden_until_filled(admin):
+    from database import Content
+    s = db()
+    draft = s.query(Content).filter_by(key="privacy_policy_draft").one()
+    assert "พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล" in draft.value  # ร่างอยู่ในหลังบ้าน
+    assert admin.get("/privacy").status_code == 404  # ช่องจริงว่าง = ไม่มีหน้า
+    home = admin.get("/").text
+    assert 'href="/privacy"' not in home and "/privacy" not in admin.get("/sitemap.xml").text
+    assert "นโยบายความเป็นส่วนตัว (/privacy)" in admin.get("/admin/content").text
+
+    real = s.query(Content).filter_by(key="privacy_policy").one()
+    real.value = "บทนำ\n## ข้อมูลที่เก็บ\n- ชื่อ\n- <script>alert(1)</script>"
+    s.commit()
+    try:
+        page = admin.get("/privacy")
+        assert page.status_code == 200
+        assert "<h2>ข้อมูลที่เก็บ</h2>" in page.text and "<li>ชื่อ</li>" in page.text
+        assert "<script>alert(1)</script>" not in page.text and "&lt;script&gt;" in page.text
+        for url in ["/", "/contact"]:
+            assert 'href="/privacy"' in admin.get(url).text, url
+        assert "/privacy" in admin.get("/sitemap.xml").text
+    finally:
+        real.value = ""
         s.commit()
         s.close()

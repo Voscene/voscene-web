@@ -71,6 +71,13 @@
                         <input name="won_value" inputmode="decimal" value="{{ '%.2f' % lead.won_value if lead.won_value is not none else '' }}" class="{{ ui.input_cls }}">
                     </div>
                     <div>
+                        <label class="block text-sm font-medium mb-1.5">ผู้รับผิดชอบ</label>
+                        <select name="assigned_to" class="{{ ui.input_cls }}">
+                            <option value="">— ยังไม่มอบหมาย —</option>
+                            {% for u in team %}<option value="{{ u.id }}" {% if lead.assigned_to == u.id %}selected{% endif %}>{{ u.label }}{% if not u.is_active %} (ปิดบัญชีแล้ว){% endif %}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium mb-1.5">นัดติดตามครั้งถัดไป</label>
                         <input type="date" name="next_follow_up" value="{{ lead.next_follow_up or '' }}" class="{{ ui.input_cls }}">
                     </div>

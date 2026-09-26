@@ -24,6 +24,8 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     user = db.query(User).filter_by(username=username).first()
     if not user or not verify_password(password, user.password_hash):
         return None
+    if user.is_active is False:
+        return None
     return user
 
 
@@ -42,7 +44,11 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> Optiona
         user_id = int(payload.get("sub"))
     except (JWTError, ValueError, TypeError):
         return None
-    return db.query(User).filter_by(id=user_id).first()
+    user = db.query(User).filter_by(id=user_id).first()
+    # บัญชีที่ถูกปิด → cookie เดิมใช้ไม่ได้ทันที ไม่ต้องรอหมดอายุ 7 วัน
+    if not user or user.is_active is False:
+        return None
+    return user
 
 
 def require_admin(request: Request, db: Session = Depends(get_db)) -> User:
@@ -53,4 +59,13 @@ def require_admin(request: Request, db: Session = Depends(get_db)) -> User:
             detail="Login required",
             headers={"Location": "/admin/login"},
         )
+    return user
+
+
+def require_owner(request: Request, db: Session = Depends(get_db)) -> User:
+    """หน้าที่เฉพาะเจ้าของ — ทีมงานที่ล็อกอินแล้วถูกส่งกลับ Dashboard พร้อมแจ้งเหตุผล"""
+    user = require_admin(request, db)
+    if not user.is_owner:
+        raise HTTPException(status_code=303, detail="Owner only",
+                            headers={"Location": "/admin?denied=owner"})
     return user

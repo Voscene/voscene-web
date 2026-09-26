@@ -8,6 +8,7 @@
 <div class="flex gap-2 mb-3 overflow-x-auto pb-1">
     <a href="/admin/leads" class="{{ tab }} {% if filter == 'all' and not f.dup %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">ทั้งหมด</a>
     <a href="/admin/leads?filter=new" class="{{ tab }} {% if filter == 'new' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รอติดต่อ</a>
+    <a href="/admin/leads?owner=me" class="{{ tab }} {% if f.owner == 'me' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">Lead ของฉัน</a>
     <a href="/admin/leads?filter=followup" class="{{ tab }} {% if filter == 'followup' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">มีนัดติดตาม</a>
     <a href="/admin/leads?dup=only" class="{{ tab }} {% if f.dup == 'only' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รายการซ้ำ</a>
     {% if settings.AI_CONSULT_ENABLED %}
@@ -31,6 +32,12 @@
         <option value="">ทุกแหล่งที่มา</option>
         {% for ch in CHANNELS %}<option value="{{ ch.key }}" {% if f.channel == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
     </select>
+    <select name="owner" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกผู้รับผิดชอบ</option>
+        <option value="me" {% if f.owner == 'me' %}selected{% endif %}>ของฉัน</option>
+        <option value="none" {% if f.owner == 'none' %}selected{% endif %}>ยังไม่มีผู้รับผิดชอบ</option>
+        {% for uid, u in team.items() if u.is_active %}<option value="{{ uid }}" {% if f.owner == uid | string %}selected{% endif %}>{{ u.label }}</option>{% endfor %}
+    </select>
     <select name="dup" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
         <option value="">ซ่อนรายการซ้ำ</option>
         <option value="all" {% if f.dup == 'all' %}selected{% endif %}>รวมรายการซ้ำ</option>
@@ -50,6 +57,7 @@
                 <th class="px-4 py-3 text-left">แหล่งที่มา</th>
                 <th class="px-4 py-3 text-left">ขั้นการขาย</th>
                 <th class="px-4 py-3 text-left">คัดกรอง</th>
+                <th class="px-4 py-3 text-left">ผู้รับผิดชอบ</th>
                 <th class="px-4 py-3 text-left">นัดถัดไป</th>
                 <th class="px-4 py-3 text-left">วันที่</th>
             </tr>
@@ -75,6 +83,7 @@
                     {{ ui.qual_badge(lead.qualification, QUALIFICATION_LABELS) }}
                     {% if lead.duplicate_of %}<div class="mt-0.5">{{ ui.badge('ซ้ำกับ #' ~ lead.duplicate_of) }}</div>{% endif %}
                 </td>
+                <td class="px-4 py-3 text-xs whitespace-nowrap">{{ team[lead.assigned_to].label if lead.assigned_to in team else '—' }}</td>
                 <td class="px-4 py-3 text-xs whitespace-nowrap">{{ lead.next_follow_up.strftime('%d/%m/%y') if lead.next_follow_up else '—' }}</td>
                 <td class="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{{ lead.created_at | bkk('%d %b %y %H:%M') }}</td>
             </tr>

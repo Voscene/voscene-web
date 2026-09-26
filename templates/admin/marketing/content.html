@@ -1,0 +1,97 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — เนื้อหาและปฏิทิน{% endblock %}
+{% block page_title %}การตลาด · เนื้อหาและปฏิทิน{% endblock %}
+{% block header_actions %}
+<a href="/admin/marketing/content/new" class="{{ ui.btn_cls }}">+ เนื้อหาใหม่</a>
+{% endblock %}
+
+{% block content %}
+{% set status_color = {'draft': 'slate', 'review': 'amber', 'ready': 'blue', 'published': 'green'} %}
+<form method="get" class="flex flex-wrap items-end gap-2 mb-4">
+    <input type="hidden" name="view" value="{{ view }}">
+    {% if view == 'calendar' %}<input type="hidden" name="month" value="{{ year }}-{{ '%02d' % month }}">{% endif %}
+    <select name="status" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกสถานะ</option>
+        {% for k, label in mk.CONTENT_STATUSES %}<option value="{{ k }}" {% if f.status == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <select name="channel" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกช่องทาง</option>
+        {% for ch in mk.CHANNELS %}<option value="{{ ch.key }}" {% if f.channel == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
+    </select>
+    <select name="campaign" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกแคมเปญ</option>
+        {% for cid, c in campaigns.items() %}<option value="{{ cid }}" {% if f.campaign == cid %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <button class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm">กรอง</button>
+    <div class="ml-auto flex rounded-lg border border-slate-300 overflow-hidden text-sm">
+        <a href="?view=list&status={{ f.status }}&channel={{ f.channel }}&campaign={{ f.campaign }}" class="px-3 py-1.5 {% if view != 'calendar' %}bg-slate-800 text-white{% else %}bg-white{% endif %}">รายการ</a>
+        <a href="?view=calendar&status={{ f.status }}&channel={{ f.channel }}&campaign={{ f.campaign }}" class="px-3 py-1.5 {% if view == 'calendar' %}bg-slate-800 text-white{% else %}bg-white{% endif %}">ปฏิทิน</a>
+    </div>
+</form>
+
+{% if view == 'calendar' %}
+{% set thai_months = ['', 'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'] %}
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200">
+        <a href="?view=calendar&month={{ prev_month }}&status={{ f.status }}&channel={{ f.channel }}&campaign={{ f.campaign }}" class="text-sm text-blue-600">← ก่อนหน้า</a>
+        <h2 class="font-semibold">{{ thai_months[month] }} {{ year + 543 }}</h2>
+        <a href="?view=calendar&month={{ next_month }}&status={{ f.status }}&channel={{ f.channel }}&campaign={{ f.campaign }}" class="text-sm text-blue-600">ถัดไป →</a>
+    </div>
+    <div class="overflow-x-auto">
+    <div class="grid grid-cols-7 min-w-[700px] text-xs">
+        {% for d in ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'] %}<div class="px-2 py-1.5 bg-slate-50 text-slate-500 border-b border-slate-200 text-center">{{ d }}</div>{% endfor %}
+        {% for week in weeks %}{% for day in week %}
+        <div class="min-h-[96px] border-b border-r border-slate-100 p-1.5 {% if day.month != month %}bg-slate-50/60 text-slate-300{% endif %} {% if day == today %}ring-2 ring-inset ring-blue-400{% endif %}">
+            <div class="text-right text-[11px] mb-1">{{ day.day }}</div>
+            {% for it in by_day.get(day, []) %}
+            <a href="/admin/marketing/content/{{ it.id }}" class="block mb-1 px-1.5 py-1 rounded text-[11px] leading-tight truncate
+                {% if it.status == 'published' %}bg-emerald-100 text-emerald-800{% elif it.status == 'ready' %}bg-blue-100 text-blue-800{% elif it.status == 'review' %}bg-amber-100 text-amber-800{% else %}bg-slate-100 text-slate-700{% endif %}" title="{{ it.title }}">
+                {{ it.planned_at.strftime('%H:%M') }} {{ it.title }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endfor %}{% endfor %}
+    </div>
+    </div>
+</div>
+{% set unscheduled = items | selectattr('planned_at', 'none') | list %}
+{% if unscheduled %}
+<div class="mt-4 text-sm text-slate-500">ยังไม่กำหนดวัน {{ unscheduled | length }} รายการ — ดูใน <a href="?view=list" class="text-blue-600 hover:underline">มุมมองรายการ</a></div>
+{% endif %}
+
+{% else %}
+{% if items %}
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
+            <tr>
+                <th class="px-4 py-2 text-left">หัวข้อ</th>
+                <th class="px-4 py-2 text-left">ช่องทาง</th>
+                <th class="px-4 py-2 text-left">แคมเปญ</th>
+                <th class="px-4 py-2 text-left">วันที่วางแผน</th>
+                <th class="px-4 py-2 text-left">ผู้รับผิดชอบ</th>
+                <th class="px-4 py-2 text-left">สถานะ</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for it in items %}
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-2"><a href="/admin/marketing/content/{{ it.id }}" class="font-medium text-blue-700 hover:underline">{{ it.title }}</a></td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ mk.channel_label(it.channel) if it.channel else '—' }}</td>
+                <td class="px-4 py-2">{{ campaigns[it.campaign_id].name if it.campaign_id in campaigns else '—' }}</td>
+                <td class="px-4 py-2 whitespace-nowrap">{{ it.planned_at.strftime('%d/%m/%y %H:%M') if it.planned_at else '—' }}</td>
+                <td class="px-4 py-2">{{ it.owner or '—' }}</td>
+                <td class="px-4 py-2">{{ ui.badge(mk.CONTENT_STATUS_LABELS[it.status], status_color[it.status]) }}{% if it.published_url %} <a href="{{ it.published_url }}" target="_blank" rel="noopener" class="text-xs text-blue-600">โพสต์ ↗</a>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% else %}
+<div class="bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-500">ยังไม่มีเนื้อหา</div>
+{% endif %}
+{% endif %}
+{% endblock %}

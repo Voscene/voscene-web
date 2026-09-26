@@ -42,3 +42,7 @@ build/
 
 # Local-only
 HANDOFF.md
+
+# DB backups made by migrations.py before a schema change
+*.db.pre-*.bak
+.pytest_cache/

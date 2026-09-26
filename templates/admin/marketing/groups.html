@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — กลุ่ม Facebook{% endblock %}
+{% block page_title %}การตลาด · กลุ่ม Facebook{% endblock %}
+{% block header_actions %}<a href="/admin/marketing/groups/new" class="{{ ui.btn_cls }}">+ เพิ่มกลุ่ม</a>{% endblock %}
+
+{% block content %}
+{{ ui.alert('ระบบช่วยเตรียมและติดตามงานเท่านั้น — ผู้ใช้ลงโพสต์ในกลุ่มเอง ระบบไม่โพสต์เข้ากลุ่มอัตโนมัติ', 'blue') }}
+<div class="flex gap-2 mb-4 text-sm">
+    <a href="/admin/marketing/groups" class="px-3 py-1.5 rounded-lg {% if show != 'all' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200{% endif %}">กลุ่มที่ใช้งาน</a>
+    <a href="/admin/marketing/groups?show=all" class="px-3 py-1.5 rounded-lg {% if show == 'all' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200{% endif %}">ทั้งหมด</a>
+</div>
+{% if groups %}
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
+            <tr>
+                <th class="px-4 py-2 text-left">กลุ่ม</th>
+                <th class="px-4 py-2 text-left">ความเกี่ยวข้อง</th>
+                <th class="px-4 py-2 text-left">ความถี่ที่อนุญาต</th>
+                <th class="px-4 py-2 text-left">ลงล่าสุด</th>
+                <th class="px-4 py-2 text-left">ครั้งถัดไป</th>
+                <th class="px-4 py-2 text-right">โพสต์ (เผยแพร่/ปฏิเสธ)</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+        {% for g in groups %}
+        {% set sm = summary[g.id] %}
+        <tr class="hover:bg-slate-50 {% if not g.is_active %}opacity-60{% endif %}">
+            <td class="px-4 py-2">
+                <a href="/admin/marketing/groups/{{ g.id }}" class="font-medium text-blue-700 hover:underline">{{ g.name }}</a>
+                {% if g.audience %}<div class="text-xs text-slate-500 truncate max-w-xs">{{ g.audience }}</div>{% endif %}
+            </td>
+            <td class="px-4 py-2">{{ ui.badge(mk.RELEVANCE_LABELS.get(g.relevance, '—'), {'high': 'green', 'medium': 'blue', 'low': 'slate'}.get(g.relevance, 'slate')) }}</td>
+            <td class="px-4 py-2 text-xs">{{ g.allowed_frequency or '—' }}</td>
+            <td class="px-4 py-2 whitespace-nowrap">{{ sm.last.strftime('%d/%m/%y') if sm.last else '—' }}
+                {% if sm.wait_days %}<div class="text-[11px] text-amber-700">ลงได้อีกใน {{ sm.wait_days }} วัน</div>{% endif %}</td>
+            <td class="px-4 py-2 whitespace-nowrap">{{ sm.next.strftime('%d/%m/%y') if sm.next else '—' }}</td>
+            <td class="px-4 py-2 text-right">{{ sm.count }} ({{ sm.published }}/{{ sm.rejected }})</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% else %}
+<div class="bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-500">ยังไม่มีกลุ่มในทะเบียน</div>
+{% endif %}
+{% endblock %}

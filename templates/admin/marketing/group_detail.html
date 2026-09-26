@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}{{ g.name }}{% endblock %}
+{% block page_title %}{{ g.name }}{% endblock %}
+{% block header_actions %}
+<div class="flex gap-2">
+    <a href="/admin/marketing/groups" class="{{ ui.btn2_cls }}">← กลุ่ม</a>
+    <a href="/admin/marketing/groups/{{ g.id }}/edit" class="{{ ui.btn_cls }}">แก้ไข</a>
+</div>
+{% endblock %}
+
+{% block content %}
+{% set status_color = {'queued': 'slate', 'awaiting_approval': 'amber', 'published': 'green', 'rejected': 'red'} %}
+{% if error %}{{ ui.alert(error, 'amber') }}{% endif %}
+{% if summary.wait_days %}{{ ui.alert('ตามกติกากลุ่ม (เว้น ' ~ g.min_days_between ~ ' วัน) ควรลงครั้งถัดไปได้อีกใน ' ~ summary.wait_days ~ ' วัน', 'amber') }}{% endif %}
+
+<div class="grid lg:grid-cols-3 gap-4 mb-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4 text-sm">
+        <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+            <div class="sm:col-span-2"><dt class="text-xs text-slate-500">ลิงก์กลุ่ม</dt><dd class="break-all">{% if g.url %}<a href="{{ g.url }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">{{ g.url }} ↗</a>{% else %}—{% endif %}</dd></div>
+            <div><dt class="text-xs text-slate-500">กลุ่มเป้าหมาย</dt><dd>{{ g.audience or '—' }}</dd></div>
+            <div><dt class="text-xs text-slate-500">ความเกี่ยวข้อง</dt><dd>{{ mk.RELEVANCE_LABELS.get(g.relevance, '—') }}</dd></div>
+            <div><dt class="text-xs text-slate-500">ความถี่ที่อนุญาต</dt><dd>{{ g.allowed_frequency or '—' }}{% if g.min_days_between %} · เว้น {{ g.min_days_between }} วัน{% endif %}</dd></div>
+            <div><dt class="text-xs text-slate-500">ลงล่าสุด / ครั้งถัดไป</dt><dd>{{ summary.last.strftime('%d/%m/%y') if summary.last else '—' }} / {{ summary.next.strftime('%d/%m/%y') if summary.next else '—' }}</dd></div>
+            {% if g.rules %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">กติกา</dt><dd class="whitespace-pre-line bg-amber-50 border border-amber-100 rounded p-2 mt-1">{{ g.rules }}</dd></div>{% endif %}
+            {% if g.notes %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">หมายเหตุ</dt><dd class="whitespace-pre-line">{{ g.notes }}</dd></div>{% endif %}
+        </dl>
+    </div>
+
+    <form method="post" action="/admin/marketing/groups/{{ g.id }}/posts" class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+        <h2 class="font-semibold text-sm">เตรียมโพสต์ใหม่</h2>
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">ใช้เนื้อหาจากคลัง</label>
+            <select name="content_item_id" class="{{ ui.input_cls }}">
+                <option value="">— เขียนข้อความเอง —</option>
+                {% for it in items %}<option value="{{ it.id }}">{{ it.title }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">แคมเปญ (ต้องมี จึงจะได้ลิงก์ติดตาม)</label>
+            <select name="campaign_id" class="{{ ui.input_cls }}">
+                <option value="">— ตามเนื้อหา / ไม่ผูก —</option>
+                {% for c in campaigns %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">ข้อความ (เว้นว่าง = ใช้ข้อความของเนื้อหา)</label>
+            <textarea name="message" rows="4" class="{{ ui.input_cls }}"></textarea>
+        </div>
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">วันที่วางแผนลง</label>
+            <input type="date" name="planned_date" class="{{ ui.input_cls }}">
+        </div>
+        <button class="{{ ui.btn_cls }} w-full">เพิ่มเข้ารายการรอลง</button>
+    </form>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="px-4 py-3 border-b border-slate-200"><h2 class="font-semibold">ประวัติโพสต์ในกลุ่มนี้</h2></div>
+    {% if posts %}
+    <ul class="divide-y divide-slate-100">
+    {% for p in posts %}
+    {% set link = links.get(p.tracking_link_id) %}
+    <li class="p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2 text-sm">
+                <span class="text-slate-400">#{{ p.id }}</span>
+                {{ ui.badge(mk.GROUP_POST_STATUS_LABELS.get(p.status, p.status), status_color.get(p.status, 'slate')) }}
+                {% if p.content_item_id and p.content_item_id in all_items %}<a href="/admin/marketing/content/{{ p.content_item_id }}" class="text-blue-700 hover:underline">{{ all_items[p.content_item_id].title }}</a>{% endif %}
+            </div>
+            <div class="text-xs text-slate-500">Lead ไม่ซ้ำ {{ lead_counts.get(p.id, 0) }}{% if p.planned_date %} · วางแผน {{ p.planned_date.strftime('%d/%m/%y') }}{% endif %}</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+            <div>
+                <textarea id="gp-text-{{ p.id }}" readonly rows="4" class="w-full text-xs bg-slate-50 border border-slate-200 rounded p-2">{{ p.message }}{% if link %}
+
+{{ link.url }}{% endif %}</textarea>
+                <div class="flex flex-wrap gap-2 mt-1">
+                    {{ ui.copy_button('#gp-text-' ~ p.id, 'คัดลอกข้อความ + ลิงก์') }}
+                    {% if link %}<input id="gp-link-{{ p.id }}" type="hidden" value="{{ link.url }}">{{ ui.copy_button('#gp-link-' ~ p.id, 'คัดลอกเฉพาะลิงก์') }}{% endif %}
+                    {% if g.url %}<a href="{{ g.url }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs">เปิดกลุ่ม ↗</a>{% endif %}
+                </div>
+                {% if not link %}<p class="text-[11px] text-amber-700 mt-1">ไม่มีลิงก์ติดตาม (ไม่ได้ผูกแคมเปญ) — Lead จากโพสต์นี้จะระบุโพสต์ไม่ได้</p>{% endif %}
+            </div>
+            <form method="post" action="/admin/marketing/groups/posts/{{ p.id }}/update" class="grid grid-cols-2 gap-2 text-sm content-start">
+                <div class="col-span-2">
+                    <label class="block text-[11px] text-slate-500">สถานะ</label>
+                    <select name="status" class="{{ ui.input_cls }}">
+                        {% for k, label in mk.GROUP_POST_STATUSES %}<option value="{{ k }}" {% if p.status == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[11px] text-slate-500">ลิงก์โพสต์จริง</label>
+                    <input name="post_url" value="{{ p.post_url }}" class="{{ ui.input_cls }}" placeholder="https://www.facebook.com/groups/.../posts/...">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-slate-500">วันที่ลงจริง</label>
+                    <input type="date" name="posted_at" value="{{ p.posted_at or '' }}" class="{{ ui.input_cls }}">
+                </div>
+                <div>
+                    <label class="block text-[11px] text-slate-500">แผนลงครั้งต่อไป</label>
+                    <input type="date" name="next_post_date" value="{{ p.next_post_date or '' }}" class="{{ ui.input_cls }}">
+                </div>
+                <div class="col-span-2">
+                    <input name="note" value="{{ p.note }}" class="{{ ui.input_cls }}" placeholder="หมายเหตุ เช่น แอดมินกลุ่มปฏิเสธเพราะ...">
+                </div>
+                <div class="col-span-2 flex justify-end"><button class="{{ ui.btn2_cls }}">บันทึก</button></div>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+    </ul>
+    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีโพสต์</div>{% endif %}
+</div>
+{{ ui.copy_script() }}
+{% endblock %}

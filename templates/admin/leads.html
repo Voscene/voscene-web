@@ -1,60 +1,89 @@
 {% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
 {% block title %}Lead{% endblock %}
 {% block page_title %}Lead / ลูกค้า{% endblock %}
 
 {% block content %}
-<div class="flex gap-2 mb-6">
-    <a href="/admin/leads" class="px-4 py-2 rounded-lg text-sm {% if filter == 'all' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">ทั้งหมด</a>
-    <a href="/admin/leads?filter=in_scope" class="px-4 py-2 rounded-lg text-sm {% if filter == 'in_scope' %}bg-emerald-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">✓ อยู่ในขอบเขต</a>
-    <a href="/admin/leads?filter=out_scope" class="px-4 py-2 rounded-lg text-sm {% if filter == 'out_scope' %}bg-amber-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">⚠ นอกขอบเขต</a>
-    <a href="/admin/leads?filter=new" class="px-4 py-2 rounded-lg text-sm {% if filter == 'new' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รอติดต่อ</a>
+{% set tab = 'px-3 py-1.5 rounded-lg text-sm whitespace-nowrap' %}
+<div class="flex gap-2 mb-3 overflow-x-auto pb-1">
+    <a href="/admin/leads" class="{{ tab }} {% if filter == 'all' and not f.dup %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">ทั้งหมด</a>
+    <a href="/admin/leads?filter=new" class="{{ tab }} {% if filter == 'new' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รอติดต่อ</a>
+    <a href="/admin/leads?filter=followup" class="{{ tab }} {% if filter == 'followup' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">มีนัดติดตาม</a>
+    <a href="/admin/leads?dup=only" class="{{ tab }} {% if f.dup == 'only' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">รายการซ้ำ</a>
+    {% if settings.AI_CONSULT_ENABLED %}
+    <a href="/admin/leads?filter=in_scope" class="{{ tab }} {% if filter == 'in_scope' %}bg-emerald-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">✓ AI: ในขอบเขต</a>
+    <a href="/admin/leads?filter=out_scope" class="{{ tab }} {% if filter == 'out_scope' %}bg-amber-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">⚠ AI: นอกขอบเขต</a>
+    {% endif %}
+    <a href="/admin/leads?filter=anonymous&dup=all" class="{{ tab }} {% if filter == 'anonymous' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200 text-slate-700{% endif %}">ไม่ได้ทิ้งข้อมูลติดต่อ</a>
 </div>
+
+<form method="get" class="flex flex-wrap gap-2 mb-4">
+    <input type="hidden" name="filter" value="{{ filter }}">
+    <select name="stage" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกขั้นการขาย</option>
+        {% for k, label in SALES_STAGES %}<option value="{{ k }}" {% if f.stage == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <select name="qual" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกผลคัดกรอง</option>
+        {% for k, label in QUALIFICATIONS %}<option value="{{ k }}" {% if f.qual == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <select name="channel" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกแหล่งที่มา</option>
+        {% for ch in CHANNELS %}<option value="{{ ch.key }}" {% if f.channel == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
+    </select>
+    <select name="dup" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ซ่อนรายการซ้ำ</option>
+        <option value="all" {% if f.dup == 'all' %}selected{% endif %}>รวมรายการซ้ำ</option>
+        <option value="only" {% if f.dup == 'only' %}selected{% endif %}>เฉพาะรายการซ้ำ</option>
+    </select>
+    <button class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm">กรอง</button>
+</form>
 
 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
     {% if leads %}
-    <table class="w-full">
-        <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
             <tr>
-                <th class="px-6 py-3 text-left">ลูกค้า</th>
-                <th class="px-6 py-3 text-left">ติดต่อ</th>
-                <th class="px-6 py-3 text-left">AI</th>
-                <th class="px-6 py-3 text-left">Package แนะนำ</th>
-                <th class="px-6 py-3 text-left">สถานะ</th>
-                <th class="px-6 py-3 text-left">วันที่</th>
-                <th class="px-6 py-3"></th>
+                <th class="px-4 py-3 text-left">ลูกค้า</th>
+                <th class="px-4 py-3 text-left">ติดต่อ</th>
+                <th class="px-4 py-3 text-left">แหล่งที่มา</th>
+                <th class="px-4 py-3 text-left">ขั้นการขาย</th>
+                <th class="px-4 py-3 text-left">คัดกรอง</th>
+                <th class="px-4 py-3 text-left">นัดถัดไป</th>
+                <th class="px-4 py-3 text-left">วันที่</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
             {% for lead in leads %}
             <tr class="hover:bg-slate-50">
-                <td class="px-6 py-4">
-                    <div class="font-medium">{{ lead.name }}</div>
+                <td class="px-4 py-3">
+                    <a href="/admin/leads/{{ lead.id }}" class="font-medium text-blue-700 hover:underline">{{ lead.name }}</a>
                     <div class="text-xs text-slate-500">{{ lead.company or '—' }}</div>
+                    {% if lead.request_type in ('demo', 'quote') %}<div class="mt-0.5">{{ ui.badge(REQUEST_TYPE_LABELS[lead.request_type], 'violet') }}</div>{% endif %}
                 </td>
-                <td class="px-6 py-4 text-sm text-slate-600">
+                <td class="px-4 py-3 text-slate-600">
                     {% if lead.phone %}<div>{{ lead.phone }}</div>{% endif %}
                     {% if lead.email %}<div class="text-xs">{{ lead.email }}</div>{% endif %}
                 </td>
-                <td class="px-6 py-4">
-                    {% if lead.ai_in_scope %}
-                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">✓ ใน Scope</span>
-                    {% else %}
-                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">⚠ นอก Scope</span>
-                    {% endif %}
-                    <div class="text-xs text-slate-400 mt-1">{{ "%.0f"|format(lead.ai_confidence * 100) }}%</div>
+                <td class="px-4 py-3 text-xs">
+                    <div class="font-medium text-slate-700">{{ channel_label(lead.channel) }}</div>
+                    {% if lead.campaign_id and lead.campaign_id in campaigns %}<div class="text-slate-500">{{ campaigns[lead.campaign_id].name }}</div>{% elif lead.utm_campaign %}<div class="text-slate-400 font-mono">{{ lead.utm_campaign }}</div>{% endif %}
                 </td>
-                <td class="px-6 py-4 text-sm">{{ lead.ai_recommended_package or '—' }}</td>
-                <td class="px-6 py-4 text-sm text-slate-600">{{ lead.status }}</td>
-                <td class="px-6 py-4 text-slate-500 text-xs">{{ lead.created_at.strftime('%d %b %y %H:%M') }}</td>
-                <td class="px-6 py-4 text-right">
-                    <a href="/admin/leads/{{ lead.id }}" class="text-blue-600 text-sm hover:underline">ดู</a>
+                <td class="px-4 py-3">{{ ui.stage_badge(lead.sales_stage, SALES_STAGE_LABELS) }}</td>
+                <td class="px-4 py-3">
+                    {{ ui.qual_badge(lead.qualification, QUALIFICATION_LABELS) }}
+                    {% if lead.duplicate_of %}<div class="mt-0.5">{{ ui.badge('ซ้ำกับ #' ~ lead.duplicate_of) }}</div>{% endif %}
                 </td>
+                <td class="px-4 py-3 text-xs whitespace-nowrap">{{ lead.next_follow_up.strftime('%d/%m/%y') if lead.next_follow_up else '—' }}</td>
+                <td class="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{{ lead.created_at | bkk('%d %b %y %H:%M') }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
     {% else %}
-    <div class="p-12 text-center text-slate-500">ยังไม่มี Lead</div>
+    <div class="p-12 text-center text-slate-500">ไม่มี Lead ตามเงื่อนไขนี้</div>
     {% endif %}
 </div>
 {% endblock %}

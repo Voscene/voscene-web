@@ -1,0 +1,130 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — รายงานผล{% endblock %}
+{% block page_title %}การตลาด · รายงานผล{% endblock %}
+{% block header_actions %}
+<a href="/admin/marketing/spend" class="{{ ui.btn2_cls }}">ค่าโฆษณา / นำเข้า CSV</a>
+{% endblock %}
+
+{% block content %}
+{% set s = r.stats %}
+{% set qs = 'start=' ~ filters.start ~ '&end=' ~ filters.end ~ '&channel=' ~ filters.channel %}
+{{ ui.filters('/admin/marketing/reports', filters, mk) }}
+
+<div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+    <h2 class="font-semibold text-sm mb-3">เส้นทางลูกค้า ({{ filters.start }} → {{ filters.end }}{% if filters.channel %} · {{ mk.channel_label(filters.channel) }}{% endif %})</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center text-sm">
+        {% for label, value, hint in [
+            ('ผู้เข้าเว็บ', none, 'ยังไม่เชื่อมข้อมูล'),
+            ('คลิก LINE', r.line_clicks, 'ไม่นับเป็น Lead'),
+            ('คลิกโทร', r.phone_clicks, 'ไม่นับเป็น Lead'),
+            ('ส่งฟอร์มสำเร็จ', s.submitted, 'รวมซ้ำ/สแปม'),
+            ('Lead ไม่ซ้ำ', s.unique, 'ตัดซ้ำ + สแปม'),
+            ('ตรงกลุ่ม', s.fit, 'ทีมงานคัดกรองแล้ว'),
+            ('เสนอราคา', s.quoted, 'ขั้นเสนอราคา/ปิดงาน'),
+            ('ปิดงาน', s.won, s.won_value | money if s.won else '')] %}
+        <div class="rounded-lg border border-slate-200 py-2 px-1">
+            <div class="text-xl font-bold {% if value is none %}text-slate-300{% endif %}">{% if value is none %}—{% else %}{{ value }}{% endif %}</div>
+            <div class="text-xs font-medium">{{ label }}</div>
+            <div class="text-[10px] text-slate-400 leading-tight">{{ hint }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-slate-600">
+        <span>ค่าโฆษณา <b>{{ ui.money(r.spend) }}</b></span>
+        <span>ต้นทุน/Lead ไม่ซ้ำ <b>{{ ui.money(r.cpl_unique, 'ต้องมีทั้งค่าโฆษณาและ Lead') }}</b></span>
+        <span>ต้นทุน/Lead ตรงกลุ่ม <b>{{ ui.money(r.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</b></span>
+        <span>ขอ Demo <b>{{ s.demo_requests }}</b> · ขอราคา <b>{{ s.quote_requests }}</b></span>
+    </div>
+</div>
+
+{% macro table_head(cols) -%}
+<thead class="bg-slate-50 text-xs text-slate-500"><tr>
+{% for c in cols %}<th class="px-3 py-2 {% if loop.index > 1 %}text-right{% else %}text-left{% endif %} whitespace-nowrap">{{ c }}</th>{% endfor %}
+</tr></thead>
+{%- endmacro %}
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-semibold">ตามช่องทาง</h2>
+        <a href="/admin/marketing/reports/export.csv?kind=channel&{{ qs }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
+    </div>
+    <div class="overflow-x-auto"><table class="w-full text-sm">
+        {{ table_head(['ช่องทาง', 'ค่าโฆษณา', 'Lead', 'ตรงกลุ่ม', 'รอตรวจ', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        <tbody class="divide-y divide-slate-100">
+        {% for x in r.by_channel %}
+        <tr>
+            <td class="px-3 py-2 font-medium whitespace-nowrap">{{ x.label }} <div class="text-[11px] font-normal text-slate-400">{{ x.connection }}{% if x.spend_sources %} · {{ x.spend_sources | join(', ') }}{% endif %}</div></td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{% if x.spend_applicable %}{{ ui.money(x.spend) }}{% else %}<span class="text-xs text-slate-400">ไม่มีค่าโฆษณา</span>{% endif %}</td>
+            <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
+            <td class="px-3 py-2 text-right text-slate-500">{{ x.pending }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
+            <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
+            <td class="px-3 py-2 text-right">{{ x.won }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ x.won_value | money if x.won else '—' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-semibold">ตามแคมเปญ</h2>
+        <a href="/admin/marketing/reports/export.csv?kind=campaign&{{ qs }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
+    </div>
+    {% if r.by_campaign %}
+    <div class="overflow-x-auto"><table class="w-full text-sm">
+        {{ table_head(['แคมเปญ', 'งบ', 'ค่าโฆษณา', 'Lead', 'ตรงกลุ่ม', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        <tbody class="divide-y divide-slate-100">
+        {% for x in r.by_campaign %}
+        <tr>
+            <td class="px-3 py-2">{% if x.id %}<a href="/admin/marketing/campaigns/{{ x.id }}" class="font-medium text-blue-700 hover:underline">{{ x.label }}</a><div class="text-[11px] text-slate-400 font-mono">{{ x.code }}</div>{% else %}<span class="text-slate-500">{{ x.label }}</span>{% endif %}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.budget, 'ไม่ได้ตั้งงบ') }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.spend) }}</td>
+            <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
+            <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
+            <td class="px-3 py-2 text-right">{{ x.won }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ x.won_value | money if x.won else '—' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีข้อมูลแคมเปญในช่วงนี้</div>{% endif %}
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-semibold">ตามเนื้อหา / โพสต์ <span class="text-xs font-normal text-slate-400">(เฉพาะ Lead ที่เข้ามาผ่านลิงก์ติดตามของโพสต์นั้น)</span></h2>
+        <a href="/admin/marketing/reports/export.csv?kind=content&{{ qs }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
+    </div>
+    {% if r.by_content %}
+    <div class="overflow-x-auto"><table class="w-full text-sm">
+        {{ table_head(['เนื้อหา / โพสต์', 'ช่องทาง', 'Lead', 'ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน']) }}
+        <tbody class="divide-y divide-slate-100">
+        {% for x in r.by_content %}
+        <tr>
+            <td class="px-3 py-2">
+                {% if x.kind == 'content' %}<a href="/admin/marketing/content/{{ x.id }}" class="text-blue-700 hover:underline">{{ x.label }}</a>
+                {% else %}<a href="/admin/marketing/groups/{{ x.group_id }}" class="text-blue-700 hover:underline">{{ x.label }}</a> <span class="text-xs text-slate-400">#{{ x.id }}</span>{% endif %}
+            </td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ mk.channel_label(x.channel) }}</td>
+            <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
+            <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
+            <td class="px-3 py-2 text-right">{{ x.won }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table></div>
+    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มี Lead ที่ระบุเนื้อหา/โพสต์ได้ในช่วงนี้</div>{% endif %}
+</div>
+
+<div class="flex flex-wrap gap-2 items-center">
+    <a href="/admin/marketing/reports/export.csv?kind=leads&{{ qs }}" class="{{ ui.btn2_cls }}">ส่งออกรายชื่อ Lead ในช่วงนี้ (CSV)</a>
+    <span class="text-xs text-slate-400">ไฟล์ CSV กันสูตร Excel ในข้อมูลที่ลูกค้ากรอกแล้ว · การส่งออกถูกบันทึกในประวัติ</span>
+</div>
+{% endblock %}

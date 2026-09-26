@@ -1,0 +1,148 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}เนื้อหา{% endblock %}
+{% block page_title %}{% if item %}{{ item.title }}{% else %}เนื้อหาใหม่{% endif %}{% endblock %}
+{% block header_actions %}<a href="/admin/marketing/content" class="text-sm text-blue-600 hover:underline">← คลังเนื้อหา</a>{% endblock %}
+
+{% block content %}
+{% macro v(key, default='') -%}{{ pre.get(key) if pre.get(key) is not none else (item[key] if item and item[key] is not none else default) }}{%- endmacro %}
+{% for e in errors %}{{ ui.alert(e) }}{% endfor %}
+{% if error %}{% for e in error.split('; ') %}{{ ui.alert(e, 'amber') }}{% endfor %}{% endif %}
+
+<div class="grid lg:grid-cols-3 gap-6">
+<form method="post" action="/admin/marketing/content/save" enctype="multipart/form-data" class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-4">
+    {% if item %}<input type="hidden" name="id" value="{{ item.id }}">{% endif %}
+    <div>
+        <label class="block text-sm font-medium mb-1">หัวข้อ *</label>
+        <input name="title" required value="{{ v('title') }}" class="{{ ui.input_cls }}">
+    </div>
+    <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">ช่องทาง</label>
+            <select name="channel" class="{{ ui.input_cls }}">
+                <option value="">— เลือก —</option>
+                {% for ch in mk.CHANNELS %}<option value="{{ ch.key }}" {% if v('channel') == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">แคมเปญ</label>
+            <select name="campaign_id" class="{{ ui.input_cls }}">
+                <option value="">— ไม่ผูก —</option>
+                {% for c in campaigns %}<option value="{{ c.id }}" {% if v('campaign_id') | string == c.id | string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+            </select>
+        </div>
+    </div>
+    <div>
+        <div class="flex items-center justify-between mb-1">
+            <label class="block text-sm font-medium">ข้อความ / แคปชัน</label>
+            {% if item %}{{ ui.copy_button('#copy-text', 'คัดลอกข้อความ + ลิงก์') }}{% endif %}
+        </div>
+        <textarea name="body" rows="8" class="{{ ui.input_cls }}">{{ v('body') }}</textarea>
+        <p class="text-[11px] text-slate-400 mt-1">ฟีเจอร์ที่ยังพัฒนาอยู่ห้ามเขียนว่าพร้อมส่งมอบ — ตรวจกับ docs/MARKETING-GUIDE.md ก่อนเปลี่ยนเป็น "พร้อมลง"</p>
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">หน้าเว็บปลายทาง</label>
+        <input name="destination" value="{{ v('destination') }}" class="{{ ui.input_cls }}" placeholder="เว้นว่าง = ใช้หน้าปลายทางของแคมเปญ">
+        <p class="text-[11px] text-slate-400 mt-1">เลือกทั้งแคมเปญและช่องทาง ระบบจะสร้างลิงก์ติดตามของโพสต์นี้ให้เอง</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">วันเวลาที่วางแผน</label>
+            <input type="datetime-local" name="planned_at" value="{{ item.planned_at.strftime('%Y-%m-%dT%H:%M') if item and item.planned_at else pre.get('planned_at', '') }}" class="{{ ui.input_cls }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">ผู้รับผิดชอบ</label>
+            <input name="owner" value="{{ v('owner') }}" class="{{ ui.input_cls }}" placeholder="ชื่อ">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">สถานะ</label>
+            <select name="status" class="{{ ui.input_cls }}">
+                {% for k, label in mk.CONTENT_STATUSES %}
+                <option value="{{ k }}" {% if v('status', 'draft') == k %}selected{% endif %} {% if k == 'published' and not (item and item.status == 'published') %}disabled{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">ร่าง → รอตรวจ → พร้อมลง → เผยแพร่แล้ว (บันทึกลิงก์โพสต์ด้านขวา)</p>
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">ไฟล์สื่อ (รูป / คลิป / PDF · ไม่เกิน 50 MB ต่อไฟล์)</label>
+        <input type="file" name="files" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.webm,.pdf" class="block w-full text-sm">
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">หมายเหตุ</label>
+        <textarea name="notes" rows="2" class="{{ ui.input_cls }}" placeholder="เช่น ลิงก์คลิปยาวบน Drive">{{ v('notes') }}</textarea>
+    </div>
+    <div class="flex justify-end"><button class="{{ ui.btn_cls }}">บันทึก</button></div>
+</form>
+
+<div class="space-y-4">
+    {% if item %}
+    {% set ch = mk.CHANNEL_MAP.get(item.channel) %}
+    <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+        <h2 class="font-semibold text-sm">ลงโพสต์เอง</h2>
+        <div class="flex flex-wrap gap-2">
+            {{ ui.copy_button('#copy-text', 'คัดลอกข้อความ + ลิงก์') }}
+            {% if ch and ch.open_url %}<a href="{{ ch.open_url }}" target="_blank" rel="noopener" class="{{ ui.btn2_cls }} !py-1.5 !text-xs">เปิด {{ ch.label }} ↗</a>{% endif %}
+        </div>
+        <textarea id="copy-text" readonly class="sr-only" tabindex="-1">{{ item.body }}{% if link %}
+
+{{ link.url }}{% endif %}</textarea>
+        {% if link %}
+        <div>
+            <div class="text-xs text-slate-500 mb-1">ลิงก์ติดตามของโพสต์นี้</div>
+            <input id="item-link" readonly value="{{ link.url }}" class="w-full font-mono text-[11px] bg-slate-50 border border-slate-200 rounded px-2 py-1.5" onclick="this.select()">
+            <div class="mt-1">{{ ui.copy_button('#item-link', 'คัดลอกลิงก์') }}</div>
+        </div>
+        {% else %}
+        <p class="text-xs text-amber-700">ยังไม่มีลิงก์ติดตาม — เลือกแคมเปญและช่องทางแล้วบันทึก</p>
+        {% endif %}
+        <div class="text-xs text-slate-500">Lead ที่เข้ามาผ่านโพสต์นี้: <b>{{ lead_count }}</b></div>
+    </div>
+
+    <form method="post" action="/admin/marketing/content/{{ item.id }}/publish" class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+        <h2 class="font-semibold text-sm">บันทึกการเผยแพร่</h2>
+        <p class="text-[11px] text-slate-500">ระบบไม่ได้โพสต์แทน — ลงโพสต์เองแล้วนำลิงก์กลับมาบันทึกที่นี่</p>
+        <input name="published_url" value="{{ item.published_url }}" required class="{{ ui.input_cls }}" placeholder="https://www.facebook.com/...">
+        <input type="datetime-local" name="published_at" required value="{{ item.published_at.strftime('%Y-%m-%dT%H:%M') if item.published_at else '' }}" class="{{ ui.input_cls }}">
+        <button class="{{ ui.btn_cls }} w-full">{% if item.status == 'published' %}อัปเดต{% else %}ทำเครื่องหมายว่าเผยแพร่แล้ว{% endif %}</button>
+        {% if item.published_url %}<a href="{{ item.published_url }}" target="_blank" rel="noopener" class="block text-xs text-blue-600 hover:underline break-all">{{ item.published_url }}</a>{% endif %}
+    </form>
+
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-2">ไฟล์สื่อ</h2>
+        {% if media %}
+        <ul class="space-y-2">
+            {% for m in media %}
+            <li class="flex items-center gap-2 text-sm">
+                {% if m.stored.split('.')[-1] in ['jpg', 'jpeg', 'png', 'webp', 'gif'] %}
+                <img src="/admin/marketing/media/{{ m.stored }}" alt="" class="w-12 h-12 object-cover rounded border border-slate-200">
+                {% else %}<div class="w-12 h-12 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-500 uppercase">{{ m.stored.split('.')[-1] }}</div>{% endif %}
+                <div class="min-w-0 flex-1">
+                    <a href="/admin/marketing/media/{{ m.stored }}" target="_blank" class="block truncate text-blue-700 hover:underline">{{ m.name }}</a>
+                    <span class="text-[11px] text-slate-400">{{ (m.size / 1048576) | round(1) }} MB · <a href="/admin/marketing/media/{{ m.stored }}?download=1" class="hover:underline">ดาวน์โหลด</a></span>
+                </div>
+                <form method="post" action="/admin/marketing/content/{{ item.id }}/media/remove" onsubmit="return confirm('ลบไฟล์นี้?')">
+                    <input type="hidden" name="stored" value="{{ m.stored }}">
+                    <button class="text-xs text-red-600 hover:underline">ลบ</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}<p class="text-xs text-slate-400">ยังไม่มีไฟล์</p>{% endif %}
+    </div>
+
+    {% if history %}
+    <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+        <summary class="cursor-pointer font-semibold">ประวัติ</summary>
+        <ul class="mt-2 space-y-1 text-xs text-slate-600">
+            {% for h in history %}<li>{{ h.created_at | bkk }} · {{ h.username }} · {{ h.action }} · <span class="font-mono">{{ h.detail }}</span></li>{% endfor %}
+        </ul>
+    </details>
+    {% endif %}
+    {% else %}
+    <div class="bg-white rounded-xl border border-slate-200 p-4 text-sm text-slate-500">บันทึกครั้งแรกแล้ว จะมีปุ่มคัดลอกข้อความ ลิงก์ติดตาม และช่องบันทึกการเผยแพร่</div>
+    {% endif %}
+</div>
+</div>
+{{ ui.copy_script() }}
+{% endblock %}

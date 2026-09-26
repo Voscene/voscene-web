@@ -729,6 +729,7 @@
 
                 try {
                     const cd = new FormData(contactForm);
+                    if (window.vsAttribution) window.vsAttribution(cd, contactForm);
                     cd.append('room_size', analyzeForm.room_size.value);
                     cd.append('budget', analyzeForm.budget.value);
                     const cr = await fetch('/api/lead', { method: 'POST', body: cd });
@@ -789,6 +790,17 @@
                     <textarea name="requirement" required rows="5" class="w-full bg-white/95 border border-white/20 rounded-xl px-4 py-4 text-navy placeholder:text-slate-400 focus:border-electric focus:ring-2 focus:ring-electric/30 outline-none transition text-base" placeholder="เช่น มีห้องประชุมขนาดกลาง 20 คน ใช้โปรเจคเตอร์ 1 เครื่อง + Smart TV 1 เครื่อง ต้องการระบบควบคุมไฟ DMX และเสียงผ่านหน้าจอเดียว งบประมาณ ~150,000 บาท..."></textarea>
                 </div>
 
+                <fieldset>
+                    <legend class="block text-sm font-medium mb-2 text-sky font-th">ต้องการให้ทีมงานช่วยเรื่อง</legend>
+                    <div class="flex flex-wrap gap-2">
+                        {% for key, label in [('consult', 'ปรึกษา / ประเมิน'), ('demo', 'ขอนัด Demo'), ('quote', 'ขอใบเสนอราคา')] %}
+                        <label class="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/20 bg-white/5 text-sky font-th text-sm cursor-pointer has-[:checked]:bg-electric has-[:checked]:border-electric has-[:checked]:text-white">
+                            <input type="radio" name="request_type" value="{{ key }}" class="accent-white" {% if loop.first %}checked{% endif %}> {{ label }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+
                 <div class="grid md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-sm font-medium mb-2 text-sky font-th">ชื่อ-นามสกุล <span class="text-electric-300">*</span></label>
@@ -847,7 +859,9 @@
             <div id="consult-success" class="hidden relative text-center py-6">
                 <h3 class="font-display text-2xl md:text-3xl font-semibold text-white mb-3">ขอบคุณครับ — ทีมงานได้รับข้อมูลของคุณแล้ว</h3>
                 <p class="text-sky/80 font-th mb-5">ทีมงานจะประเมินความต้องการและติดต่อกลับโดยเร็ว</p>
-                <p class="text-sky/70 text-sm font-th">อยากคุยเลยตอนนี้ โทร {{ c.contact_phone | linkify_phone }}</p>
+                {# ช่องโทรศัพท์ใน CMS มีหลายบรรทัด (ฝ่ายขาย / ฝ่ายเทคนิค / LINE) — แยกบรรทัดแบบเดียวกับหน้า /contact #}
+                <p class="text-sky/70 text-sm font-th">อยากคุยเลยตอนนี้ ติดต่อ</p>
+                <p class="text-sky/80 text-sm font-th whitespace-pre-line mt-1">{{ c.contact_phone | linkify_phone }}</p>
             </div>
         </div>
     </div>
@@ -871,7 +885,9 @@
         errorBox.classList.add('hidden');
 
         try {
-            const r = await fetch('/api/lead', { method: 'POST', body: new FormData(form) });
+            const fd = new FormData(form);
+            if (window.vsAttribution) window.vsAttribution(fd, form);
+            const r = await fetch('/api/lead', { method: 'POST', body: fd });
             const j = await r.json();
             if (j.ok) {
                 if (window.trackLead) window.trackLead('homepage-consult');

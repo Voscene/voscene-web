@@ -8,6 +8,7 @@
 - **AI วิเคราะห์ Lead** — กรอกฟอร์ม → AI (Groq llama-3.3-70b) วิเคราะห์ว่าอยู่ในขอบเขตให้บริการหรือไม่ + แนะนำ Package
 - **Admin Panel** — แก้ไขเนื้อหาหน้าเว็บ, จัดการ Package/ราคา, ดู Lead, เขียนบทความ Blog
 - **Authentication** — JWT cookie session, เปลี่ยนรหัสผ่านได้
+- **การตลาด** (Admin → การตลาด) — แคมเปญ + ลิงก์ UTM · คลังเนื้อหา/ปฏิทิน · ทะเบียนกลุ่ม Facebook · ค่าโฆษณา (กรอกเอง/CSV) · รายงานจากแหล่งที่มาถึงปิดงาน — คู่มือและนิยามตัวชี้วัด: [docs/MARKETING-GUIDE.md](docs/MARKETING-GUIDE.md)
 
 ## โครงสร้างไฟล์
 
@@ -15,17 +16,32 @@
 cc web/
 ├── main.py              # FastAPI app
 ├── database.py          # SQLite schema
+├── migrations.py        # เพิ่มตาราง/คอลัมน์แบบไม่ทำลายข้อมูล (สำรอง DB ก่อนทุกครั้ง)
+├── marketing.py         # เมนูการตลาด (routes) + /api/event
+├── marketing_core.py    # บริการ · ช่องทาง · UTM · ซ้ำ/สแปม · CSV
+├── marketing_integrations.py  # โครงเชื่อมต่อแพลตฟอร์ม (ระยะ 2)
 ├── seed.py              # ข้อมูลเริ่มต้น
 ├── auth.py              # Login / Session
 ├── ai_service.py        # Groq AI integration
 ├── config.py            # Settings (.env)
 ├── requirements.txt
 ├── .env.example         # ก๊อปเป็น .env
+├── docs/                # แนวทางการตลาด + คู่มือ
+├── tests/               # python -m pytest tests -q
 ├── templates/
 │   ├── public/          # หน้าเว็บ
-│   └── admin/           # Admin Panel
-└── static/              # CSS/JS/Images
+│   └── admin/           # Admin Panel (marketing/ = เมนูการตลาด)
+└── static/              # CSS/JS/Images (js/vs-track.js = แหล่งที่มาของ Lead)
 ```
+
+## ทดสอบ
+
+```powershell
+pip install pytest
+python -m pytest tests -q
+```
+
+ใช้ฐานข้อมูลชั่วคราวแยก ไม่แตะ `data.db`
 
 ## ติดตั้ง (Local Development)
 

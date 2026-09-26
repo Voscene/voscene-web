@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — ค่าโฆษณา{% endblock %}
+{% block page_title %}การตลาด · ค่าโฆษณา{% endblock %}
+{% block header_actions %}<a href="/admin/marketing/reports" class="text-sm text-blue-600 hover:underline">← รายงานผล</a>{% endblock %}
+
+{% block content %}
+{% if error %}{{ ui.alert(error) }}{% endif %}
+<div class="grid lg:grid-cols-2 gap-4 mb-6">
+    <form method="post" action="/admin/marketing/spend/add" class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+        <h2 class="font-semibold text-sm">กรอกค่าโฆษณาเอง (รายวัน)</h2>
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">วันที่ *</label>
+                <input type="date" name="date" required max="{{ today }}" value="{{ today }}" class="{{ ui.input_cls }}">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">ช่องทาง *</label>
+                <select name="channel" required class="{{ ui.input_cls }}">
+                    {% for key in mk.SPEND_CHANNELS %}<option value="{{ key }}">{{ mk.channel_label(key) }}</option>{% endfor %}
+                </select>
+            </div>
+            <div class="col-span-2">
+                <label class="block text-xs text-slate-500 mb-1">แคมเปญ</label>
+                <select name="campaign_id" class="{{ ui.input_cls }}">
+                    <option value="">— ไม่ผูกแคมเปญ —</option>
+                    {% for c in campaigns %}<option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">ค่าโฆษณา (บาท) *</label>
+                <input name="spend" required inputmode="decimal" class="{{ ui.input_cls }}" placeholder="0.00">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div><label class="block text-xs text-slate-500 mb-1">Impressions</label><input name="impressions" inputmode="numeric" class="{{ ui.input_cls }}"></div>
+                <div><label class="block text-xs text-slate-500 mb-1">คลิก</label><input name="clicks" inputmode="numeric" class="{{ ui.input_cls }}"></div>
+            </div>
+            <div class="col-span-2"><input name="note" class="{{ ui.input_cls }}" placeholder="หมายเหตุ (ไม่บังคับ)"></div>
+        </div>
+        <button class="{{ ui.btn_cls }} w-full">บันทึก</button>
+        <p class="text-[11px] text-slate-400">1 วัน × 1 ช่องทาง × 1 แคมเปญ บันทึกได้รายการเดียว (กันนับซ้ำ) · ถ้าต้องแก้ ลบรายการเดิมแล้วกรอกใหม่ · ทุกการเพิ่ม/ลบถูกบันทึกในประวัติ</p>
+    </form>
+
+    <form method="post" action="/admin/marketing/spend/import" enctype="multipart/form-data" class="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+        <h2 class="font-semibold text-sm">นำเข้าจากไฟล์ CSV</h2>
+        <p class="text-sm text-slate-600">คอลัมน์: <code class="text-xs bg-slate-100 px-1 rounded">date, channel, campaign, spend, impressions, clicks, currency</code></p>
+        <ul class="text-xs text-slate-500 list-disc pl-5 space-y-0.5">
+            <li><b>channel</b> ใช้คีย์: {{ mk.SPEND_CHANNELS | join(', ') }}</li>
+            <li><b>campaign</b> ใส่รหัสแคมเปญ (utm_campaign) เพื่อผูกกับแคมเปญ · ไม่ตรงก็นำเข้าได้แต่จะไม่ผูก</li>
+            <li>ระบบแสดงตัวอย่างให้ตรวจก่อนทุกครั้ง · ไฟล์เดิมซ้ำ หรือแถววัน/ช่องทาง/แคมเปญที่มีอยู่แล้ว จะถูกข้าม</li>
+        </ul>
+        <a href="/admin/marketing/spend/sample.csv" class="text-sm text-blue-600 hover:underline">ดาวน์โหลดไฟล์ตัวอย่าง</a>
+        <input type="file" name="file" accept=".csv,text/csv" required class="block w-full text-sm">
+        <button class="{{ ui.btn_cls }} w-full">ตรวจไฟล์ (ยังไม่นำเข้า)</button>
+    </form>
+</div>
+
+{% if batches %}
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200"><h2 class="font-semibold text-sm">การนำเข้าล่าสุด</h2></div>
+    <ul class="divide-y divide-slate-100 text-sm">
+        {% for b in batches %}
+        <li class="px-4 py-2 flex flex-wrap justify-between gap-2">
+            <a href="/admin/marketing/spend/import/{{ b.id }}" class="hover:underline">{{ b.filename }}</a>
+            <span class="text-xs text-slate-500">{{ ui.badge({'preview': 'รอยืนยัน', 'imported': 'นำเข้าแล้ว', 'cancelled': 'ยกเลิก'}[b.status], {'preview': 'amber', 'imported': 'green', 'cancelled': 'slate'}[b.status]) }}
+                {% if b.status == 'imported' %}นำเข้า {{ b.imported_rows }} · ข้าม {{ b.skipped_rows }}{% endif %} · {{ b.created_at | bkk }} · {{ b.created_by }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="px-4 py-3 border-b border-slate-200"><h2 class="font-semibold text-sm">รายการค่าโฆษณา (ล่าสุด 200 รายการ)</h2></div>
+    {% if rows %}
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
+            <tr><th class="px-3 py-2 text-left">วันที่</th><th class="px-3 py-2 text-left">ช่องทาง</th><th class="px-3 py-2 text-left">แคมเปญ</th><th class="px-3 py-2 text-right">ค่าโฆษณา</th><th class="px-3 py-2 text-right">Impr.</th><th class="px-3 py-2 text-right">คลิก</th><th class="px-3 py-2 text-left">ที่มา</th><th></th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+        {% for r in rows %}
+        <tr>
+            <td class="px-3 py-2 whitespace-nowrap">{{ r.date.strftime('%d/%m/%Y') }}</td>
+            <td class="px-3 py-2 whitespace-nowrap">{{ mk.channel_label(r.channel) }}</td>
+            <td class="px-3 py-2">{% if r.campaign_id and r.campaign_id in all_campaigns %}<a href="/admin/marketing/campaigns/{{ r.campaign_id }}" class="text-blue-700 hover:underline">{{ all_campaigns[r.campaign_id].name }}</a>{% elif r.campaign_label %}<span class="text-slate-500">{{ r.campaign_label }} (ไม่ผูก)</span>{% else %}—{% endif %}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ r.spend | money }}</td>
+            <td class="px-3 py-2 text-right">{{ '{:,}'.format(r.impressions) if r.impressions is not none else '—' }}</td>
+            <td class="px-3 py-2 text-right">{{ '{:,}'.format(r.clicks) if r.clicks is not none else '—' }}</td>
+            <td class="px-3 py-2 text-xs">{{ {'manual': 'กรอกเอง', 'csv': 'นำเข้าไฟล์', 'api': 'เชื่อมต่อ'}.get(r.source, r.source) }} · {{ r.created_by }}</td>
+            <td class="px-3 py-2 text-right">
+                <form method="post" action="/admin/marketing/spend/{{ r.id }}/delete" onsubmit="return confirm('ลบรายการค่าโฆษณานี้? (บันทึกในประวัติ)')"><button class="text-xs text-red-600 hover:underline">ลบ</button></form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีข้อมูลค่าโฆษณา — รายงานจะแสดง "—" (ยังไม่มีข้อมูล) ไม่ใช่ 0</div>{% endif %}
+</div>
+{% endblock %}

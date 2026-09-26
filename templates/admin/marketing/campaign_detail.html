@@ -1,0 +1,135 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}{{ c.name }}{% endblock %}
+{% block page_title %}{{ c.name }}{% endblock %}
+{% block header_actions %}
+<div class="flex gap-2">
+    <a href="/admin/marketing/campaigns" class="{{ ui.btn2_cls }}">← แคมเปญ</a>
+    <a href="/admin/marketing/campaigns/{{ c.id }}/edit" class="{{ ui.btn_cls }}">แก้ไข</a>
+</div>
+{% endblock %}
+
+{% block content %}
+{% set svc = mk.SERVICE_MAP.get(c.service) %}
+{% if error %}{{ ui.alert(error) }}{% endif %}
+{% if svc and svc.claim != 'ready' %}
+{{ ui.alert('บริการนี้ ' ~ mk.CLAIM_LABELS[svc.claim] ~ ' — ' ~ svc.note, 'amber' if svc.claim == 'conditions' else 'red') }}
+{% endif %}
+
+<div class="grid lg:grid-cols-3 gap-4 mb-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4">
+        <dl class="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+            <div><dt class="text-xs text-slate-500">รหัส (utm_campaign)</dt><dd class="font-mono">{{ c.code }}</dd></div>
+            <div><dt class="text-xs text-slate-500">สถานะ</dt><dd>{{ ui.badge(mk.CAMPAIGN_STATUS_LABELS.get(c.status, c.status), 'green' if c.status == 'active' else 'slate') }}</dd></div>
+            <div><dt class="text-xs text-slate-500">บริการ</dt><dd>{{ svc.label if svc else '—' }}</dd></div>
+            <div><dt class="text-xs text-slate-500">เป้าหมาย</dt><dd>{{ mk.CAMPAIGN_GOAL_LABELS.get(c.goal, '—') }}</dd></div>
+            <div><dt class="text-xs text-slate-500">ช่วงเวลา</dt><dd>{{ c.start_date.strftime('%d/%m/%Y') if c.start_date else '?' }} – {{ c.end_date.strftime('%d/%m/%Y') if c.end_date else '?' }}</dd></div>
+            <div><dt class="text-xs text-slate-500">ช่องทาง</dt><dd>{% for ch in (c.channels or '').split(',') if ch %}{{ mk.channel_label(ch) }}{% if not loop.last %} · {% endif %}{% else %}—{% endfor %}</dd></div>
+            <div class="sm:col-span-2"><dt class="text-xs text-slate-500">หน้าปลายทาง</dt><dd class="break-all"><a href="{{ c.landing_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">{{ c.landing_url }}</a></dd></div>
+            {% if c.audience %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">กลุ่มเป้าหมาย</dt><dd class="whitespace-pre-line">{{ c.audience }}</dd></div>{% endif %}
+            {% if c.notes %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">หมายเหตุ</dt><dd class="whitespace-pre-line">{{ c.notes }}</dd></div>{% endif %}
+        </dl>
+    </div>
+    <div class="grid grid-cols-2 gap-3 content-start">
+        {{ ui.kpi('งบ', ui.money(c.budget, 'ไม่ได้ตั้งงบ')) }}
+        {{ ui.kpi('ใช้ไป (ทั้งหมด)', ui.money(spend)) }}
+        {{ ui.kpi('Lead ไม่ซ้ำ', stats.unique) }}
+        {{ ui.kpi('ตรงกลุ่ม', stats.fit, '', 'text-emerald-600') }}
+        {{ ui.kpi('ต้นทุน/ตรงกลุ่ม', ui.money(cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม')) }}
+        {{ ui.kpi('ปิดงาน', stats.won, stats.won_value | money if stats.won else '') }}
+    </div>
+</div>
+
+<!-- ลิงก์ติดตาม -->
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200"><h2 class="font-semibold">ลิงก์ติดตาม (UTM)</h2></div>
+    <form method="post" action="/admin/marketing/campaigns/{{ c.id }}/links" class="p-4 grid md:grid-cols-6 gap-3 items-end border-b border-slate-100 bg-slate-50">
+        <div class="md:col-span-2">
+            <label class="block text-xs text-slate-500 mb-1">ช่องทาง</label>
+            <select name="channel" required class="{{ ui.input_cls }}" onchange="document.getElementById('custom-src').classList.toggle('hidden', this.value !== 'other')">
+                {% for ch in mk.CHANNELS %}<option value="{{ ch.key }}">{{ ch.label }}{% if ch.source %} ({{ ch.source }} / {{ ch.medium }}){% endif %}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-xs text-slate-500 mb-1">หน้าปลายทาง (เว้นว่าง = ของแคมเปญ)</label>
+            <input name="destination" class="{{ ui.input_cls }}" placeholder="{{ c.landing_url }}">
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-xs text-slate-500 mb-1">ผูกกับเนื้อหา (utm_content อัตโนมัติ)</label>
+            <select name="content_item_id" class="{{ ui.input_cls }}">
+                <option value="">— ไม่ผูก —</option>
+                {% for it in items %}<option value="{{ it.id }}">{{ it.title }}</option>{% endfor %}
+            </select>
+        </div>
+        <div id="custom-src" class="hidden md:col-span-2 grid grid-cols-2 gap-2">
+            <input name="source" class="{{ ui.input_cls }}" placeholder="utm_source">
+            <input name="medium" class="{{ ui.input_cls }}" placeholder="utm_medium">
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-xs text-slate-500 mb-1">utm_content เอง (ถ้าไม่ผูกเนื้อหา)</label>
+            <input name="content" class="{{ ui.input_cls }}" placeholder="เช่น banner-a">
+        </div>
+        <div class="md:col-span-2">
+            <label class="block text-xs text-slate-500 mb-1">ชื่อเรียก (ไว้ดูเอง)</label>
+            <input name="label" class="{{ ui.input_cls }}" placeholder="เช่น โฆษณาชุด A">
+        </div>
+        <div class="md:col-span-2"><button class="{{ ui.btn_cls }} w-full">สร้างลิงก์</button></div>
+    </form>
+    {% if links %}
+    <ul class="divide-y divide-slate-100">
+        {% for l in links %}
+        {% set n = link_leads.get((l.utm_source, l.utm_medium, l.utm_content), 0) %}
+        <li class="px-4 py-3 {% if new_link == l.id %}bg-emerald-50{% endif %}">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="text-sm font-medium">{{ mk.channel_label(l.channel) }}{% if l.label %} · <span class="text-slate-600 font-normal">{{ l.label }}</span>{% endif %}</div>
+                <div class="flex items-center gap-2 text-xs text-slate-500">Lead ไม่ซ้ำ {{ n }} · {{ ui.copy_button('#link-' ~ l.id, 'คัดลอกลิงก์') }}</div>
+            </div>
+            <input id="link-{{ l.id }}" readonly value="{{ l.url }}" class="mt-1 w-full font-mono text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5" onclick="this.select()">
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีลิงก์ติดตาม</div>{% endif %}
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h2 class="font-semibold text-sm">เนื้อหาของแคมเปญ</h2>
+            <a href="/admin/marketing/content/new?campaign={{ c.id }}" class="text-xs text-blue-600 hover:underline">+ เพิ่มเนื้อหา</a>
+        </div>
+        {% if items %}
+        <ul class="divide-y divide-slate-100 text-sm">
+            {% for it in items %}
+            <li class="px-4 py-2 flex justify-between gap-2">
+                <a href="/admin/marketing/content/{{ it.id }}" class="truncate hover:underline">{{ it.title }}</a>
+                <span class="flex-shrink-0">{{ ui.badge(mk.CONTENT_STATUS_LABELS[it.status]) }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีเนื้อหา</div>{% endif %}
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200"><h2 class="font-semibold text-sm">Lead ล่าสุดจากแคมเปญนี้</h2></div>
+        {% if leads %}
+        <ul class="divide-y divide-slate-100 text-sm">
+            {% for l in leads %}
+            <li class="px-4 py-2 flex justify-between gap-2">
+                <a href="/admin/leads/{{ l.id }}" class="truncate hover:underline">{{ l.name }} <span class="text-slate-400">{{ l.company }}</span></a>
+                <span class="flex-shrink-0 flex gap-1">{% if l.duplicate_of %}{{ ui.badge('ซ้ำ', 'slate') }}{% endif %}{{ ui.qual_badge(l.qualification, mk.QUALIFICATION_LABELS) }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มี Lead</div>{% endif %}
+    </div>
+</div>
+
+{% if history %}
+<details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+    <summary class="cursor-pointer font-semibold">ประวัติการแก้ไข</summary>
+    <ul class="mt-2 space-y-1 text-xs text-slate-600">
+        {% for h in history %}<li>{{ h.created_at | bkk }} · {{ h.username }} · {{ h.action }} · <span class="font-mono">{{ h.detail }}</span></li>{% endfor %}
+    </ul>
+</details>
+{% endif %}
+{{ ui.copy_script() }}
+{% endblock %}

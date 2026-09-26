@@ -1,0 +1,159 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — ภาพรวม{% endblock %}
+{% block page_title %}การตลาด · ภาพรวม{% endblock %}
+{% block header_actions %}
+<a href="/admin/marketing/reports?start={{ filters.start }}&end={{ filters.end }}&channel={{ filters.channel }}" class="text-sm text-blue-600 hover:underline">รายงานละเอียด →</a>
+{% endblock %}
+
+{% block content %}
+{% set s = r.stats %}
+{{ ui.filters('/admin/marketing', filters, mk) }}
+
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+    {{ ui.kpi('ค่าโฆษณา', ui.money(r.spend, 'ยังไม่มีการบันทึกค่าโฆษณาในช่วงนี้'), 'กรอกเอง / นำเข้า CSV' if r.spend is not none else 'ยังไม่มีข้อมูลในช่วงนี้') }}
+    {{ ui.kpi('Lead ใหม่ (ไม่ซ้ำ)', s.unique, 'ส่งฟอร์ม ' ~ s.submitted ~ ' · ซ้ำ ' ~ s.duplicates ~ ' · สงสัยสแปม ' ~ s.spam) }}
+    {{ ui.kpi('Lead ตรงกลุ่ม', s.fit, 'รอตรวจอีก ' ~ s.pending ~ ' ราย', 'text-emerald-600') }}
+    {{ ui.kpi('ต้นทุนต่อ Lead ตรงกลุ่ม', ui.money(r.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่มอย่างน้อย 1 ราย'), 'ค่าโฆษณา ÷ Lead ตรงกลุ่ม') }}
+    {{ ui.kpi('ผู้เข้าเว็บไซต์', ui.na('ยังไม่เชื่อม GA4'), 'ยังไม่เชื่อมข้อมูล (ระยะ 2)', 'text-slate-400') }}
+</div>
+
+<div class="grid lg:grid-cols-3 gap-4 mb-6">
+    <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="font-semibold text-sm">สถานะการขาย <span class="font-normal text-slate-400">(Lead ไม่ซ้ำที่เข้ามาในช่วงนี้ · สถานะปัจจุบัน)</span></h2>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
+            {% for key, label in mk.SALES_STAGES %}
+            <a href="/admin/leads?stage={{ key }}" class="rounded-lg border border-slate-200 py-2 hover:bg-slate-50">
+                <div class="text-xl font-bold {% if key == 'won' %}text-emerald-600{% elif key == 'lost' %}text-slate-400{% endif %}">{{ s.stage.get(key, 0) }}</div>
+                <div class="text-[11px] text-slate-500 leading-tight px-1">{{ label }}</div>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-slate-600">
+            <span>มูลค่าเสนอราคา <b>{{ s.quote_value | money if s.quoted else '—' }}</b></span>
+            <span>มูลค่างานที่ปิดได้ <b class="text-emerald-700">{{ s.won_value | money if s.won else '—' }}</b></span>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-3">การกระทำบนเว็บ</h2>
+        <dl class="text-sm space-y-2">
+            <div class="flex justify-between"><dt>ส่งฟอร์มสำเร็จ</dt><dd class="font-semibold">{{ s.submitted }}</dd></div>
+            <div class="flex justify-between"><dt class="pl-3 text-slate-500">· ขอนัด Demo</dt><dd>{{ s.demo_requests }}</dd></div>
+            <div class="flex justify-between"><dt class="pl-3 text-slate-500">· ขอใบเสนอราคา</dt><dd>{{ s.quote_requests }}</dd></div>
+            <div class="flex justify-between"><dt>คลิก LINE</dt><dd class="font-semibold">{{ r.line_clicks }}</dd></div>
+            <div class="flex justify-between"><dt>คลิกโทรศัพท์</dt><dd class="font-semibold">{{ r.phone_clicks }}</dd></div>
+        </dl>
+        <p class="text-[11px] text-slate-400 mt-3 leading-snug">คลิก LINE/โทร นับครั้งเดียวต่อการเข้าเว็บ และ<b>ไม่นับเป็น Lead</b> — ยังไม่รู้ว่าติดต่อสำเร็จหรือไม่</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 md:px-6 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-semibold">เปรียบเทียบตามช่องทาง</h2>
+        <a href="/admin/marketing/reports/export.csv?kind=channel&start={{ filters.start }}&end={{ filters.end }}&channel={{ filters.channel }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
+    </div>
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
+            <tr>
+                <th class="px-4 py-2 text-left">ช่องทาง</th>
+                <th class="px-4 py-2 text-left">การเชื่อมต่อ / ที่มาข้อมูล</th>
+                <th class="px-4 py-2 text-right">ค่าโฆษณา</th>
+                <th class="px-4 py-2 text-right">Lead</th>
+                <th class="px-4 py-2 text-right">ตรงกลุ่ม</th>
+                <th class="px-4 py-2 text-right">ต้นทุน/ตรงกลุ่ม</th>
+                <th class="px-4 py-2 text-right">เสนอราคา</th>
+                <th class="px-4 py-2 text-right">ปิดงาน</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+        {% for row in r.by_channel %}
+            <tr>
+                <td class="px-4 py-2 font-medium whitespace-nowrap">{{ row.label }}</td>
+                <td class="px-4 py-2">
+                    <div class="flex flex-wrap items-center gap-1">
+                        {{ ui.conn_badge(row.connection_code, row.connection) }}
+                        {% for src in row.spend_sources %}{{ ui.badge(src, 'blue') }}{% endfor %}
+                    </div>
+                    {% if row.last_update %}<div class="text-[11px] text-slate-400 mt-0.5">ค่าโฆษณาอัปเดตล่าสุด {{ row.last_update.strftime('%d/%m/%y %H:%M') }}</div>{% endif %}
+                </td>
+                <td class="px-4 py-2 text-right whitespace-nowrap">
+                    {% if not row.spend_applicable %}<span class="text-slate-400 text-xs">ไม่มีค่าโฆษณา</span>
+                    {% else %}{{ ui.money(row.spend, 'ยังไม่มีการบันทึกค่าโฆษณาของช่องทางนี้ในช่วงนี้') }}{% endif %}
+                </td>
+                <td class="px-4 py-2 text-right">{{ row.unique }}</td>
+                <td class="px-4 py-2 text-right font-semibold text-emerald-700">{{ row.fit }}</td>
+                <td class="px-4 py-2 text-right whitespace-nowrap">{{ ui.money(row.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
+                <td class="px-4 py-2 text-right">{{ row.quoted }}</td>
+                <td class="px-4 py-2 text-right">{{ row.won }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    <p class="px-4 md:px-6 py-2 text-[11px] text-slate-400 border-t border-slate-100">"—" = ยังไม่มีข้อมูล (ไม่ใช่ศูนย์) · Lead นับจากฐานข้อมูลเว็บของเราเอง ไม่รวมยอด conversion ที่แต่ละแพลตฟอร์มรายงาน</p>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h2 class="font-semibold text-sm">โพสต์ที่วางแผนไว้</h2>
+            <a href="/admin/marketing/content?view=calendar" class="text-xs text-blue-600 hover:underline">ปฏิทิน →</a>
+        </div>
+        {% if upcoming %}
+        <ul class="divide-y divide-slate-100 text-sm">
+            {% for it in upcoming %}
+            <li class="px-4 py-2 flex items-center justify-between gap-2">
+                <a href="/admin/marketing/content/{{ it.id }}" class="truncate hover:underline">{{ it.title }}</a>
+                <span class="flex items-center gap-2 flex-shrink-0 text-xs text-slate-500">{{ ui.badge(mk.CONTENT_STATUS_LABELS[it.status]) }} {{ it.planned_at.strftime('%d/%m %H:%M') }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ยังไม่มีโพสต์ที่วางแผนไว้</div>{% endif %}
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h2 class="font-semibold text-sm">นัดติดตาม Lead (ภายใน 7 วัน / เลยกำหนด)</h2>
+            <a href="/admin/leads?filter=followup" class="text-xs text-blue-600 hover:underline">ทั้งหมด →</a>
+        </div>
+        {% if followups %}
+        <ul class="divide-y divide-slate-100 text-sm">
+            {% for l in followups %}
+            <li class="px-4 py-2 flex items-center justify-between gap-2">
+                <a href="/admin/leads/{{ l.id }}" class="truncate hover:underline">{{ l.name }} <span class="text-slate-400">{{ l.company }}</span></a>
+                <span class="text-xs flex-shrink-0 {% if l.next_follow_up < today %}text-red-600 font-semibold{% else %}text-slate-500{% endif %}">{{ l.next_follow_up.strftime('%d/%m/%y') }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ไม่มีนัดติดตาม</div>{% endif %}
+    </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4">
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-3">แหล่งข้อมูล</h2>
+        <ul class="text-sm space-y-2">
+            {% for src in r.sources %}
+            <li class="flex justify-between gap-3">
+                <div><div class="font-medium">{{ src.label }}</div><div class="text-xs text-slate-500">{{ src.how }}</div></div>
+                <div class="text-xs text-slate-500 text-right whitespace-nowrap">{% if src.last %}ล่าสุด {{ src.last.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-3">การเชื่อมต่อแพลตฟอร์ม</h2>
+        <ul class="text-sm space-y-2">
+            {% for c, code, label in r.connectors %}
+            <li class="flex justify-between gap-3">
+                <div><div class="font-medium">{{ c.label }}</div><div class="text-xs text-slate-500">{{ c.provides }}</div></div>
+                <div class="flex-shrink-0">{{ ui.conn_badge(code, label) }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="text-[11px] text-slate-400 mt-3">รุ่นนี้ยังไม่ดึงข้อมูลจากแพลตฟอร์ม — ค่าโฆษณากรอกเองหรือนำเข้า CSV ที่หน้า <a href="/admin/marketing/spend" class="text-blue-600 hover:underline">ค่าโฆษณา</a></p>
+    </div>
+</div>
+{% endblock %}

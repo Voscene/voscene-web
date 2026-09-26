@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — แคมเปญ{% endblock %}
+{% block page_title %}การตลาด · แคมเปญ{% endblock %}
+{% block header_actions %}
+<a href="/admin/marketing/campaigns/new" class="{{ ui.btn_cls }}">+ สร้างแคมเปญ</a>
+{% endblock %}
+
+{% block content %}
+<div class="flex gap-2 mb-4 text-sm">
+    <a href="/admin/marketing/campaigns" class="px-3 py-1.5 rounded-lg {% if show != 'archived' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200{% endif %}">ใช้งานอยู่</a>
+    <a href="/admin/marketing/campaigns?show=archived" class="px-3 py-1.5 rounded-lg {% if show == 'archived' %}bg-blue-600 text-white{% else %}bg-white border border-slate-200{% endif %}">รวมที่เก็บเข้าคลัง</a>
+</div>
+
+{% if campaigns %}
+<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+    {% for c in campaigns %}
+    {% set svc = mk.SERVICE_MAP.get(c.service) %}
+    <a href="/admin/marketing/campaigns/{{ c.id }}" class="block bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-400">
+        <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+                <div class="font-semibold truncate">{{ c.name }}</div>
+                <div class="text-xs font-mono text-slate-400 truncate">{{ c.code }}</div>
+            </div>
+            {{ ui.badge(mk.CAMPAIGN_STATUS_LABELS.get(c.status, c.status), 'green' if c.status == 'active' else 'slate') }}
+        </div>
+        <div class="mt-2 text-sm text-slate-600 flex flex-wrap items-center gap-1">{{ svc.label if svc else '—' }} {% if svc %}{{ ui.claim_badge(svc) }}{% endif %}</div>
+        <div class="mt-1 text-xs text-slate-500">
+            {% for ch in (c.channels or '').split(',') if ch %}{{ mk.channel_label(ch) }}{% if not loop.last %} · {% endif %}{% endfor %}
+        </div>
+        <div class="mt-1 text-xs text-slate-500">
+            {% if c.start_date %}{{ c.start_date.strftime('%d/%m/%y') }}{% else %}?{% endif %} – {% if c.end_date %}{{ c.end_date.strftime('%d/%m/%y') }}{% else %}?{% endif %}
+            · เป้าหมาย: {{ mk.CAMPAIGN_GOAL_LABELS.get(c.goal, '—') }}
+        </div>
+        <div class="mt-3 grid grid-cols-4 gap-2 text-center border-t border-slate-100 pt-3">
+            <div><div class="text-[11px] text-slate-400">งบ</div><div class="text-sm font-semibold">{{ ui.money(c.budget, 'ไม่ได้ตั้งงบ') }}</div></div>
+            <div><div class="text-[11px] text-slate-400">ใช้ไป</div><div class="text-sm font-semibold">{{ ui.money(spend.get(c.id)) }}</div></div>
+            <div><div class="text-[11px] text-slate-400">Lead</div><div class="text-sm font-semibold">{{ lead_counts.get(c.id, 0) }}</div></div>
+            <div><div class="text-[11px] text-slate-400">ตรงกลุ่ม</div><div class="text-sm font-semibold text-emerald-700">{{ fit_counts.get(c.id, 0) }}</div></div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-xl border border-slate-200 p-10 text-center">
+    <p class="text-slate-500 mb-4">ยังไม่มีแคมเปญ</p>
+    <a href="/admin/marketing/campaigns/new" class="{{ ui.btn_cls }}">+ สร้างแคมเปญแรก</a>
+</div>
+{% endif %}
+{% endblock %}

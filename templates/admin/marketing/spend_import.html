@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}ตรวจไฟล์ค่าโฆษณา{% endblock %}
+{% block page_title %}ตรวจไฟล์ก่อนนำเข้า · {{ batch.filename }}{% endblock %}
+{% block header_actions %}<a href="/admin/marketing/spend" class="text-sm text-blue-600 hover:underline">← ค่าโฆษณา</a>{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-3 gap-3 mb-4 max-w-xl">
+    {{ ui.kpi('จะนำเข้า', ok_count, '', 'text-emerald-600') }}
+    {{ ui.kpi('มีอยู่แล้ว (ข้าม)', dup_count, '', 'text-slate-500') }}
+    {{ ui.kpi('ผิดรูปแบบ (ข้าม)', bad_count, '', 'text-red-600' if bad_count else '') }}
+</div>
+
+{% if batch.status == 'preview' %}
+<div class="flex flex-wrap gap-2 mb-6">
+    <form method="post" action="/admin/marketing/spend/import/{{ batch.id }}/confirm">
+        <button class="{{ ui.btn_cls }} disabled:opacity-50" {% if not ok_count %}disabled{% endif %}>ยืนยันนำเข้า {{ ok_count }} แถว</button>
+    </form>
+    <form method="post" action="/admin/marketing/spend/import/{{ batch.id }}/cancel">
+        <button class="{{ ui.btn2_cls }}">ยกเลิก</button>
+    </form>
+</div>
+{% else %}
+{{ ui.alert('ไฟล์นี้' ~ ('นำเข้าแล้ว: ' ~ batch.imported_rows ~ ' แถว · ข้าม ' ~ batch.skipped_rows if batch.status == 'imported' else 'ถูกยกเลิกแล้ว'), 'blue') }}
+{% endif %}
+
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-xs text-slate-500">
+            <tr><th class="px-3 py-2 text-left">แถว</th><th class="px-3 py-2 text-left">ผล</th><th class="px-3 py-2 text-left">วันที่</th><th class="px-3 py-2 text-left">ช่องทาง</th><th class="px-3 py-2 text-left">แคมเปญ</th><th class="px-3 py-2 text-right">ค่าโฆษณา</th><th class="px-3 py-2 text-right">Impr.</th><th class="px-3 py-2 text-right">คลิก</th></tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+        {% for r in rows %}
+        <tr class="{% if not r.ok %}bg-red-50{% elif r.exists %}bg-slate-50 text-slate-400{% endif %}">
+            <td class="px-3 py-2">{{ r.row }}</td>
+            <td class="px-3 py-2 text-xs">{% if not r.ok %}<span class="text-red-700">{{ r.error }}</span>{% elif r.exists %}มีอยู่แล้ว — ข้าม{% else %}<span class="text-emerald-700">✓ นำเข้าได้</span>{% endif %}</td>
+            <td class="px-3 py-2 whitespace-nowrap">{{ r.date }}</td>
+            <td class="px-3 py-2">{{ mk.channel_label(r.channel) if r.channel in mk.SPEND_CHANNELS else r.channel }}</td>
+            <td class="px-3 py-2">{% if r.campaign_id and r.campaign_id in campaigns %}{{ campaigns[r.campaign_id].name }}{% elif r.campaign_label %}{{ r.campaign_label }} <span class="text-xs text-amber-700">(ไม่พบแคมเปญ — ไม่ผูก)</span>{% else %}—{% endif %}</td>
+            <td class="px-3 py-2 text-right">{{ r.spend | money if r.spend is not none else '—' }}</td>
+            <td class="px-3 py-2 text-right">{{ r.impressions if r.impressions is not none else '—' }}</td>
+            <td class="px-3 py-2 text-right">{{ r.clicks if r.clicks is not none else '—' }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

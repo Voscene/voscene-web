@@ -26,13 +26,19 @@
         }
       }
     </script>
-    <style>body { font-family: 'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif; }</style>
+    <style>
+      body { font-family: 'Inter', 'IBM Plex Sans Thai', system-ui, sans-serif; }
+      /* ตารางของหน้าเดิมที่ไม่ได้ครอบ overflow-x ไว้ — มือถือให้เลื่อนแนวนอนในกล่องแทนดันทั้งหน้า */
+      @media (max-width: 767px) { main .overflow-hidden > table { display: block; overflow-x: auto; white-space: nowrap; } }
+    </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen">
 
 <div class="flex h-screen overflow-hidden">
+    {# มือถือ: เมนูซ่อนไว้ กดปุ่ม ☰ ที่หัวหน้าเพื่อเปิด · จอกว้าง md ขึ้นไปแสดงตลอด #}
+    <div id="nav-backdrop" class="hidden fixed inset-0 bg-black/40 z-30 md:hidden" onclick="toggleNav(false)"></div>
     <!-- Sidebar -->
-    <aside class="w-64 bg-navy text-white flex flex-col">
+    <aside id="admin-nav" class="w-64 bg-navy text-white flex flex-col fixed inset-y-0 left-0 z-40 -translate-x-full transition-transform md:static md:translate-x-0 overflow-y-auto">
         <div class="p-6 border-b border-white/10">
             <a href="/admin" class="flex items-center gap-2 mb-1">
                 <img src="/static/images/voscene-horizontal-white.png" alt="Voscene" class="h-8 w-auto">
@@ -56,6 +62,19 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 Lead / ลูกค้า
             </a>
+            {% set mk_path = request.url.path %}
+            <a href="/admin/marketing" class="flex items-center gap-3 px-6 py-2.5 text-sm {% if mk_path.startswith('/admin/marketing') %}bg-electric text-white{% else %}text-sky/80 hover:bg-white/5{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                การตลาด
+            </a>
+            {% if mk_path.startswith('/admin/marketing') %}
+            <div class="pb-1">
+                {% for href, label in [('/admin/marketing', 'ภาพรวม'), ('/admin/marketing/campaigns', 'แคมเปญ'), ('/admin/marketing/content', 'เนื้อหาและปฏิทิน'), ('/admin/marketing/groups', 'กลุ่ม Facebook'), ('/admin/marketing/reports', 'รายงานผล')] %}
+                {% set on = (mk_path == href) if href == '/admin/marketing' else (mk_path.startswith(href) or (href.endswith('/reports') and mk_path.startswith('/admin/marketing/spend'))) %}
+                <a href="{{ href }}" class="block pl-14 pr-6 py-1.5 text-xs {% if on %}text-white font-semibold{% else %}text-sky/70 hover:text-white{% endif %}">{{ label }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
             <a href="/admin/blog" class="flex items-center gap-3 px-6 py-2.5 text-sm {% if '/admin/blog' in request.url.path %}bg-electric text-white{% else %}text-sky/80 hover:bg-white/5{% endif %}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 บทความ / Blog
@@ -84,12 +103,17 @@
     </aside>
 
     <!-- Content -->
-    <main class="flex-1 overflow-y-auto">
-        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-            <h1 class="text-xl font-semibold">{% block page_title %}{% endblock %}</h1>
-            {% block header_actions %}{% endblock %}
+    <main class="flex-1 overflow-y-auto min-w-0">
+        <header class="bg-white border-b border-slate-200 px-4 md:px-8 py-3 md:py-4 flex items-center justify-between gap-3 sticky top-0 z-20">
+            <div class="flex items-center gap-3 min-w-0">
+                <button type="button" class="md:hidden p-2 -ml-2 rounded-lg hover:bg-slate-100" onclick="toggleNav(true)" aria-label="เปิดเมนู">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+                <h1 class="text-lg md:text-xl font-semibold truncate">{% block page_title %}{% endblock %}</h1>
+            </div>
+            <div class="flex-shrink-0">{% block header_actions %}{% endblock %}</div>
         </header>
-        <div class="p-8">
+        <div class="p-4 md:p-8">
             {% if request.query_params.get('saved') %}
             <div class="mb-6 px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
                 ✓ บันทึกเรียบร้อย
@@ -100,5 +124,12 @@
     </main>
 </div>
 
+<script>
+function toggleNav(open) {
+    document.getElementById('admin-nav').classList.toggle('-translate-x-full', !open);
+    document.getElementById('nav-backdrop').classList.toggle('hidden', !open);
+}
+</script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

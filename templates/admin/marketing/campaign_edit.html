@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}แคมเปญ{% endblock %}
+{% block page_title %}{% if c %}แก้ไขแคมเปญ{% else %}สร้างแคมเปญ{% endif %}{% endblock %}
+{% block header_actions %}
+<a href="{% if c %}/admin/marketing/campaigns/{{ c.id }}{% else %}/admin/marketing/campaigns{% endif %}" class="text-sm text-blue-600 hover:underline">← กลับ</a>
+{% endblock %}
+
+{% block content %}
+{# ค่าที่แสดง: ถ้าเพิ่งส่งแล้วผิด ใช้ค่าจากฟอร์ม · ไม่งั้นใช้ค่าจากแคมเปญ #}
+{% macro v(key, default='') -%}{{ form.get(key) if form.get(key) is not none else (c[key] if c and c[key] is not none else default) }}{%- endmacro %}
+{% set sel_channels = form.get('channels') if form.get('channels') is not none else ((c.channels or '').split(',') if c else []) %}
+
+{% for e in errors %}{{ ui.alert(e) }}{% endfor %}
+
+<form method="post" action="/admin/marketing/campaigns/save" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-5 max-w-3xl">
+    {% if c %}<input type="hidden" name="id" value="{{ c.id }}">{% endif %}
+    <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">ชื่อแคมเปญ *</label>
+            <input name="name" required value="{{ v('name') }}" class="{{ ui.input_cls }}" placeholder="เช่น เปิดห้องปุ่มเดียว — หน่วยงานรัฐ Q4">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">รหัสแคมเปญ (utm_campaign)</label>
+            <input name="code" value="{{ v('code') }}" class="{{ ui.input_cls }} font-mono" placeholder="one-touch-gov-q4" pattern="[a-z0-9]+([\-_][a-z0-9]+)*">
+            <p class="text-[11px] text-slate-400 mt-1">a-z 0-9 และขีดเท่านั้น · เว้นว่าง = สร้างจากชื่อ (ตัดภาษาไทยออก) · เปลี่ยนไม่ได้หลังสร้างลิงก์แล้ว</p>
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">บริการที่โปรโมต *</label>
+        <div class="grid sm:grid-cols-2 gap-2">
+            {% for s in mk.SERVICES %}
+            <label class="flex items-start gap-2 p-2 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer text-sm">
+                <input type="radio" name="service" value="{{ s.key }}" {% if v('service') == s.key %}checked{% endif %} class="mt-1" required>
+                <span>{{ s.label }} {{ ui.claim_badge(s) }}{% if s.note %}<span class="block text-[11px] text-slate-500 mt-0.5">{{ s.note }}</span>{% endif %}</span>
+            </label>
+            {% endfor %}
+        </div>
+        <p class="text-[11px] text-amber-700 mt-1">บริการที่ติดป้ายต้องใส่เงื่อนไขในข้อความโฆษณาทุกครั้ง · "ยังไม่ยืนยัน" ห้ามโฆษณาว่าพร้อมส่งมอบ — ดู docs/MARKETING-GUIDE.md</p>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">กลุ่มเป้าหมาย</label>
+        <textarea name="audience" rows="2" class="{{ ui.input_cls }}" placeholder="เช่น ฝ่ายอาคาร/IT หน่วยงานราชการ ที่มีห้องประชุม 3+ ห้อง">{{ v('audience') }}</textarea>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">ช่องทาง</label>
+        <div class="flex flex-wrap gap-2">
+            {% for ch in mk.CHANNELS %}
+            <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm cursor-pointer hover:bg-slate-50">
+                <input type="checkbox" name="channels" value="{{ ch.key }}" {% if ch.key in sel_channels %}checked{% endif %}> {{ ch.label }}
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">งบประมาณ (บาท)</label>
+            <input name="budget" inputmode="decimal" value="{{ v('budget') }}" class="{{ ui.input_cls }}" placeholder="เว้นว่างได้">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">เริ่ม</label>
+            <input type="date" name="start_date" value="{{ v('start_date') }}" class="{{ ui.input_cls }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">สิ้นสุด</label>
+            <input type="date" name="end_date" value="{{ v('end_date') }}" class="{{ ui.input_cls }}">
+        </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">เป้าหมาย *</label>
+            <select name="goal" required class="{{ ui.input_cls }}">
+                <option value="">เลือก...</option>
+                {% for key, label in mk.CAMPAIGN_GOALS %}<option value="{{ key }}" {% if v('goal') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">สถานะ</label>
+            <select name="status" class="{{ ui.input_cls }}">
+                {% for key, label in mk.CAMPAIGN_STATUSES %}<option value="{{ key }}" {% if v('status', 'draft') == key %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">หน้าเว็บปลายทาง *</label>
+        <input name="landing_url" required value="{{ v('landing_url') }}" class="{{ ui.input_cls }}" placeholder="/features หรือ {{ settings.APP_URL }}/contact">
+        <p class="text-[11px] text-slate-400 mt-1">ต้องเป็นหน้าในเว็บ {{ settings.APP_URL }} เท่านั้น</p>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1">หมายเหตุ</label>
+        <textarea name="notes" rows="3" class="{{ ui.input_cls }}">{{ v('notes') }}</textarea>
+    </div>
+
+    <div class="flex justify-end gap-2">
+        <button class="{{ ui.btn_cls }}">บันทึก</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,104 @@
+{# ส่วนประกอบที่ใช้ซ้ำในหน้าการตลาด — import ด้วย {% import "admin/marketing/_ui.html" as ui %} #}
+
+{% set input_cls = "w-full border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 bg-white" %}
+{% set btn_cls = "inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium" %}
+{% set btn2_cls = "inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm" %}
+
+{% macro badge(text, color='slate') -%}
+{%- set colors = {
+    'slate': 'bg-slate-100 text-slate-700', 'green': 'bg-emerald-100 text-emerald-700',
+    'amber': 'bg-amber-100 text-amber-800', 'red': 'bg-red-100 text-red-700',
+    'blue': 'bg-blue-100 text-blue-700', 'violet': 'bg-violet-100 text-violet-700'} -%}
+<span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap {{ colors.get(color, colors['slate']) }}">{{ text }}</span>
+{%- endmacro %}
+
+{% macro na(reason='ยังไม่มีข้อมูล') -%}
+<span class="text-slate-400 cursor-help" title="{{ reason }}">—</span>
+{%- endmacro %}
+
+{% macro money(v, reason='ยังไม่มีข้อมูล') -%}
+{%- if v is none -%}{{ na(reason) }}{%- else -%}{{ v | money }}{%- endif -%}
+{%- endmacro %}
+
+{% macro stage_badge(stage, labels) -%}
+{%- set c = {'new': 'blue', 'contacted': 'slate', 'demo': 'violet', 'quoted': 'amber', 'won': 'green', 'lost': 'red'} -%}
+{{ badge(labels.get(stage, stage or 'new'), c.get(stage, 'slate')) }}
+{%- endmacro %}
+
+{% macro qual_badge(q, labels) -%}
+{%- set c = {'pending': 'slate', 'fit': 'green', 'unfit': 'amber', 'spam': 'red'} -%}
+{{ badge(labels.get(q, q or 'pending'), c.get(q, 'slate')) }}
+{%- endmacro %}
+
+{% macro claim_badge(service) -%}
+{%- if service.claim == 'conditions' -%}{{ badge('ต้องระบุเงื่อนไข', 'amber') }}
+{%- elif service.claim == 'unconfirmed' -%}{{ badge('ยังไม่ยืนยัน', 'red') }}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro conn_badge(code, label) -%}
+{%- set c = {'connected': 'green', 'credentials_only': 'amber', 'not_connected': 'slate', 'manual': 'slate'} -%}
+{{ badge(label, c.get(code, 'slate')) }}
+{%- endmacro %}
+
+{% macro kpi(label, value_html, hint='', tone='') -%}
+<div class="bg-white rounded-xl border border-slate-200 p-4">
+    <div class="text-xs text-slate-500">{{ label }}</div>
+    <div class="text-2xl font-bold mt-1 {{ tone }}">{{ value_html }}</div>
+    {% if hint %}<div class="text-[11px] text-slate-400 mt-1 leading-snug">{{ hint }}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{% macro filters(action, f, mk, show_channel=True) -%}
+<form method="get" action="{{ action }}" class="bg-white rounded-xl border border-slate-200 p-3 md:p-4 mb-6 flex flex-wrap items-end gap-3">
+    <div>
+        <label class="block text-xs text-slate-500 mb-1">ตั้งแต่</label>
+        <input type="date" name="start" value="{{ f.start }}" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm">
+    </div>
+    <div>
+        <label class="block text-xs text-slate-500 mb-1">ถึง</label>
+        <input type="date" name="end" value="{{ f.end }}" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm">
+    </div>
+    {% if show_channel %}
+    <div>
+        <label class="block text-xs text-slate-500 mb-1">ช่องทาง</label>
+        <select name="channel" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm">
+            <option value="">ทุกช่องทาง</option>
+            {% for ch in mk.CHANNELS %}<option value="{{ ch.key }}" {% if f.channel == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
+            {% for key in ['organic_search', 'referral', 'unknown'] %}<option value="{{ key }}" {% if f.channel == key %}selected{% endif %}>{{ mk.channel_label(key) }}</option>{% endfor %}
+        </select>
+    </div>
+    {% endif %}
+    <button class="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-sm">แสดง</button>
+    <div class="flex gap-1 text-xs">
+        {% for key, label in [('7d', '7 วัน'), ('month', 'เดือนนี้'), ('90d', '90 วัน')] %}
+        <a href="{{ action }}?range={{ key }}{% if f.channel %}&channel={{ f.channel }}{% endif %}" class="px-2 py-1.5 rounded border border-slate-200 hover:bg-slate-50">{{ label }}</a>
+        {% endfor %}
+    </div>
+</form>
+{%- endmacro %}
+
+{% macro alert(text, tone='red') -%}
+{%- set c = {'red': 'bg-red-50 border-red-200 text-red-700', 'amber': 'bg-amber-50 border-amber-200 text-amber-800', 'blue': 'bg-blue-50 border-blue-200 text-blue-800'} -%}
+<div class="mb-4 px-4 py-3 rounded-lg border text-sm {{ c.get(tone) }}">{{ text }}</div>
+{%- endmacro %}
+
+{% macro copy_button(target, label='คัดลอก') -%}
+<button type="button" data-copy="{{ target }}" class="js-copy inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-xs text-slate-700">{{ label }}</button>
+{%- endmacro %}
+
+{% macro copy_script() -%}
+<script>
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.js-copy');
+    if (!btn) return;
+    const el = document.querySelector(btn.dataset.copy);
+    if (!el) return;
+    const text = ('value' in el && el.tagName !== 'DIV') ? el.value : el.textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch (err) { if (el.select) { el.select(); document.execCommand('copy'); } }
+    const old = btn.textContent; btn.textContent = 'คัดลอกแล้ว ✓';
+    setTimeout(() => { btn.textContent = old; }, 1500);
+});
+</script>
+{%- endmacro %}

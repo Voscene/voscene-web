@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}กลุ่ม Facebook{% endblock %}
+{% block page_title %}{% if g %}แก้ไขกลุ่ม{% else %}เพิ่มกลุ่ม Facebook{% endif %}{% endblock %}
+{% block header_actions %}<a href="{% if g %}/admin/marketing/groups/{{ g.id }}{% else %}/admin/marketing/groups{% endif %}" class="text-sm text-blue-600 hover:underline">← กลับ</a>{% endblock %}
+
+{% block content %}
+{% macro v(key, default='') -%}{{ form.get(key) if form.get(key) is not none else (g[key] if g and g[key] is not none else default) }}{%- endmacro %}
+{% for e in errors %}{{ ui.alert(e) }}{% endfor %}
+<form method="post" action="/admin/marketing/groups/save" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-4 max-w-3xl">
+    {% if g %}<input type="hidden" name="id" value="{{ g.id }}">{% endif %}
+    <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">ชื่อกลุ่ม *</label>
+            <input name="name" required value="{{ v('name') }}" class="{{ ui.input_cls }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">ลิงก์กลุ่ม</label>
+            <input name="url" value="{{ v('url') }}" class="{{ ui.input_cls }}" placeholder="https://www.facebook.com/groups/...">
+        </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-1">กลุ่มเป้าหมาย / ประเภทสมาชิก</label>
+            <input name="audience" value="{{ v('audience') }}" class="{{ ui.input_cls }}" placeholder="เช่น ช่างเทคนิค AV · ผู้รับเหมาระบบภาพและเสียง">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">ความเกี่ยวข้องกับบริการ</label>
+            <select name="relevance" class="{{ ui.input_cls }}">
+                <option value="">—</option>
+                {% for k, label in mk.RELEVANCE %}<option value="{{ k }}" {% if v('relevance') == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">กติกาการลงโฆษณาของกลุ่ม</label>
+        <textarea name="rules" rows="3" class="{{ ui.input_cls }}" placeholder="เช่น ลงขายได้เฉพาะวันศุกร์ · ห้ามใส่ลิงก์ในโพสต์ ให้ใส่ในคอมเมนต์">{{ v('rules') }}</textarea>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">ความถี่ที่อนุญาต (ข้อความ)</label>
+            <input name="allowed_frequency" value="{{ v('allowed_frequency') }}" class="{{ ui.input_cls }}" placeholder="เช่น สัปดาห์ละ 1 โพสต์">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">เว้นระยะขั้นต่ำ (วัน)</label>
+            <input name="min_days_between" inputmode="numeric" value="{{ v('min_days_between') }}" class="{{ ui.input_cls }}" placeholder="เช่น 7">
+            <p class="text-[11px] text-slate-400 mt-1">ใช้เตือนเมื่อจะลงถี่เกินกติกา</p>
+        </div>
+    </div>
+    <div>
+        <label class="block text-sm font-medium mb-1">หมายเหตุ</label>
+        <textarea name="notes" rows="2" class="{{ ui.input_cls }}">{{ v('notes') }}</textarea>
+    </div>
+    {% if g %}
+    <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="is_active" {% if g.is_active %}checked{% endif %}> ยังใช้งานกลุ่มนี้อยู่</label>
+    {% endif %}
+    <div class="flex justify-end"><button class="{{ ui.btn_cls }}">บันทึก</button></div>
+</form>
+{% endblock %}

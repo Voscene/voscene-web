@@ -1,4 +1,5 @@
 {% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
 {% block title %}Lead #{{ lead.id }}{% endblock %}
 {% block page_title %}Lead #{{ lead.id }} — {{ lead.name }}{% endblock %}
 
@@ -7,86 +8,158 @@
 {% endblock %}
 
 {% block content %}
+{% if error %}{{ ui.alert(error) }}{% endif %}
+{% if lead.duplicate_of %}
+<div class="mb-4 px-4 py-3 rounded-lg border bg-amber-50 border-amber-200 text-amber-900 text-sm flex flex-wrap items-center justify-between gap-2">
+    <span>ข้อมูลติดต่อซ้ำกับ <a href="/admin/leads/{{ lead.duplicate_of }}" class="font-semibold underline">Lead #{{ lead.duplicate_of }}{% if dup_first %} — {{ dup_first.name }}{% endif %}</a> · ไม่นับเป็น Lead ใหม่ในรายงาน (ข้อมูลไม่ถูกลบ)</span>
+    <form method="post" action="/admin/leads/{{ lead.id }}/not-duplicate"><button class="px-3 py-1 rounded border border-amber-300 bg-white text-xs">ไม่ใช่รายการซ้ำ</button></form>
+</div>
+{% endif %}
+{% if dup_others %}
+<div class="mb-4 px-4 py-3 rounded-lg border bg-slate-50 border-slate-200 text-sm">
+    ติดต่อเข้ามาซ้ำอีก {{ dup_others | length }} ครั้ง:
+    {% for d in dup_others %}<a href="/admin/leads/{{ d.id }}" class="text-blue-700 underline">#{{ d.id }}</a> ({{ d.created_at | bkk('%d/%m/%y') }}){% if not loop.last %}, {% endif %}{% endfor %}
+</div>
+{% endif %}
+
 <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-6">
-        <!-- AI Analysis -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-                <h2 class="font-semibold">🤖 AI Analysis</h2>
-                {% if lead.ai_in_scope %}
-                <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium">✓ อยู่ในขอบเขตให้บริการ</span>
-                {% else %}
-                <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium">⚠ ต้องพิจารณาเพิ่ม</span>
-                {% endif %}
-            </div>
-            <div class="p-6 space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">Confidence</div>
-                        <div class="font-semibold">{{ "%.0f"|format(lead.ai_confidence * 100) }}%</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">Package แนะนำ</div>
-                        <div class="font-semibold">{{ lead.ai_recommended_package or '—' }}</div>
-                    </div>
-                </div>
-                {% if lead.ai_analysis %}
-                <details>
-                    <summary class="text-sm text-blue-600 cursor-pointer">ดู JSON ดิบ</summary>
-                    <pre class="mt-2 p-3 bg-slate-50 rounded text-xs overflow-x-auto whitespace-pre-wrap">{{ lead.ai_analysis }}</pre>
-                </details>
-                {% endif %}
-            </div>
-        </div>
-
         <!-- Requirement -->
         <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
+            <div class="px-4 md:px-6 py-3 border-b border-slate-200 bg-slate-50 flex flex-wrap items-center justify-between gap-2">
                 <h2 class="font-semibold">ความต้องการของลูกค้า</h2>
+                {% if lead.request_type %}{{ ui.badge(REQUEST_TYPE_LABELS.get(lead.request_type, lead.request_type), 'violet') }}{% endif %}
             </div>
-            <div class="p-6">
+            <div class="p-4 md:p-6">
                 <p class="whitespace-pre-line text-slate-700">{{ lead.requirement }}</p>
             </div>
         </div>
 
-        <!-- Status & Notes -->
+        <!-- Sales -->
         <form method="post" action="/admin/leads/{{ lead.id }}/update" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
-                <h2 class="font-semibold">สถานะการติดตาม</h2>
+            <div class="px-4 md:px-6 py-3 border-b border-slate-200 bg-slate-50">
+                <h2 class="font-semibold">การขายและผลคัดกรอง</h2>
             </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium mb-1.5">สถานะ</label>
-                    <select name="status" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">
-                        {% for opt in ['new', 'anonymous', 'new_in_scope', 'new_out_scope', 'contacted', 'quoted', 'won', 'lost', 'spam'] %}
-                        <option value="{{ opt }}" {% if lead.status == opt %}selected{% endif %}>{{ opt }}</option>
-                        {% endfor %}
-                    </select>
+            <div class="p-4 md:p-6 space-y-4">
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">ขั้นการขาย</label>
+                        <select name="sales_stage" class="{{ ui.input_cls }}">
+                            {% for k, label in SALES_STAGES %}<option value="{{ k }}" {% if lead.sales_stage == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">ผลคัดกรอง</label>
+                        <select name="qualification" class="{{ ui.input_cls }}">
+                            {% for k, label in QUALIFICATIONS %}<option value="{{ k }}" {% if lead.qualification == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                        </select>
+                        {% if lead.qualification == 'spam' and lead.spam_reason %}<p class="text-[11px] text-red-600 mt-1">เหตุผล: {{ SPAM_REASON_LABELS.get(lead.spam_reason, lead.spam_reason) }} — ตรวจแล้วเป็นคนจริงให้เปลี่ยนได้</p>{% endif %}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium mb-1.5">บริการที่สนใจ</label>
+                        <select name="service_interest" class="{{ ui.input_cls }}">
+                            <option value="">— ยังไม่ระบุ —</option>
+                            {% for s in SERVICES %}<option value="{{ s.key }}" {% if lead.service_interest == s.key %}selected{% endif %}>{{ s.label }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">มูลค่าเสนอราคา (บาท)</label>
+                        <input name="quote_value" inputmode="decimal" value="{{ '%.2f' % lead.quote_value if lead.quote_value is not none else '' }}" class="{{ ui.input_cls }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">มูลค่างานที่ปิดได้ (บาท)</label>
+                        <input name="won_value" inputmode="decimal" value="{{ '%.2f' % lead.won_value if lead.won_value is not none else '' }}" class="{{ ui.input_cls }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1.5">นัดติดตามครั้งถัดไป</label>
+                        <input type="date" name="next_follow_up" value="{{ lead.next_follow_up or '' }}" class="{{ ui.input_cls }}">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1.5">บันทึกของทีมงาน</label>
-                    <textarea name="notes" rows="4" class="w-full border border-slate-300 rounded-lg px-3 py-2 outline-none focus:border-blue-500">{{ lead.notes }}</textarea>
+                    <label class="block text-sm font-medium mb-1.5">บันทึกของทีมงาน (ช่องเดิม)</label>
+                    <textarea name="notes" rows="3" class="{{ ui.input_cls }}">{{ lead.notes }}</textarea>
                 </div>
                 <div class="flex justify-end">
-                    <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">บันทึก</button>
+                    <button type="submit" class="{{ ui.btn_cls }}">บันทึก</button>
                 </div>
             </div>
         </form>
+
+        <!-- Follow-up log -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-4 md:px-6 py-3 border-b border-slate-200 bg-slate-50"><h2 class="font-semibold">บันทึกติดตาม</h2></div>
+            <form method="post" action="/admin/leads/{{ lead.id }}/notes" class="p-4 md:p-6 space-y-3 border-b border-slate-100">
+                <textarea name="text" rows="2" class="{{ ui.input_cls }}" placeholder="เช่น โทรคุยแล้ว สนใจห้องประชุมใหญ่ 2 ห้อง ขอให้ส่ง Demo วันพฤหัส"></textarea>
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="text-sm">นัดถัดไป <input type="date" name="next_follow_up" class="border border-slate-300 rounded-lg px-2 py-1 text-sm"></label>
+                    {% if lead.sales_stage == 'new' %}<label class="text-sm flex items-center gap-1"><input type="checkbox" name="mark_contacted"> เปลี่ยนเป็น "ติดต่อแล้ว"</label>{% endif %}
+                    <button class="ml-auto {{ ui.btn_cls }}">เพิ่มบันทึก</button>
+                </div>
+            </form>
+            {% if notes %}
+            <ul class="divide-y divide-slate-100">
+                {% for n in notes %}
+                <li class="px-4 md:px-6 py-3 text-sm">
+                    <div class="text-xs text-slate-500 mb-1">{{ n.created_at | bkk }} · {{ n.created_by }}{% if n.next_follow_up %} · นัดถัดไป {{ n.next_follow_up.strftime('%d/%m/%y') }}{% endif %}</div>
+                    <div class="whitespace-pre-line">{{ n.text }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}<div class="px-6 py-4 text-sm text-slate-400">ยังไม่มีบันทึก</div>{% endif %}
+        </div>
+
+        {% if lead.ai_analysis %}
+        <details class="bg-white rounded-xl border border-slate-200 p-4 md:p-6">
+            <summary class="font-semibold cursor-pointer">ผลวิเคราะห์ AI เดิม {% if lead.ai_in_scope %}{{ ui.badge('ในขอบเขต', 'green') }}{% else %}{{ ui.badge('ต้องพิจารณาเพิ่ม', 'amber') }}{% endif %}</summary>
+            <div class="mt-3 grid grid-cols-2 gap-4 text-sm">
+                <div><div class="text-xs text-slate-500">Confidence</div><div class="font-semibold">{{ "%.0f"|format(lead.ai_confidence * 100) }}%</div></div>
+                <div><div class="text-xs text-slate-500">Package แนะนำ</div><div class="font-semibold">{{ lead.ai_recommended_package or '—' }}</div></div>
+            </div>
+            <pre class="mt-3 p-3 bg-slate-50 rounded text-xs overflow-x-auto whitespace-pre-wrap">{{ lead.ai_analysis }}</pre>
+            <p class="text-[11px] text-slate-400 mt-2">ผลของ AI ไม่ใช่ผลคัดกรอง — ผลคัดกรองในรายงานมาจากทีมงานเท่านั้น</p>
+        </details>
+        {% endif %}
+
+        {% if history %}
+        <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="cursor-pointer font-semibold">ประวัติการแก้สถานะ</summary>
+            <ul class="mt-2 space-y-1 text-xs text-slate-600">
+                {% for h in history %}<li>{{ h.created_at | bkk }} · {{ h.username }} · {{ h.action }} · <span class="font-mono break-all">{{ h.detail }}</span></li>{% endfor %}
+            </ul>
+        </details>
+        {% endif %}
     </div>
 
-    <!-- Customer Info -->
     <div class="space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 md:p-6">
             <h3 class="font-semibold mb-4">ข้อมูลผู้ติดต่อ</h3>
             <dl class="space-y-3 text-sm">
                 <div><dt class="text-slate-500 text-xs">ชื่อ</dt><dd class="font-medium">{{ lead.name }}</dd></div>
-                <div><dt class="text-slate-500 text-xs">บริษัท</dt><dd>{{ lead.company or '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">บริษัท / หน่วยงาน</dt><dd>{{ lead.company or '—' }}</dd></div>
                 <div><dt class="text-slate-500 text-xs">โทรศัพท์</dt><dd>{% if lead.phone %}<a href="tel:{{ lead.phone }}" class="text-blue-600 hover:underline">{{ lead.phone }}</a>{% else %}—{% endif %}</dd></div>
                 <div><dt class="text-slate-500 text-xs">อีเมล</dt><dd>{% if lead.email %}<a href="mailto:{{ lead.email }}" class="text-blue-600 hover:underline">{{ lead.email }}</a>{% else %}—{% endif %}</dd></div>
                 <div><dt class="text-slate-500 text-xs">ขนาดห้อง</dt><dd>{{ lead.room_size or '—' }}</dd></div>
                 <div><dt class="text-slate-500 text-xs">งบประมาณ</dt><dd>{{ lead.budget or '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs">กรอกฟอร์มเมื่อ</dt><dd>{{ lead.created_at.strftime('%d %B %Y %H:%M') }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">กรอกฟอร์มเมื่อ (เวลาไทย)</dt><dd>{{ lead.created_at | bkk('%d/%m/%Y %H:%M') }}</dd></div>
             </dl>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-4 md:p-6">
+            <h3 class="font-semibold mb-4">แหล่งที่มา</h3>
+            <dl class="space-y-3 text-sm">
+                <div><dt class="text-slate-500 text-xs">ช่องทาง</dt><dd class="font-medium">{{ channel_label(lead.channel) }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">แคมเปญ</dt><dd>{% if campaign %}<a href="/admin/marketing/campaigns/{{ campaign.id }}" class="text-blue-600 hover:underline">{{ campaign.name }}</a>{% elif lead.utm_campaign %}<span class="font-mono">{{ lead.utm_campaign }}</span> <span class="text-xs text-slate-400">(ไม่ตรงกับแคมเปญในระบบ)</span>{% else %}—{% endif %}</dd></div>
+                <div><dt class="text-slate-500 text-xs">เนื้อหา / โพสต์</dt><dd>
+                    {% if content_item %}<a href="/admin/marketing/content/{{ content_item.id }}" class="text-blue-600 hover:underline">{{ content_item.title }}</a>
+                    {% elif group_post %}<a href="/admin/marketing/groups/{{ group_post.group_id }}" class="text-blue-600 hover:underline">โพสต์กลุ่ม Facebook #{{ group_post.id }}</a>
+                    {% elif lead.utm_content %}<span class="font-mono">{{ lead.utm_content }}</span>{% else %}—{% endif %}</dd></div>
+                <div><dt class="text-slate-500 text-xs">หน้าที่เข้ามาครั้งแรก</dt><dd class="break-all text-xs">{{ lead.landing_page or '—' }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">มาจากเว็บ (referrer)</dt><dd class="break-all text-xs">{{ lead.referrer or '—' }}</dd></div>
+                {% if lead.utm_source or lead.utm_medium %}
+                <div><dt class="text-slate-500 text-xs">UTM</dt><dd class="font-mono text-xs break-all">{{ lead.utm_source }} / {{ lead.utm_medium }}{% if lead.utm_term %} / {{ lead.utm_term }}{% endif %}</dd></div>
+                {% endif %}
+            </dl>
+            {% if not lead.channel or lead.channel == 'unknown' %}<p class="text-[11px] text-slate-400 mt-3">{{ UNKNOWN_SOURCE }} — เข้าเว็บตรง, Lead ก่อนเปิดระบบติดตาม, หรือเบราว์เซอร์ไม่ส่งข้อมูล</p>{% endif %}
         </div>
     </div>
 </div>

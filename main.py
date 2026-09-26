@@ -2,6 +2,7 @@
 import os
 import re
 import shutil
+from datetime import datetime
 from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, UploadFile, File
@@ -20,7 +21,9 @@ ALLOWED_UPLOAD_EXT = {".pdf", ".doc", ".docx", ".ppt", ".pptx"}
 MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20 MB
 
 from config import get_settings
-from database import get_db, Content, Package, Lead, BlogPost, User
+from database import get_db, Content, Package, Lead, BlogPost, User, LeadNote, AuditLog, Campaign, ContentItem, FbGroupPost
+import marketing
+import marketing_core as mc
 from auth import (
     authenticate_user, create_session_token, get_current_user, require_admin,
     pwd_context, COOKIE_NAME, TOKEN_EXPIRE_HOURS,
@@ -73,6 +76,27 @@ def linkify_phone(value) -> Markup:
 
 
 templates.env.filters["linkify_phone"] = linkify_phone
+
+
+def _money(value) -> str:
+    """ตัวเลขเงินบาท · None = "—" (ยังไม่มีข้อมูล ต่างจาก 0)"""
+    if value is None:
+        return "—"
+    return f"฿{value:,.0f}" if abs(value - round(value)) < 0.005 else f"฿{value:,.2f}"
+
+
+def _bkk(dt, fmt: str = "%d/%m/%y %H:%M") -> str:
+    """created_at ในฐานข้อมูลเป็น UTC → แสดงเป็นเวลาไทย"""
+    return mc.utc_to_bkk(dt).strftime(fmt) if dt else "—"
+
+
+templates.env.filters["money"] = _money
+templates.env.filters["bkk"] = _bkk
+
+# เมนูการตลาด (/admin/marketing/*) + endpoint คลิก LINE/โทร (/api/event)
+marketing.bind(templates, UPLOAD_DIR)
+app.include_router(marketing.router)
+app.include_router(marketing.public_router)
 
 
 # ===== โค้ดติดตามโฆษณา =====
@@ -325,6 +349,8 @@ async def submit_lead(
         return JSONResponse({"ok": False, "error": format_error}, status_code=400)
 
     is_spam = honeypot_tripped(fax_number)
+    # ช่องแหล่งที่มา/ประเภทคำขอ ที่สคริปต์หน้าเว็บแนบมา (vs-track.js) — ไม่มีก็ไม่เป็นไร
+    form = await request.form()
 
     # ถ้ามี lead_id แปลว่า analyze มาแล้ว ให้ update lead เดิม
     lead = None
@@ -345,6 +371,8 @@ async def submit_lead(
             lead.status = "new"
         else:
             lead.status = "new_in_scope" if lead.ai_in_scope else "new_out_scope"
+        marketing.apply_attribution(db, lead, form)
+        marketing.screen_lead(db, lead, form, honeypot=is_spam)
         db.commit()
         return {
             "ok": True,
@@ -382,6 +410,8 @@ async def submit_lead(
         ai_recommended_package=str(analysis.get("recommended_package", "")),
         status=lead_status,
     )
+    marketing.apply_attribution(db, lead, form)
+    marketing.screen_lead(db, lead, form, honeypot=is_spam)
     db.add(lead)
     db.commit()
 
@@ -462,10 +492,13 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
-    total_leads = db.query(Lead).count()
+    real = db.query(Lead).filter(Lead.status != "anonymous")
+    total_leads = real.count()
     in_scope = db.query(Lead).filter_by(ai_in_scope=True).count()
-    new_leads = db.query(Lead).filter(Lead.status.like("new%")).count()
-    recent_leads = db.query(Lead).order_by(Lead.created_at.desc()).limit(5).all()
+    # รอติดต่อ = ขั้น "ใหม่" ที่ไม่ใช่รายการซ้ำและไม่สงสัยสแปม
+    new_leads = real.filter(Lead.sales_stage == "new", Lead.duplicate_of.is_(None),
+                            Lead.qualification != "spam").count()
+    recent_leads = real.order_by(Lead.created_at.desc()).limit(5).all()
     total_posts = db.query(BlogPost).count()
     published_posts = db.query(BlogPost).filter_by(is_published=True).count()
 
@@ -612,21 +645,56 @@ async def admin_package_update(
     return RedirectResponse("/admin/packages?saved=1", status_code=303)
 
 
+def _lead_ctx() -> dict:
+    return {
+        "SALES_STAGES": mc.SALES_STAGES, "SALES_STAGE_LABELS": mc.SALES_STAGE_LABELS,
+        "QUALIFICATIONS": mc.QUALIFICATIONS, "QUALIFICATION_LABELS": mc.QUALIFICATION_LABELS,
+        "SERVICES": mc.SERVICES, "SERVICE_MAP": mc.SERVICE_MAP,
+        "REQUEST_TYPE_LABELS": mc.REQUEST_TYPE_LABELS, "SPAM_REASON_LABELS": mc.SPAM_REASON_LABELS,
+        "channel_label": mc.channel_label, "CHANNELS": mc.CHANNELS + mc.DERIVED_CHANNELS,
+        "UNKNOWN_SOURCE": mc.UNKNOWN_SOURCE,
+    }
+
+
 @app.get("/admin/leads", response_class=HTMLResponse)
-async def admin_leads(request: Request, db: Session = Depends(get_db), filter: str = "all"):
+async def admin_leads(request: Request, db: Session = Depends(get_db), filter: str = "all",
+                      stage: str = "", qual: str = "", channel: str = "", dup: str = ""):
     user = _check_admin(request, db)
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
     q = db.query(Lead)
+    if filter == "anonymous":
+        q = q.filter(Lead.status == "anonymous")
+    else:
+        q = q.filter(Lead.status != "anonymous")
     if filter == "in_scope":
         q = q.filter_by(ai_in_scope=True)
     elif filter == "out_scope":
         q = q.filter_by(ai_in_scope=False)
     elif filter == "new":
-        q = q.filter(Lead.status.like("new%"))
-    leads = q.order_by(Lead.created_at.desc()).all()
+        q = q.filter(Lead.sales_stage == "new", Lead.qualification != "spam",
+                     Lead.duplicate_of.is_(None))
+    elif filter == "followup":
+        q = q.filter(Lead.next_follow_up.isnot(None), Lead.sales_stage.notin_(("won", "lost")))
+    if stage in mc.SALES_STAGE_LABELS:
+        q = q.filter(Lead.sales_stage == stage)
+    if qual in mc.QUALIFICATION_LABELS:
+        q = q.filter(Lead.qualification == qual)
+    if channel == "unknown":
+        q = q.filter((Lead.channel == "unknown") | (Lead.channel == "") | (Lead.channel.is_(None)))
+    elif channel in mc.CHANNEL_MAP:
+        q = q.filter(Lead.channel == channel)
+    if dup == "only":
+        q = q.filter(Lead.duplicate_of.isnot(None))
+    elif dup != "all":
+        q = q.filter(Lead.duplicate_of.is_(None))
+    order = Lead.next_follow_up if filter == "followup" else Lead.created_at.desc()
+    leads = q.order_by(order).limit(500).all()
+    campaigns = {c.id: c for c in db.query(Campaign).all()}
     return templates.TemplateResponse("admin/leads.html", {
         "request": request, "user": user, "leads": leads, "filter": filter, "settings": settings,
+        "f": {"stage": stage, "qual": qual, "channel": channel, "dup": dup},
+        "campaigns": campaigns, **_lead_ctx(),
     })
 
 
@@ -638,9 +706,26 @@ async def admin_lead_detail(lead_id: int, request: Request, db: Session = Depend
     lead = db.query(Lead).filter_by(id=lead_id).first()
     if not lead:
         raise HTTPException(status_code=404)
+    notes = db.query(LeadNote).filter_by(lead_id=lead.id).order_by(LeadNote.created_at.desc()).all()
+    history = (db.query(AuditLog).filter_by(entity="lead", entity_id=lead.id)
+               .order_by(AuditLog.created_at.desc()).limit(30).all())
+    dup_first = db.get(Lead, lead.duplicate_of) if lead.duplicate_of else None
+    dup_others = db.query(Lead).filter(Lead.duplicate_of == lead.id).order_by(Lead.created_at).all()
     return templates.TemplateResponse("admin/lead_detail.html", {
         "request": request, "user": user, "lead": lead, "settings": settings,
+        "notes": notes, "history": history, "dup_first": dup_first, "dup_others": dup_others,
+        "campaign": db.get(Campaign, lead.campaign_id) if lead.campaign_id else None,
+        "content_item": db.get(ContentItem, lead.content_item_id) if lead.content_item_id else None,
+        "group_post": db.get(FbGroupPost, lead.group_post_id) if lead.group_post_id else None,
+        "error": request.query_params.get("error", ""),
+        **_lead_ctx(),
     })
+
+
+def _lead_audit(db: Session, user: User, action: str, lead_id: int, detail: dict) -> None:
+    import json as _json
+    db.add(AuditLog(username=user.username, action=action, entity="lead", entity_id=lead_id,
+                    detail=_json.dumps(detail, ensure_ascii=False, default=str)))
 
 
 @app.post("/admin/leads/{lead_id}/update")
@@ -654,9 +739,95 @@ async def admin_lead_update(
         return RedirectResponse("/admin/login", status_code=303)
     form = await request.form()
     lead = db.query(Lead).filter_by(id=lead_id).first()
-    if lead:
-        lead.status = form.get("status", lead.status)
-        lead.notes = form.get("notes", lead.notes)
+    if not lead:
+        raise HTTPException(status_code=404)
+
+    errors = []
+    stage = str(form.get("sales_stage") or lead.sales_stage or "new")
+    qual = str(form.get("qualification") or lead.qualification or "pending")
+    service = str(form.get("service_interest") or "")
+    if stage not in mc.SALES_STAGE_LABELS or qual not in mc.QUALIFICATION_LABELS:
+        errors.append("สถานะไม่ถูกต้อง")
+    if service and service not in mc.SERVICE_MAP:
+        service = ""
+    values = {}
+    for key in ("quote_value", "won_value"):
+        raw = str(form.get(key) or "").strip()
+        values[key] = mc.parse_money(raw)
+        if raw and values[key] is None:
+            errors.append("มูลค่าต้องเป็นตัวเลข ≥ 0")
+    if stage == "won" and values["won_value"] is None:
+        errors.append("ปิดงานแล้ว — กรุณาใส่มูลค่างานที่ปิดได้")
+    next_raw = str(form.get("next_follow_up") or "").strip()
+    next_date = mc.parse_date(next_raw)
+    if next_raw and not next_date:
+        errors.append("วันนัดถัดไปไม่ถูกต้อง")
+    if errors:
+        from urllib.parse import quote
+        return RedirectResponse(f"/admin/leads/{lead_id}?error={quote(' · '.join(errors))}",
+                                status_code=303)
+
+    before = {"sales_stage": lead.sales_stage, "qualification": lead.qualification,
+              "quote_value": lead.quote_value, "won_value": lead.won_value,
+              "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up}
+    lead.sales_stage, lead.qualification, lead.service_interest = stage, qual, service
+    lead.quote_value, lead.won_value = values["quote_value"], values["won_value"]
+    lead.next_follow_up = next_date
+    if qual == "spam" and not lead.spam_reason:
+        lead.spam_reason = "manual"
+    # คงช่อง status เดิมให้สอดคล้อง (ระบบเก่าบางจุดยังอ่านค่านี้)
+    lead.status = "spam" if qual == "spam" else stage
+    lead.notes = form.get("notes", lead.notes)
+    lead.updated_at = datetime.utcnow()
+    after = {"sales_stage": lead.sales_stage, "qualification": lead.qualification,
+             "quote_value": lead.quote_value, "won_value": lead.won_value,
+             "service_interest": lead.service_interest, "next_follow_up": lead.next_follow_up}
+    changed = {k: {"from": before[k], "to": after[k]} for k in after if before[k] != after[k]}
+    if changed:
+        _lead_audit(db, user, "lead_update", lead.id, changed)
+    db.commit()
+    return RedirectResponse(f"/admin/leads/{lead_id}?saved=1", status_code=303)
+
+
+@app.post("/admin/leads/{lead_id}/notes")
+async def admin_lead_note(lead_id: int, request: Request, db: Session = Depends(get_db)):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+    lead = db.get(Lead, lead_id)
+    if not lead:
+        raise HTTPException(status_code=404)
+    form = await request.form()
+    text = str(form.get("text") or "").strip()[:4000]
+    next_date = mc.parse_date(str(form.get("next_follow_up") or ""))
+    if not text and not next_date:
+        return RedirectResponse(f"/admin/leads/{lead_id}", status_code=303)
+    db.add(LeadNote(lead_id=lead.id, text=text, next_follow_up=next_date,
+                    created_by=user.username))
+    if next_date:
+        lead.next_follow_up = next_date
+    if lead.sales_stage == "new" and form.get("mark_contacted") == "on":
+        _lead_audit(db, user, "lead_update", lead.id,
+                    {"sales_stage": {"from": "new", "to": "contacted"}})
+        lead.sales_stage = lead.status = "contacted"
+    lead.updated_at = datetime.utcnow()
+    db.commit()
+    return RedirectResponse(f"/admin/leads/{lead_id}?saved=1", status_code=303)
+
+
+@app.post("/admin/leads/{lead_id}/not-duplicate")
+async def admin_lead_not_duplicate(lead_id: int, request: Request, db: Session = Depends(get_db)):
+    """ยืนยันว่าไม่ใช่รายการซ้ำ (เช่น คนละคนใช้เบอร์สำนักงานเดียวกัน)"""
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+    lead = db.get(Lead, lead_id)
+    if not lead:
+        raise HTTPException(status_code=404)
+    if lead.duplicate_of:
+        _lead_audit(db, user, "lead_not_duplicate", lead.id, {"was_duplicate_of": lead.duplicate_of})
+        lead.duplicate_of = None
+        lead.not_duplicate = True
         db.commit()
     return RedirectResponse(f"/admin/leads/{lead_id}?saved=1", status_code=303)
 

@@ -75,20 +75,33 @@
         </div>
         <div class="md:col-span-2"><button class="{{ ui.btn_cls }} w-full">สร้างลิงก์</button></div>
     </form>
-    {% if links %}
+    {% macro link_row(l) %}
+    {% set n = link_leads.get((l.utm_source, l.utm_medium, l.utm_content), 0) %}
+    <li class="px-4 py-3 {% if new_link == l.id %}bg-emerald-50{% endif %}">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="text-sm font-medium">{{ mk.channel_label(l.channel) }}{% if l.label %} · <span class="text-slate-600 font-normal">{{ l.label }}</span>{% endif %}</div>
+            <div class="flex items-center gap-2 text-xs text-slate-500">Lead ไม่ซ้ำ {{ n }} · {{ ui.copy_button('#link-' ~ l.id, 'คัดลอกลิงก์') }}</div>
+        </div>
+        <input id="link-{{ l.id }}" readonly value="{{ l.url }}" class="mt-1 w-full font-mono text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5" onclick="this.select()">
+    </li>
+    {% endmacro %}
+    {# ลิงก์ของแคมเปญที่ไม่ได้ชี้หน้าปลายทางปัจจุบัน (เช่น ก่อนย้ายหน้าปลายทาง) — ยังนับผลได้ แต่พับเก็บไว้ ไม่ให้คัดลอกผิดตัว
+       ลิงก์ของโพสต์/เนื้อหา/กลุ่ม Facebook ปลายทางต่างได้ตามตั้งใจ จึงแสดงปกติ #}
+    {% set old_links = links | selectattr('content_item_id', 'none') | selectattr('group_post_id', 'none') | rejectattr('destination', 'equalto', c.landing_url) | list %}
+    {% set cur_links = links | reject('in', old_links) | list %}
+    {% if cur_links %}
     <ul class="divide-y divide-slate-100">
-        {% for l in links %}
-        {% set n = link_leads.get((l.utm_source, l.utm_medium, l.utm_content), 0) %}
-        <li class="px-4 py-3 {% if new_link == l.id %}bg-emerald-50{% endif %}">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-                <div class="text-sm font-medium">{{ mk.channel_label(l.channel) }}{% if l.label %} · <span class="text-slate-600 font-normal">{{ l.label }}</span>{% endif %}</div>
-                <div class="flex items-center gap-2 text-xs text-slate-500">Lead ไม่ซ้ำ {{ n }} · {{ ui.copy_button('#link-' ~ l.id, 'คัดลอกลิงก์') }}</div>
-            </div>
-            <input id="link-{{ l.id }}" readonly value="{{ l.url }}" class="mt-1 w-full font-mono text-xs bg-slate-50 border border-slate-200 rounded px-2 py-1.5" onclick="this.select()">
-        </li>
-        {% endfor %}
+        {% for l in cur_links %}{{ link_row(l) }}{% endfor %}
     </ul>
-    {% else %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีลิงก์ติดตาม</div>{% endif %}
+    {% elif not old_links %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีลิงก์ติดตาม</div>{% endif %}
+    {% if old_links %}
+    <details class="border-t border-slate-200 bg-slate-50/60">
+        <summary class="px-4 py-2 text-xs text-slate-500 cursor-pointer">ลิงก์ที่ชี้หน้าปลายทางเดิม ({{ old_links | length }}) — ยังนับผลได้ ไม่ควรใช้กับโฆษณา/โพสต์ใหม่</summary>
+        <ul class="divide-y divide-slate-100 opacity-75">
+            {% for l in old_links %}{{ link_row(l) }}{% endfor %}
+        </ul>
+    </details>
+    {% endif %}
 </div>
 
 <div class="grid lg:grid-cols-2 gap-4 mb-6">

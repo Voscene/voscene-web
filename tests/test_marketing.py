@@ -591,7 +591,8 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
 
     async def fake_llm(messages):
         sent["messages"] = messages
-        return "ควบคุมห้องประชุมได้ทุกยี่ห้อ พร้อมระบบไฟและประกาศเสียงตามสาย ดูที่ https://x.com"
+        return ("ควบคุมห้องประชุมได้ทุกยี่ห้อ พร้อมระบบไฟ และประกาศเสียงตามสายกรณีเพลิงไหม้ "
+                "คุมได้ 200 ห้อง ดูที่ https://x.com")
 
     monkeypatch.setattr(marketing_ai, "call_llm", fake_llm)
     r = admin.post("/admin/marketing/ai/draft", json={"service": "multi_room", "channel": "facebook_page",
@@ -602,8 +603,10 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
     assert "สูงสุด 20 ห้อง" in system and "PA" in system  # ข้อเท็จจริง + ข้อห้ามอยู่ในพรอมต์
     assert "20 ห้อง" in sent["messages"][1]["content"]     # เงื่อนไขของบริการถูกบังคับใส่
     joined = " ".join(j["warnings"])
-    for expect in ("เกินจริง", "ระบบไฟ", "PA", "ลิงก์", "20 ห้อง"):
+    for expect in ("เกินจริง", "PA", "อัคคีภัย", "เกิน 20", "ลิงก์", "20 ห้อง"):
         assert expect in joined, expect
+    assert "แสง" not in joined  # ระบบไฟ DMX ยืนยันแล้ว (27 ก.ย.) — ไม่เตือน
+    assert "ควบคุมแสงสว่างได้" in system and "รองรับการเชื่อมต่อ AI" in system
 
     # บริการที่ยังไม่ยืนยัน → ไม่ร่าง และไม่เรียก AI
     sent.clear()
@@ -899,3 +902,36 @@ def test_line_clicks_by_channel_and_campaign(admin, client):
     csv_text = admin.get(f"/admin/marketing/reports/export.csv?kind=channel&start={today}&end={today}").text
     assert "line_clicks" in csv_text and "cost_per_line_click" in csv_text
     s.close()
+
+
+def test_claim_rewrites_before_ads():
+    import seed
+    from database import Content
+    s = db()
+    old = {
+        "stat_1_value": "60-80%",
+        "stat_1_label": "ประหยัดกว่าระบบ AV แบรนด์ใหญ่",
+        "seo_description": "ซอฟต์แวร์ควบคุม AV · ประหยัด 60-80% · Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง) · ข้อความที่เจ้าของเขียนเอง",
+    }
+    for k, v in old.items():
+        s.query(Content).filter_by(key=k).update({"value": v})
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    get = lambda k: s.query(Content).filter_by(key=k).one().value  # noqa: E731
+    assert get("stat_1_value") == "ประหยัดกว่า" and get("stat_1_label") == "ระบบควบคุม AV ต่างประเทศ"
+    seo = get("seo_description")
+    assert "60-80" not in seo and "~200" not in seo and "รองรับการขยาย" in seo
+    assert "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ" in seo and "ข้อความที่เจ้าของเขียนเอง" in seo
+    # เจ้าของเปลี่ยนตัวเลขการ์ดเป็นอย่างอื่นแล้ว → ไม่แตะ
+    s.query(Content).filter_by(key="stat_1_value").update({"value": "18 ปี"})
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    assert get("stat_1_value") == "18 ปี"
+    s.close()
+    html = TestClient(main.app).get("/features").text
+    assert "60-80" not in html and "~200" not in html and "รองรับการขยาย" in html
+    why = TestClient(main.app).get("/why").text
+    assert "Emergency PA" not in why and "รองรับการเชื่อมต่อระบบประกาศเหตุฉุกเฉิน" in why
+    assert "AI-powered commands" not in why and "รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์" in why

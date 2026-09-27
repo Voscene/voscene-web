@@ -134,7 +134,7 @@ DEFAULT_CONTENT = [
     ("hero_title_line2", "smart spaces.", "บรรทัดที่ 2 (สี gradient)", "hero", "text"),
     ("hero_subtitle_th", "ระบบควบคุม AV ขับเคลื่อนด้วย AI ออกแบบเพื่อองค์กรไทย", "บรรทัดภาษาไทย", "hero", "text"),
     ("hero_tagline", "Voice on SCENE · Speak. Control. Transform.", "Slogan", "hero", "text"),
-    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบ AV ระดับโลก 60-80% รองรับอุปกรณ์ AV หลากหลายยี่ห้อ — 48 ยี่ห้อ · 1,000+ รุ่น ผ่านโปรโตคอลมาตรฐาน (PJLink · VISCA · webOS/Tizen · DMX ฯลฯ)", "คำอธิบาย Hero", "hero", "textarea"),
+    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ รองรับอุปกรณ์ AV หลากหลายยี่ห้อ — 48 ยี่ห้อ · 1,000+ รุ่น ผ่านโปรโตคอลมาตรฐาน (PJLink · VISCA · webOS/Tizen · DMX ฯลฯ)", "คำอธิบาย Hero", "hero", "textarea"),
     ("hero_cta_primary", "Book a Demo", "ปุ่มหลัก", "hero", "text"),
     ("hero_cta_secondary", "ดูฟีเจอร์", "ปุ่มรอง", "hero", "text"),
     ("hero_mission", "\"พูดสิ่งที่อยากทำ\" — Voscene จัดการที่เหลือให้", "Mission Statement (quote-style)", "hero", "textarea"),
@@ -148,8 +148,8 @@ DEFAULT_CONTENT = [
     ("brand_meaning_text", "VOSCENE ออกเสียงว่า \"VO-seen\" — มาจาก Voice on SCENE หมายถึง \"เสียงพร้อมแล้ว ในทุกพื้นที่\"", "ความหมายแบรนด์", "brand", "textarea"),
 
     # ===== USP Stats =====
-    ("stat_1_value", "60-80%", "ตัวเลขสถิติ 1", "stats", "text"),
-    ("stat_1_label", "ประหยัดกว่าระบบ AV แบรนด์ใหญ่", "คำอธิบายสถิติ 1", "stats", "text"),
+    ("stat_1_value", "ประหยัดกว่า", "ตัวเลขสถิติ 1", "stats", "text"),
+    ("stat_1_label", "ระบบควบคุม AV ต่างประเทศ", "คำอธิบายสถิติ 1", "stats", "text"),
     ("stat_2_value", "<24h", "ตัวเลขสถิติ 2", "stats", "text"),
     ("stat_2_label", "ติดตั้งห้องเดียว Plug & Play", "คำอธิบายสถิติ 2", "stats", "text"),
     ("stat_3_value", "48", "ตัวเลขสถิติ 3", "stats", "text"),
@@ -159,7 +159,7 @@ DEFAULT_CONTENT = [
 
     # ===== About / Why =====
     ("about_title", "ทำไมต้องเลือก Voscene", "หัวข้อ About", "about", "text"),
-    ("about_description", "ออกแบบมาเทียบชั้นระบบ AV ระดับโลก แต่ราคาประหยัดกว่า 60-80% — ใช้ AI สั่งงานด้วยภาษาธรรมชาติ ลดความซับซ้อน รองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วผ่านโปรโตคอลมาตรฐาน", "คำอธิบาย About", "about", "textarea"),
+    ("about_description", "ออกแบบมาเทียบชั้นระบบ AV ระดับโลก แต่ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ — ใช้ AI สั่งงานด้วยภาษาธรรมชาติ ลดความซับซ้อน รองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วผ่านโปรโตคอลมาตรฐาน", "คำอธิบาย About", "about", "textarea"),
 
     # ===== Brand Note =====
     ("brand_note", "ระบบรองรับอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลมาตรฐาน — ไม่ต้องมีรุ่นในลิสต์ก็คุมได้ถ้าพูดโปรโตคอลที่รองรับ · ปรับแต่งเพื่อรองรับอุปกรณ์ที่ลูกค้ามีอยู่แล้วได้", "หมายเหตุเรื่อง Brand", "about", "textarea"),
@@ -194,7 +194,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · รองรับการขยาย), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -211,7 +211,7 @@ DEFAULT_PACKAGES = [
         "code": "pro", "name": "Voscene Pro",
         "price": "Contact for pricing", "price_unit": "",
         "description": "For multi-room deployments · Best for hotels, universities, enterprises",
-        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · designed to scale to ~200 with Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
+        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · รองรับการขยาย · Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
         "category": "purchase", "sort_order": 2, "is_featured": True,
     },
     {
@@ -299,6 +299,18 @@ def run_seed():
         # พอแอดมินแก้ข้อความเองแล้วก็หยุดบังคับ (รูปแบบเดียวกับ REPOSITION_FORCE)
         AI_CONSULT_RETIRE = {} if settings.AI_CONSULT_ENABLED else {"contact_subtitle": "วิเคราะห์"}
         FORM_RETIRE = {"contact_subtitle": "กรอก"}
+        # 2026-09-27 เจ้าของตัดสินถ้อยคำก่อนยิงโฆษณา: เลิกตัวเลข "ประหยัด 60-80%" (ไม่มีเอกสารเทียบราคารองรับ)
+        # และ "~200 ห้อง" (ใช้ "รองรับการขยาย") — แทนเฉพาะวลีเก่าในค่าที่เก็บอยู่ ส่วนอื่นที่แอดมินแก้ไว้คงเดิม
+        # stat_1 เป็นคู่ตัวเลข/คำอธิบาย → แทนเฉพาะเมื่อยังเป็นค่าเดิมทั้งช่อง
+        CLAIM_REWRITES = {
+            "stat_1_value": [("60-80%", "ประหยัดกว่า")],
+            "stat_1_label": [("ประหยัดกว่าระบบ AV แบรนด์ใหญ่", "ระบบควบคุม AV ต่างประเทศ")],
+            "hero_description": [("ราคาประหยัดกว่าระบบ AV ระดับโลก 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ")],
+            "about_description": [("แต่ราคาประหยัดกว่า 60-80%", "แต่ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ")],
+            "seo_description": [("ประหยัด 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ"),
+                                ("ออกแบบให้ขยายถึง ~200 ห้อง", "รองรับการขยาย")],
+        }
+        WHOLE_FIELD = {"stat_1_value", "stat_1_label"}
         added = 0
         migrated = 0
         legal_forced = 0
@@ -347,6 +359,15 @@ def run_seed():
                 if key == "contact_phone" and _lines(existing.value) in OLD_CONTACT_PHONES:
                     existing.value = value
                     changed = True
+                for old, new in CLAIM_REWRITES.get(key, []):
+                    current = existing.value or ""
+                    if key in WHOLE_FIELD:
+                        if current.strip() == old:
+                            existing.value = new
+                            changed = True
+                    elif old in current:
+                        existing.value = current.replace(old, new)
+                        changed = True
                 # ร่างนโยบายที่ยังเป็นฉบับแรกทุกตัวอักษร (ยังไม่มีใครแก้) → อัปเดตเป็นฉบับไม่มีฟอร์ม
                 # ถ้าเจ้าของแก้ร่างไปแล้ว ไม่แตะ
                 if key == "privacy_policy_draft" and _fingerprint(existing.value) in OLD_PRIVACY_DRAFTS:

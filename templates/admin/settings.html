@@ -27,6 +27,30 @@
         <button type="submit" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">เปลี่ยนรหัสผ่าน</button>
     </form>
 
+    {% if security %}
+    {% set sec_ok = security.secret_ok and security.debug_off and not security.weak_pw_users %}
+    <div class="bg-white rounded-xl border {% if sec_ok %}border-emerald-300{% else %}border-red-300{% endif %} p-6 space-y-3">
+        <h2 class="font-semibold">ความปลอดภัยของระบบ</h2>
+        {% if sec_ok %}<p class="text-sm text-emerald-700">✓ ค่าตั้งด้านความปลอดภัยครบ</p>
+        {% else %}<p class="text-sm text-red-700 font-medium">⚠ มีค่าตั้งที่ต้องแก้ — ดูรายการด้านล่าง</p>{% endif %}
+        <ul class="text-sm space-y-2">
+            <li class="flex justify-between gap-4">
+                <span><span class="font-medium">กุญแจเซ็นการล็อกอิน (SECRET_KEY)</span><span class="block text-xs text-slate-500">ถ้ายังเป็นค่าตัวอย่างในโค้ด คนนอกปลอมการล็อกอินเข้าหลังบ้านได้</span></span>
+                <span class="text-right flex-shrink-0">{% if security.secret_ok %}<span class="text-emerald-600">✓ ตั้งแล้ว ({{ security.secret_len }} ตัว)</span>{% elif security.secret_default %}<span class="text-red-600">✗ ยังเป็นค่าตัวอย่าง</span>{% else %}<span class="text-red-600">✗ สั้นเกินไป ({{ security.secret_len }} ตัว)</span>{% endif %}</span>
+            </li>
+            <li class="flex justify-between gap-4">
+                <span><span class="font-medium">โหมดนักพัฒนา (DEBUG)</span><span class="block text-xs text-slate-500">ต้องปิดบนเว็บจริง</span></span>
+                <span class="text-right flex-shrink-0">{% if security.debug_off %}<span class="text-emerald-600">✓ ปิดอยู่</span>{% else %}<span class="text-red-600">✗ เปิดอยู่</span>{% endif %}</span>
+            </li>
+            <li class="flex justify-between gap-4">
+                <span><span class="font-medium">รหัสผ่านเริ่มต้น "changeme"</span><span class="block text-xs text-slate-500">ไม่ควรมีบัญชีไหนใช้รหัสนี้อยู่</span></span>
+                <span class="text-right flex-shrink-0">{% if not security.weak_pw_users %}<span class="text-emerald-600">✓ ไม่มี</span>{% else %}<span class="text-red-600">✗ {{ security.weak_pw_users | join(', ') }}</span>{% endif %}</span>
+            </li>
+        </ul>
+        {% if not sec_ok %}<p class="text-xs text-slate-600">แก้ SECRET_KEY / DEBUG: Render → service voscene-web → Environment · รหัสผ่าน: เปลี่ยนที่ช่องด้านบน หรือหน้าบัญชีผู้ใช้</p>{% endif %}
+    </div>
+    {% endif %}
+
     {% if storage %}
     <div class="bg-white rounded-xl border {% if storage.db_persistent %}border-emerald-300{% else %}border-red-300{% endif %} p-6 space-y-3">
         <h2 class="font-semibold">การเก็บข้อมูลถาวร</h2>

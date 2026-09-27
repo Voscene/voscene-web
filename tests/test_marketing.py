@@ -826,3 +826,33 @@ def test_seed_splits_sales_and_tech_phone_once():
     s.expire_all()
     assert s.query(Content).filter_by(key="contact_phone").one().value == "ติดต่อ 02-000-0000"
     s.close()
+
+
+def test_privacy_patch_keeps_owner_edits():
+    import seed
+    old_lines = [
+        "นโยบายนี้อธิบายว่า ...",
+        "## ข้อมูลที่เราเก็บ",
+        "- ข้อมูลที่คุณกรอกในแบบฟอร์มติดต่อ: ชื่อ-นามสกุล บริษัท/หน่วยงาน เบอร์โทรศัพท์ อีเมล ขนาดห้องประชุม งบประมาณ ความต้องการ และประเภทคำขอ (ปรึกษา / ขอนัด Demo / ขอใบเสนอราคา)",
+        "- หมายเลข IP ในกรณีที่ระบบตรวจพบว่าการส่งแบบฟอร์มอาจเป็นสแปมหรือบอท",
+        "- ผู้ให้บริการระบบที่เว็บไซต์ใช้ ได้แก่ ผู้ให้บริการเซิร์ฟเวอร์ (Render — ศูนย์ข้อมูลในสิงคโปร์) และ Cloudflare ซึ่งอาจประมวลผลข้อมูลนอกประเทศไทย ภายใต้มาตรการคุ้มครองที่เหมาะสม",
+        "- เก็บข้อมูลไว้ 2 ปี",                       # เจ้าของเติมเอง
+        "อีเมล: privacy@csi.example",                 # เจ้าของเติมเอง
+    ]
+    owner_draft = "\r\n".join(old_lines)             # textarea บันทึกเป็น CRLF
+    patched = seed.patch_privacy_text(owner_draft)
+    assert "แบบฟอร์ม" not in patched and "หมายเลข IP" not in patched
+    assert "ติดต่อเราทาง LINE โทรศัพท์ หรืออีเมล" in patched
+    assert "- LINE ในฐานะผู้ให้บริการช่องทางแชต" in patched
+    assert "- เก็บข้อมูลไว้ 2 ปี" in patched and "อีเมล: privacy@csi.example" in patched
+    assert seed.patch_privacy_text(patched) == patched           # รันซ้ำไม่เปลี่ยน
+    assert seed.patch_privacy_text("ข้อความเจ้าของล้วน") == "ข้อความเจ้าของล้วน"
+    assert "รหัสอ้างอิง" in seed.PRIVACY_POLICY_DRAFT               # ฉบับใหม่พูดถึงรหัสในข้อความ LINE
+
+
+def test_settings_security_panel(admin):
+    html = admin.get("/admin/settings").text
+    assert "ความปลอดภัยของระบบ" in html and "SECRET_KEY" in html
+    assert "✓ ปิดอยู่" not in html  # เทสรันด้วย DEBUG=True → ต้องขึ้นเตือน ไม่ใช่ผ่าน
+    assert "ตั้งแล้ว" in html          # คีย์เทสยาวพอ ไม่ใช่ค่าตัวอย่าง
+    assert os.environ["SECRET_KEY"] not in html  # ไม่แสดงค่าจริง

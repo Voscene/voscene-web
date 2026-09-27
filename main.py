@@ -1256,7 +1256,29 @@ async def admin_settings(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("admin/settings.html", {
         "request": request, "user": user, "settings": settings,
         "storage": _storage_status() if user.is_owner else None,
+        "security": _security_status(db) if user.is_owner else None,
     })
+
+
+_DEFAULT_SECRET = "change-this-to-random-string-min-32-chars"
+
+
+def _security_status(db: Session) -> dict:
+    """ตรวจค่าตั้งที่สำคัญโดยไม่เปิดเผยค่าจริง — เจ้าของไม่ต้องเข้า Render ก็รู้ว่าปลอดภัยไหม
+
+    SECRET_KEY ใช้เซ็น cookie ล็อกอิน · ถ้ายังเป็นค่าตัวอย่างในโค้ด (ซึ่งใครก็อ่านได้บน GitHub)
+    คนนอกปลอม cookie เข้าหลังบ้านได้ · DEBUG เปิด = cookie ล็อกอินไม่ติดธง Secure
+    """
+    key = settings.SECRET_KEY or ""
+    weak_pw = [u.username for u in db.query(User).filter(User.is_active.is_(True)).all()
+               if pwd_context.verify("changeme", u.password_hash)]
+    return {
+        "secret_ok": key != _DEFAULT_SECRET and len(key) >= 32,
+        "secret_default": key == _DEFAULT_SECRET,
+        "secret_len": len(key),
+        "debug_off": not settings.DEBUG,
+        "weak_pw_users": weak_pw,
+    }
 
 
 def _storage_status() -> dict:

@@ -123,6 +123,27 @@ def _simple_doc(value) -> Markup:
 
 
 templates.env.filters["simple_doc"] = _simple_doc
+
+
+def _line_href(value) -> str:
+    """ค่า contact_line จาก CMS (URL หรือ @ID) → ลิงก์เปิดแชต LINE OA"""
+    v = str(value or "").strip()
+    if not v:
+        return ""
+    if v.startswith("https://"):
+        return v
+    return "https://line.me/R/ti/p/" + (v if v.startswith("@") else "@" + v)
+
+
+def _line_label(value) -> str:
+    """ชื่อบนปุ่ม: "LINE @CSIPROAV" · ถ้าเป็นลิงก์ lin.ee ที่ไม่มี ID ให้เห็น ใช้ "LINE" เฉย ๆ"""
+    v = str(value or "").strip()
+    found = re.search(r"@[A-Za-z0-9._-]+", v)
+    return f"LINE {found.group(0)}" if found else "LINE"
+
+
+templates.env.filters["line_href"] = _line_href
+templates.env.filters["line_label"] = _line_label
 templates.env.filters["money"] = _money
 templates.env.filters["bkk"] = _bkk
 
@@ -299,6 +320,14 @@ async def sitemap_xml(db: Session = Depends(get_db)):
     return Response("\n".join(parts), media_type="application/xml")
 
 
+def _forms_closed() -> JSONResponse:
+    """เว็บเลิกรับข้อมูลผ่านฟอร์มแล้ว — ตอบก่อนอ่านข้อมูลใด ๆ จึงไม่มีอะไรถูกบันทึก"""
+    return JSONResponse({
+        "ok": False,
+        "error": "ขณะนี้รับเรื่องทาง LINE และโทรศัพท์เท่านั้น — ดูช่องทางติดต่อได้ที่หน้าติดต่อเรา",
+    }, status_code=410)
+
+
 @app.post("/api/analyze", response_class=JSONResponse)
 async def analyze_only(
     request: Request,
@@ -309,6 +338,8 @@ async def analyze_only(
     db: Session = Depends(get_db),
 ):
     """วิเคราะห์อย่างเดียว ยังไม่บันทึก Lead — บันทึกเป็น anonymous lead เพื่อเก็บสถิติ"""
+    if not settings.WEB_FORMS_ENABLED:
+        return _forms_closed()
     if not requirement.strip():
         return JSONResponse({"ok": False, "error": "กรุณากรอกความต้องการ"}, status_code=400)
 
@@ -380,6 +411,8 @@ async def submit_lead(
     db: Session = Depends(get_db),
 ):
     """บันทึก/อัปเดต Lead เมื่อมีข้อมูลติดต่อแล้ว — รองรับทั้ง flow ใหม่ (อัปเดต anonymous lead) และ flow เดิม (สร้างใหม่)"""
+    if not settings.WEB_FORMS_ENABLED:
+        return _forms_closed()
     if not name.strip() or not requirement.strip():
         return JSONResponse({"ok": False, "error": "กรุณากรอกชื่อและความต้องการ"}, status_code=400)
 
@@ -710,7 +743,7 @@ def _lead_ctx() -> dict:
         "SERVICES": mc.SERVICES, "SERVICE_MAP": mc.SERVICE_MAP,
         "REQUEST_TYPE_LABELS": mc.REQUEST_TYPE_LABELS, "SPAM_REASON_LABELS": mc.SPAM_REASON_LABELS,
         "channel_label": mc.channel_label, "CHANNELS": mc.CHANNELS + mc.DERIVED_CHANNELS,
-        "UNKNOWN_SOURCE": mc.UNKNOWN_SOURCE,
+        "UNKNOWN_SOURCE": mc.UNKNOWN_SOURCE, "CONTACT_METHOD_LABELS": mc.CONTACT_METHOD_LABELS,
     }
 
 
@@ -761,6 +794,76 @@ async def admin_leads(request: Request, db: Session = Depends(get_db), filter: s
         "f": {"stage": stage, "qual": qual, "channel": channel, "dup": dup, "owner": owner},
         "campaigns": campaigns, "team": {u.id: u for u in db.query(User).all()}, **_lead_ctx(),
     })
+
+
+@app.get("/admin/leads/new", response_class=HTMLResponse)
+async def admin_lead_new(request: Request, db: Session = Depends(get_db)):
+    """บันทึก Lead ที่ทัก LINE / โทรเข้ามา — เว็บไม่มีฟอร์มแล้ว (2026-09-27) ทีมงานจึงเป็นคนกรอก"""
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+    return templates.TemplateResponse("admin/lead_new.html", {
+        "request": request, "user": user, "settings": settings,
+        "campaigns": db.query(Campaign).filter(Campaign.status != "archived").order_by(Campaign.name).all(),
+        "team": db.query(User).filter(User.is_active.is_(True)).order_by(User.username).all(),
+        "error": request.query_params.get("error", ""),
+        "CONTACT_METHODS": [m for m in mc.CONTACT_METHODS if m[0] != "web_form"],
+        **_lead_ctx(),
+    })
+
+
+@app.post("/admin/leads/create")
+async def admin_lead_create(request: Request, db: Session = Depends(get_db)):
+    user = _check_admin(request, db)
+    if not user:
+        return RedirectResponse("/admin/login", status_code=303)
+    form = await request.form()
+    get = lambda k, n=200: str(form.get(k) or "").strip()[:n]  # noqa: E731
+    name, method = get("name", 128), get("contact_method", 16)
+    phone, email = get("phone", 64), get("email", 128)
+    err = ""
+    if not name:
+        err = "กรุณาใส่ชื่อลูกค้า (หรือชื่อ LINE)"
+    elif method not in mc.CONTACT_METHOD_LABELS or method == "web_form":
+        err = "เลือกว่าลูกค้าติดต่อเข้ามาทางไหน"
+    else:
+        err = contact_format_error(phone, email) or ""
+    if err:
+        from urllib.parse import quote
+        return RedirectResponse(f"/admin/leads/new?error={quote(err)}", status_code=303)
+
+    channel = get("channel", 32)
+    if channel not in mc.CHANNEL_MAP:
+        channel = "unknown"
+    camp = db.get(Campaign, mc.parse_int(form.get("campaign_id")) or 0)
+    service = get("service_interest", 32)
+    rt = get("request_type", 16)
+    qual = get("qualification", 16)
+    assignee = mc.parse_int(form.get("assigned_to"))
+    if assignee and not db.query(User).filter_by(id=assignee, is_active=True).first():
+        assignee = None
+    lead = Lead(
+        name=name, company=get("company", 128), phone=phone, email=email,
+        requirement=get("requirement", 4000) or "-", room_size="", budget="",
+        status="new", sales_stage="new",
+        qualification=qual if qual in mc.QUALIFICATION_LABELS else "pending",
+        contact_method=method, channel=channel,
+        campaign_id=camp.id if camp else None, utm_campaign=camp.code if camp else "",
+        service_interest=service if service in mc.SERVICE_MAP else (camp.service if camp else ""),
+        request_type=rt if rt in mc.REQUEST_TYPE_LABELS else "",
+        assigned_to=assignee,
+    )
+    # ใช้ตัวตรวจซ้ำเดียวกับฟอร์ม (ไม่มี form_ms / honeypot → ไม่ติดป้ายสแปม)
+    marketing.screen_lead(db, lead, {}, honeypot=False)
+    db.add(lead)
+    db.flush()
+    note = get("note", 4000)
+    if note:
+        db.add(LeadNote(lead_id=lead.id, text=note, created_by=user.username))
+    _lead_audit(db, user, "lead_create_manual", lead.id,
+                {"contact_method": method, "channel": channel, "campaign": camp.code if camp else ""})
+    db.commit()
+    return RedirectResponse(f"/admin/leads/{lead.id}?saved=1", status_code=303)
 
 
 @app.get("/admin/leads/{lead_id}", response_class=HTMLResponse)

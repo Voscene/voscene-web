@@ -107,9 +107,23 @@ def _m002_users_roles(conn, Base) -> str:
     return f"+{len(added)} columns, {owners} existing users set to owner"
 
 
+def _m003_contact_method(conn, Base) -> str:
+    """เลิกใช้ฟอร์ม (2026-09-27) — Lead ใหม่ทีมงานบันทึกเองจาก LINE/โทร จึงต้องรู้ว่าติดต่อทางไหน
+
+    Lead เดิมที่มีข้อมูลติดต่อมาจากฟอร์มเว็บทั้งหมด → web_form · anonymous คงว่างไว้
+    """
+    added = _add_columns(conn, "leads", Base.metadata.tables["leads"])
+    n = conn.execute(text(
+        "UPDATE leads SET contact_method='web_form' "
+        "WHERE (contact_method IS NULL OR contact_method='') AND status != 'anonymous'"
+    )).rowcount
+    return f"leads +{len(added)} columns, {n} existing leads marked web_form"
+
+
 MIGRATIONS = [
     ("001_marketing", _m001_marketing),
     ("002_users_roles", _m002_users_roles),
+    ("003_contact_method", _m003_contact_method),
 ]
 
 

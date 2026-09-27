@@ -200,6 +200,7 @@ def apply_attribution(db: Session, lead: Lead, form) -> None:
     lead.channel = mc.classify_channel(
         lead.utm_source, lead.utm_medium, lead.referrer, mc.site_host(settings.APP_URL),
     )
+    lead.contact_method = lead.contact_method or "web_form"  # มาทาง /api/lead = ฟอร์มเว็บ
     rt = get("request_type").strip()
     lead.request_type = rt if rt in mc.REQUEST_TYPE_LABELS else ""
 
@@ -326,6 +327,8 @@ def _lead_stats(leads: list) -> dict:
         "won": len(won),
         "demo_requests": sum(1 for l in uniq if l.request_type == "demo"),
         "quote_requests": sum(1 for l in uniq if l.request_type == "quote"),
+        "by_method": {k: sum(1 for l in uniq if (l.contact_method or "") == k)
+                      for k in mc.CONTACT_METHOD_LABELS},
         "quote_value": sum(l.quote_value or 0 for l in uniq if l.quote_value is not None),
         "won_value": sum(l.won_value or 0 for l in won if l.won_value is not None),
     }
@@ -443,7 +446,7 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
         "phone_clicks": sum(1 for e in events if e.event == "phone_click"),
         "by_channel": by_channel, "by_campaign": by_campaign, "by_content": by_content,
         "sources": [
-            {"label": "Lead / ฟอร์มบนเว็บ", "how": "ฐานข้อมูลเว็บไซต์ (บันทึกทันทีที่ส่งฟอร์ม)",
+            {"label": "Lead", "how": "ทีมงานบันทึกจาก LINE / โทร (+ ฟอร์มเว็บรุ่นเก่า)",
              "last": mc.utc_to_bkk(last_lead)},
             {"label": "ค่าโฆษณา", "how": "กรอกเอง / นำเข้า CSV",
              "last": mc.utc_to_bkk(last_any_spend)},
@@ -1100,12 +1103,13 @@ async def reports_export(request: Request, kind: str = "channel", db: Session = 
                  x["fit"], x["quoted"], x["won"]] for x in r["by_content"]]
     elif kind == "leads":
         leads = _lead_scope(db, r["start"], r["end"], r["channel"]).order_by(Lead.created_at).all()
-        header = ["id", "created_at_bkk", "name", "company", "phone", "email", "channel",
+        header = ["id", "created_at_bkk", "name", "company", "phone", "email", "contact_method", "channel",
                   "utm_source", "utm_medium", "utm_campaign", "utm_content", "landing_page",
                   "request_type", "service_interest", "sales_stage", "qualification",
                   "duplicate_of", "quote_value", "won_value", "next_follow_up"]
         rows = [[l.id, mc.utc_to_bkk(l.created_at).strftime("%Y-%m-%d %H:%M"), l.name, l.company,
-                 l.phone, l.email, mc.channel_label(l.channel), l.utm_source, l.utm_medium,
+                 l.phone, l.email, mc.CONTACT_METHOD_LABELS.get(l.contact_method or "", ""),
+                 mc.channel_label(l.channel), l.utm_source, l.utm_medium,
                  l.utm_campaign, l.utm_content, l.landing_page,
                  mc.REQUEST_TYPE_LABELS.get(l.request_type, ""),
                  mc.SERVICE_MAP.get(l.service_interest, {}).get("label", ""),

@@ -147,14 +147,15 @@
                 <div><dt class="text-slate-500 text-xs">อีเมล</dt><dd>{% if lead.email %}<a href="mailto:{{ lead.email }}" class="text-blue-600 hover:underline">{{ lead.email }}</a>{% else %}—{% endif %}</dd></div>
                 <div><dt class="text-slate-500 text-xs">ขนาดห้อง</dt><dd>{{ lead.room_size or '—' }}</dd></div>
                 <div><dt class="text-slate-500 text-xs">งบประมาณ</dt><dd>{{ lead.budget or '—' }}</dd></div>
-                <div><dt class="text-slate-500 text-xs">กรอกฟอร์มเมื่อ (เวลาไทย)</dt><dd>{{ lead.created_at | bkk('%d/%m/%Y %H:%M') }}</dd></div>
+                <div><dt class="text-slate-500 text-xs">บันทึกเมื่อ (เวลาไทย)</dt><dd>{{ lead.created_at | bkk('%d/%m/%Y %H:%M') }}</dd></div>
             </dl>
         </div>
 
         <div class="bg-white rounded-xl border border-slate-200 p-4 md:p-6">
             <h3 class="font-semibold mb-4">แหล่งที่มา</h3>
             <dl class="space-y-3 text-sm">
-                <div><dt class="text-slate-500 text-xs">ช่องทาง</dt><dd class="font-medium">{{ channel_label(lead.channel) }}</dd></div>
+                {% if lead.contact_method %}<div><dt class="text-slate-500 text-xs">ติดต่อเข้ามาทาง</dt><dd class="font-medium">{{ CONTACT_METHOD_LABELS.get(lead.contact_method, lead.contact_method) }}</dd></div>{% endif %}
+                <div><dt class="text-slate-500 text-xs">เห็นเราจากช่องทาง</dt><dd class="font-medium">{{ channel_label(lead.channel) }}</dd></div>
                 <div><dt class="text-slate-500 text-xs">แคมเปญ</dt><dd>{% if campaign %}<a href="/admin/marketing/campaigns/{{ campaign.id }}" class="text-blue-600 hover:underline">{{ campaign.name }}</a>{% elif lead.utm_campaign %}<span class="font-mono">{{ lead.utm_campaign }}</span> <span class="text-xs text-slate-400">(ไม่ตรงกับแคมเปญในระบบ)</span>{% else %}—{% endif %}</dd></div>
                 <div><dt class="text-slate-500 text-xs">เนื้อหา / โพสต์</dt><dd>
                     {% if content_item %}<a href="/admin/marketing/content/{{ content_item.id }}" class="text-blue-600 hover:underline">{{ content_item.title }}</a>

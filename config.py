@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     # ไม่ต้องแก้โค้ด ไม่ต้อง deploy (รูปแบบเดียวกับ GA4_ID / META_PIXEL_ID)
     AI_CONSULT_ENABLED: bool = False
 
+    # ฟอร์มฝากข้อมูลบนเว็บ — ตัดออกจากทุกหน้าแล้ว (เจ้าของสั่ง 2026-09-27: ลูกค้าทัก LINE / โทรเอง)
+    # ปิด = /api/lead และ /api/analyze ไม่รับและไม่บันทึกข้อมูลใด ๆ (กันหน้าเก่าที่ค้างในแคช/บอท)
+    # เปิดกลับได้ด้วย env ใน Render แต่ต้องใส่ฟอร์มกลับในเทมเพลต + แก้นโยบายความเป็นส่วนตัวด้วย
+    WEB_FORMS_ENABLED: bool = False
+
     # Analytics / ad tracking. Empty = nothing is injected at all (no requests,
     # no cookies). Paste the IDs into the Render dashboard to switch them on
     # without a code change or redeploy.

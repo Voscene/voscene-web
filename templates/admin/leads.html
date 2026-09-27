@@ -2,6 +2,7 @@
 {% import "admin/marketing/_ui.html" as ui %}
 {% block title %}Lead{% endblock %}
 {% block page_title %}Lead / ลูกค้า{% endblock %}
+{% block header_actions %}<a href="/admin/leads/new" class="{{ ui.btn_cls }}">+ เพิ่ม Lead</a>{% endblock %}
 
 {% block content %}
 {% set tab = 'px-3 py-1.5 rounded-lg text-sm whitespace-nowrap' %}
@@ -75,6 +76,7 @@
                     {% if lead.email %}<div class="text-xs">{{ lead.email }}</div>{% endif %}
                 </td>
                 <td class="px-4 py-3 text-xs">
+                    {% if lead.contact_method %}<div class="text-slate-500">ติดต่อทาง {{ CONTACT_METHOD_LABELS.get(lead.contact_method, lead.contact_method) }}</div>{% endif %}
                     <div class="font-medium text-slate-700">{{ channel_label(lead.channel) }}</div>
                     {% if lead.campaign_id and lead.campaign_id in campaigns %}<div class="text-slate-500">{{ campaigns[lead.campaign_id].name }}</div>{% elif lead.utm_campaign %}<div class="text-slate-400 font-mono">{{ lead.utm_campaign }}</div>{% endif %}
                 </td>

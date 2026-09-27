@@ -36,6 +36,8 @@ services:
         sync: false  # ใช้ตอนสร้างบัญชีครั้งแรกเท่านั้น — หลังจากนั้นเปลี่ยนรหัสที่ /admin/settings
       - key: AI_CONSULT_ENABLED
         value: "False"  # ที่ปรึกษา AI บนเว็บปิดไว้ (เปิด = "True")
+      - key: WEB_FORMS_ENABLED
+        value: "False"  # เว็บไม่มีฟอร์มแล้ว (2026-09-27) — /api/lead ไม่รับข้อมูล
       - key: GROQ_API_KEY
         sync: false  # set in dashboard
       - key: GROQ_MODEL

@@ -136,6 +136,12 @@ QUALIFICATIONS = [
 ]
 QUALIFICATION_LABELS = dict(QUALIFICATIONS)
 
+CONTACT_METHODS = [
+    ("line", "LINE"), ("phone", "โทรศัพท์"), ("email", "อีเมล"),
+    ("walkin", "พบตัว / งานแสดงสินค้า / แนะนำต่อ"), ("web_form", "ฟอร์มบนเว็บ (รุ่นเก่า)"),
+]
+CONTACT_METHOD_LABELS = dict(CONTACT_METHODS)
+
 REQUEST_TYPES = [("consult", "ปรึกษา / ประเมิน"), ("demo", "ขอนัด Demo"), ("quote", "ขอใบเสนอราคา")]
 REQUEST_TYPE_LABELS = dict(REQUEST_TYPES)
 

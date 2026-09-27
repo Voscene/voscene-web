@@ -1,0 +1,104 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}เพิ่ม Lead{% endblock %}
+{% block page_title %}เพิ่ม Lead{% endblock %}
+{% block header_actions %}<a href="/admin/leads" class="text-sm text-blue-600 hover:underline">← Lead ทั้งหมด</a>{% endblock %}
+
+{% block content %}
+{% if error %}{{ ui.alert(error) }}{% endif %}
+<form method="post" action="/admin/leads/create" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-5 max-w-3xl">
+    <p class="text-sm text-slate-500">บันทึกลูกค้าที่ทัก LINE หรือโทรเข้ามา — เว็บไม่มีฟอร์มแล้ว รายงานการตลาดนับจากรายการที่ทีมบันทึกตรงนี้</p>
+
+    <div>
+        <label class="block text-sm font-medium mb-1.5">ติดต่อเข้ามาทาง *</label>
+        <div class="flex flex-wrap gap-2">
+            {% for key, label in CONTACT_METHODS %}
+            <label class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 text-sm cursor-pointer has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+                <input type="radio" name="contact_method" value="{{ key }}" required {% if loop.first %}checked{% endif %}> {{ label }}
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1.5">ชื่อลูกค้า / ชื่อ LINE *</label>
+            <input name="name" required maxlength="128" class="{{ ui.input_cls }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">บริษัท / หน่วยงาน</label>
+            <input name="company" maxlength="128" class="{{ ui.input_cls }}">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">เบอร์โทร</label>
+            <input name="phone" type="tel" maxlength="64" class="{{ ui.input_cls }}" placeholder="ใช้ตรวจรายการซ้ำด้วย">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">อีเมล</label>
+            <input name="email" type="email" maxlength="128" class="{{ ui.input_cls }}">
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1.5">ความต้องการ</label>
+        <textarea name="requirement" rows="3" maxlength="4000" class="{{ ui.input_cls }}" placeholder="เช่น ห้องประชุม 3 ห้อง อยากให้เจ้าหน้าที่เปิดระบบเองได้"></textarea>
+    </div>
+
+    <div class="rounded-lg border border-slate-200 p-4 space-y-4 bg-slate-50">
+        <div class="text-sm font-medium">ลูกค้าเห็นเราจากที่ไหน <span class="font-normal text-slate-500">— ถามลูกค้าได้ ช่วยให้รายงานรู้ว่าโฆษณาไหนได้ผล</span></div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">ช่องทาง</label>
+                <select name="channel" class="{{ ui.input_cls }}">
+                    <option value="unknown">{{ UNKNOWN_SOURCE }}</option>
+                    {% for ch in CHANNELS if ch.key != 'unknown' %}<option value="{{ ch.key }}">{{ ch.label }}</option>{% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-500 mb-1">แคมเปญ</label>
+                <select name="campaign_id" class="{{ ui.input_cls }}">
+                    <option value="">— ไม่ทราบ / ไม่ผูก —</option>
+                    {% for c in campaigns %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-sm font-medium mb-1.5">ต้องการ</label>
+            <select name="request_type" class="{{ ui.input_cls }}">
+                <option value="">— ยังไม่ทราบ —</option>
+                {% for k, label in REQUEST_TYPE_LABELS.items() %}<option value="{{ k }}">{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">บริการที่สนใจ</label>
+            <select name="service_interest" class="{{ ui.input_cls }}">
+                <option value="">— ตามแคมเปญ / ยังไม่ระบุ —</option>
+                {% for s in SERVICES %}<option value="{{ s.key }}">{{ s.label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">ผลคัดกรอง</label>
+            <select name="qualification" class="{{ ui.input_cls }}">
+                {% for k, label in QUALIFICATIONS if k != 'spam' %}<option value="{{ k }}">{{ label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1.5">ผู้รับผิดชอบ</label>
+            <select name="assigned_to" class="{{ ui.input_cls }}">
+                <option value="">— ยังไม่มอบหมาย —</option>
+                {% for u in team %}<option value="{{ u.id }}" {% if u.id == user.id %}selected{% endif %}>{{ u.label }}</option>{% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium mb-1.5">บันทึกติดตาม (ไม่บังคับ)</label>
+        <textarea name="note" rows="2" maxlength="4000" class="{{ ui.input_cls }}" placeholder="เช่น คุยทาง LINE แล้ว ขอรูปห้องเพิ่ม นัดคุยวันศุกร์"></textarea>
+    </div>
+
+    <div class="flex justify-end"><button class="{{ ui.btn_cls }}">บันทึก Lead</button></div>
+</form>
+{% endblock %}

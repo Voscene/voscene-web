@@ -111,6 +111,8 @@ class Lead(Base):
     not_duplicate = Column(Boolean, default=False)
     updated_at = Column(DateTime, nullable=True)
     assigned_to = Column(Integer, nullable=True)  # users.id ของผู้รับผิดชอบ
+    # ติดต่อเข้ามาทางไหน: line / phone / email / walkin / web_form (Lead จากฟอร์มเว็บรุ่นเก่า)
+    contact_method = Column(String(16), default="")
 
 
 class LeadNote(Base):

@@ -38,6 +38,9 @@ from database import (  # noqa: E402
 from migrations import run_migrations  # noqa: E402
 
 main.marketing.bind(main.templates, _TMP)  # ไฟล์สื่อที่ทดสอบอัปโหลดไปลงโฟลเดอร์ชั่วคราว
+# เทสเดิมใช้ /api/lead จำลองลูกค้าส่งฟอร์ม (ทดสอบตรรกะแหล่งที่มา/ซ้ำ/สแปม) — เปิดสวิตช์ไว้
+# ส่วนพฤติกรรมจริงตอนปิด (ค่าเริ่มต้น) ทดสอบใน test_web_forms_closed_by_default
+main.settings.WEB_FORMS_ENABLED = True
 
 
 def new_client() -> TestClient:
@@ -141,6 +144,10 @@ def test_migration_keeps_legacy_data_and_is_idempotent():
     assert got[2][5] == 1 and got[2][6] == "0811112222"
     assert got[5][5] == 1
     assert got[4][5] is None  # anonymous ไม่ถูกจับคู่
+    con = sqlite3.connect(path)
+    methods = dict(con.execute("SELECT id, contact_method FROM leads"))
+    con.close()
+    assert methods[1] == "web_form" and methods[4] in ("", None)  # Lead เก่า = ฟอร์มเว็บ
 
     con = sqlite3.connect(path)
     assert con.execute("SELECT role, is_active FROM users WHERE id=1").fetchone() == ("owner", 1),         "บัญชีเดิมต้องเป็นเจ้าของ ไม่งั้นล็อกตัวเองออกหลัง deploy"
@@ -444,7 +451,7 @@ def test_existing_pages_still_work(admin):
         r = admin.get(url)
         assert r.status_code == 200, (url, r.text[:300])
     home = admin.get("/").text
-    assert "/static/js/vs-track.js" in home and 'name="request_type"' in home
+    assert "/static/js/vs-track.js" in home
     assert admin.get("/static/js/vs-track.js").status_code == 200
 
 
@@ -555,6 +562,7 @@ def test_privacy_page_hidden_until_filled(admin):
     s = db()
     draft = s.query(Content).filter_by(key="privacy_policy_draft").one()
     assert "พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล" in draft.value  # ร่างอยู่ในหลังบ้าน
+    assert "แบบฟอร์ม" not in draft.value  # ฉบับไม่มีฟอร์ม
     assert admin.get("/privacy").status_code == 404  # ช่องจริงว่าง = ไม่มีหน้า
     home = admin.get("/").text
     assert 'href="/privacy"' not in home and "/privacy" not in admin.get("/sitemap.xml").text
@@ -569,7 +577,7 @@ def test_privacy_page_hidden_until_filled(admin):
         assert "<h2>ข้อมูลที่เก็บ</h2>" in page.text and "<li>ชื่อ</li>" in page.text
         assert "<script>alert(1)</script>" not in page.text and "&lt;script&gt;" in page.text
         for url in ["/", "/contact"]:
-            assert 'href="/privacy"' in admin.get(url).text, url
+            assert 'href="/privacy"' in admin.get(url).text, url  # ท้ายเว็บ + หน้าติดต่อ
         assert "/privacy" in admin.get("/sitemap.xml").text
     finally:
         real.value = ""
@@ -669,3 +677,82 @@ def test_password_change_logs_out_other_sessions(admin):
                                                    "display_name": "เบนซ์", "new_password": "reset-pass-333"})
     assert laptop.get("/admin/leads", follow_redirects=False).status_code == 303
     assert "เบนซ์" in admin.get("/admin/marketing/content/new").text  # ตัวเลือกผู้รับผิดชอบ
+
+
+def test_no_forms_line_button_and_manual_leads(admin):
+    from database import Content
+    s = db()
+    line = s.query(Content).filter_by(key="contact_line").one()
+    old_line = line.value
+    line.value = "@CSIPROAV"
+    s.commit()
+    try:
+        for url in ["/", "/contact", "/why", "/features", "/pricing", "/blog"]:
+            html = admin.get(url).text
+            assert "<form" not in html, url                       # ลูกค้าไม่ต้องกรอกอะไร
+            assert "Book Demo" not in html and "Book a Demo" not in html, url
+            assert 'href="https://line.me/R/ti/p/@CSIPROAV"' in html, url  # ปุ่ม LINE ลอย
+            assert "LINE @CSIPROAV" in html, url
+        assert "ให้ AI วิเคราะห์" not in admin.get("/why").text
+        assert "กรอก" not in admin.get("/contact").text.split("<main")[1].split("</main>")[0]
+    finally:
+        line.value = old_line
+        s.commit()
+
+    # ทีมงานบันทึก Lead ที่ทัก LINE เข้ามา + ผูกแคมเปญ
+    camp = s.query(Campaign).filter_by(code="one-touch-gov-q4").one()
+    r = admin.post("/admin/leads/create", data={"name": "", "contact_method": "line"}, follow_redirects=False)
+    assert "error=" in r.headers["location"]
+    r = admin.post("/admin/leads/create", data={
+        "name": "คุณวิภา (LINE)", "company": "เทศบาลตัวอย่าง", "phone": "0877776666",
+        "contact_method": "line", "channel": "facebook_ads", "campaign_id": str(camp.id),
+        "request_type": "quote", "qualification": "fit", "note": "ขอรูปห้องเพิ่ม"}, follow_redirects=False)
+    lid = int(r.headers["location"].split("/")[-1].split("?")[0])
+    s.expire_all()
+    lead = s.get(Lead, lid)
+    assert (lead.contact_method, lead.channel, lead.campaign_id, lead.service_interest) ==         ("line", "facebook_ads", camp.id, "one_touch")
+    assert lead.qualification == "fit" and lead.duplicate_of is None
+    # คนเดิมโทรมาอีกรอบ → ถูกจับเป็นรายการซ้ำ
+    r = admin.post("/admin/leads/create", data={"name": "คุณวิภา", "phone": "087-777-6666",
+                                                "contact_method": "phone"}, follow_redirects=False)
+    dup = s.get(Lead, int(r.headers["location"].split("/")[-1].split("?")[0]))
+    assert dup.duplicate_of == lid
+    rep = main.marketing.compute_report(s, mc.bkk_today(), mc.bkk_today())
+    assert rep["stats"]["by_method"]["line"] >= 1
+    page = admin.get(f"/admin/leads/{lid}").text
+    assert "ติดต่อเข้ามาทาง" in page and "LINE" in page
+    s.close()
+
+
+def test_migration_003_and_seed_retire_form_text():
+    import seed
+    from database import Content
+    s = db()
+    # คำโปรยที่ยังชวน "กรอก" ถูกเปลี่ยนตอนบูต · ร่างนโยบายฉบับแรกที่ไม่มีใครแก้ถูกอัปเดต
+    s.query(Content).filter_by(key="contact_subtitle").update({"value": "กรอกความต้องการของคุณ"})
+    draft = s.query(Content).filter_by(key="privacy_policy_draft").one()
+    draft.value = "ร่างที่เจ้าของแก้เองแล้ว"
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    assert "กรอก" not in s.query(Content).filter_by(key="contact_subtitle").one().value
+    assert s.query(Content).filter_by(key="privacy_policy_draft").one().value == "ร่างที่เจ้าของแก้เองแล้ว"
+    assert "แบบฟอร์ม" not in seed.PRIVACY_POLICY_DRAFT
+    s.close()
+
+
+def test_web_forms_closed_by_default(client):
+    from config import Settings
+    assert Settings.model_fields["WEB_FORMS_ENABLED"].default is False
+    s = db()
+    before = s.query(Lead).count()
+    main.settings.WEB_FORMS_ENABLED = False
+    try:
+        for url in ("/api/lead", "/api/analyze"):
+            r = client.post(url, data={"name": "หน้าเก่าในแคช", "requirement": "x", "phone": "0811111111"})
+            assert r.status_code == 410 and "LINE" in r.json()["error"], url
+    finally:
+        main.settings.WEB_FORMS_ENABLED = True
+    s.expire_all()
+    assert s.query(Lead).count() == before  # ไม่มีอะไรถูกบันทึก
+    s.close()

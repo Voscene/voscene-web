@@ -949,6 +949,7 @@ def test_claim_rewrites_before_ads():
     assert "24 hours" not in why and "Setup Time" not in why          # ไม่สัญญาระยะเวลาติดตั้ง
     features = TestClient(main.app).get("/features").text
     assert "Thai NLP" not in features and "LLM Powered" not in features  # การ์ด AI ใช้ถ้อยคำเจ้าของ
+    assert "สั่งงานด้วยเสียง" not in features  # AI ENGINE ไม่อ้างสั่งด้วยเสียง
     assert features.count("รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์") >= 1
     s = db()
     assert "24 ชั่วโมง" not in s.query(Content).filter_by(key="seo_description").one().value

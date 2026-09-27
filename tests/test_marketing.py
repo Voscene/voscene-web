@@ -592,7 +592,7 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
     async def fake_llm(messages):
         sent["messages"] = messages
         return ("ควบคุมห้องประชุมได้ทุกยี่ห้อ พร้อมระบบไฟ และประกาศเสียงตามสายกรณีเพลิงไหม้ "
-                "คุมได้ 200 ห้อง ดูที่ https://x.com")
+                "คุมได้ 500 ห้อง ดูที่ https://x.com")
 
     monkeypatch.setattr(marketing_ai, "call_llm", fake_llm)
     r = admin.post("/admin/marketing/ai/draft", json={"service": "multi_room", "channel": "facebook_page",
@@ -603,7 +603,7 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
     assert "สูงสุด 20 ห้อง" in system and "PA" in system  # ข้อเท็จจริง + ข้อห้ามอยู่ในพรอมต์
     assert "20 ห้อง" in sent["messages"][1]["content"]     # เงื่อนไขของบริการถูกบังคับใส่
     joined = " ".join(j["warnings"])
-    for expect in ("เกินจริง", "PA", "อัคคีภัย", "เกิน 20", "ลิงก์", "20 ห้อง"):
+    for expect in ("เกินจริง", "PA", "อัคคีภัย", "เกิน 200", "ลิงก์", "20 ห้อง"):
         assert expect in joined, expect
     assert "แสง" not in joined  # ระบบไฟ DMX ยืนยันแล้ว (27 ก.ย.) — ไม่เตือน
     assert "ควบคุมแสงสว่างได้" in system and "รองรับการเชื่อมต่อ AI" in system
@@ -921,7 +921,17 @@ def test_claim_rewrites_before_ads():
     get = lambda k: s.query(Content).filter_by(key=k).one().value  # noqa: E731
     assert get("stat_1_value") == "ประหยัดกว่า" and get("stat_1_label") == "ระบบควบคุม AV ต่างประเทศ"
     seo = get("seo_description")
-    assert "60-80" not in seo and "~200" not in seo and "รองรับการขยาย" in seo
+    assert "60-80" not in seo and "~200" not in seo and "รองรับการขยายได้ 200 ห้อง" in seo
+    # ค่าที่รอบก่อน (03b1ede) เปลี่ยนเป็น "รองรับการขยาย" เฉย ๆ → อัปเดตเป็นถ้อยคำที่มีตัวเลข
+    s.query(Content).filter_by(key="seo_description").update(
+        {"value": "Multi-Room (20 ห้อง/controller · รองรับการขยาย) · ข้อความเจ้าของ"})
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    assert get("seo_description") == "Multi-Room (20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง) · ข้อความเจ้าของ"
+    seed.run_seed()  # รันซ้ำไม่เปลี่ยนอีก
+    s.expire_all()
+    assert get("seo_description").count("200 ห้อง") == 1
     assert "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ" in seo and "ข้อความที่เจ้าของเขียนเอง" in seo
     # เจ้าของเปลี่ยนตัวเลขการ์ดเป็นอย่างอื่นแล้ว → ไม่แตะ
     s.query(Content).filter_by(key="stat_1_value").update({"value": "18 ปี"})
@@ -931,7 +941,8 @@ def test_claim_rewrites_before_ads():
     assert get("stat_1_value") == "18 ปี"
     s.close()
     html = TestClient(main.app).get("/features").text
-    assert "60-80" not in html and "~200" not in html and "รองรับการขยาย" in html
+    assert "60-80" not in html and "~200" not in html and "รองรับการขยายได้ 200 ห้อง" in html
+    assert "รองรับการขยายได้ 200 ห้อง" in TestClient(main.app).get("/pricing").text
     why = TestClient(main.app).get("/why").text
     assert "Emergency PA" not in why and "รองรับการเชื่อมต่อระบบประกาศเหตุฉุกเฉิน" in why
     assert "AI-powered commands" not in why and "รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์" in why

@@ -42,7 +42,7 @@
             <div class="flex justify-between"><dt>Lead ทาง LINE</dt><dd class="font-semibold">{{ s.by_method.get('line', 0) }}</dd></div>
             <div class="flex justify-between"><dt>Lead ทางโทรศัพท์</dt><dd class="font-semibold">{{ s.by_method.get('phone', 0) }}</dd></div>
             {% if s.by_method.get('web_form') %}<div class="flex justify-between"><dt>Lead จากฟอร์มเว็บ (รุ่นเก่า)</dt><dd class="font-semibold">{{ s.by_method.get('web_form') }}</dd></div>{% endif %}
-            <div class="flex justify-between"><dt class="pl-3 text-slate-500">· ขอนัด Demo</dt><dd>{{ s.demo_requests }}</dd></div>
+            <div class="flex justify-between"><dt class="pl-3 text-slate-500">· ขอนัดปรึกษาออกแบบ</dt><dd>{{ s.demo_requests }}</dd></div>
             <div class="flex justify-between"><dt class="pl-3 text-slate-500">· ขอใบเสนอราคา</dt><dd>{{ s.quote_requests }}</dd></div>
             <div class="flex justify-between"><dt>คลิกปุ่ม LINE บนเว็บ</dt><dd class="font-semibold">{{ r.line_clicks }}</dd></div>
             <div class="flex justify-between"><dt>คลิกเบอร์โทรบนเว็บ</dt><dd class="font-semibold">{{ r.phone_clicks }}</dd></div>

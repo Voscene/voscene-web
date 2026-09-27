@@ -23,6 +23,7 @@ MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20 MB
 
 from config import get_settings
 from database import get_db, Content, Package, Lead, BlogPost, User, LeadNote, AuditLog, Campaign, ContentItem, FbGroupPost
+import landing_pages
 import marketing
 import marketing_core as mc
 from auth import (
@@ -293,6 +294,19 @@ async def contact_page(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@app.get("/solutions/{slug}", response_class=HTMLResponse)
+async def solution_page(slug: str, request: Request, db: Session = Depends(get_db)):
+    """หน้าปลายทางของแคมเปญโฆษณา — ข้อความอยู่ใน landing_pages.py"""
+    page = landing_pages.PAGES.get(slug)
+    if not page:
+        raise HTTPException(status_code=404)
+    others = [(k, v["title"]) for k, v in landing_pages.PAGES.items() if k != slug]
+    return templates.TemplateResponse("public/solution.html", {
+        "request": request, "c": load_content(db), "sol": page, "others": others,
+        "settings": settings,
+    })
+
+
 @app.get("/privacy", response_class=HTMLResponse)
 async def privacy_page(request: Request, db: Session = Depends(get_db)):
     content = load_content(db)
@@ -318,6 +332,7 @@ async def sitemap_xml(db: Session = Depends(get_db)):
     base = (settings.APP_URL or "").rstrip("/")
     urls = [(f"{base}/", "1.0"), (f"{base}/why", "0.8"), (f"{base}/features", "0.8"),
             (f"{base}/pricing", "0.8"), (f"{base}/blog", "0.6"), (f"{base}/contact", "0.6")]
+    urls += [(f"{base}/solutions/{slug}", "0.7") for slug in landing_pages.PAGES]
     parts = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     privacy = db.query(Content).filter_by(key="privacy_policy").first()

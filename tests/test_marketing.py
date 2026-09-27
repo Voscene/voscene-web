@@ -954,3 +954,31 @@ def test_claim_rewrites_before_ads():
     s = db()
     assert "24 ชั่วโมง" not in s.query(Content).filter_by(key="seo_description").one().value
     s.close()
+
+
+def test_campaign_landing_pages(client):
+    import landing_pages
+    from database import Content
+    s = db()
+    row = s.query(Content).filter_by(key="contact_line").first()
+    if row:
+        row.value = "@CSIPROAV"
+    else:
+        s.add(Content(key="contact_line", value="@CSIPROAV"))
+    s.commit()
+    s.close()
+    for slug in landing_pages.PAGES:
+        r = client.get(f"/solutions/{slug}")
+        assert r.status_code == 200
+        html = r.text
+        assert "line.me/R/ti/p/" in html          # vs-track.js แนบรหัสอ้างอิงได้เฉพาะลิงก์รูปแบบนี้
+        assert "<form" not in html                # เว็บไม่มีฟอร์มแล้ว
+        assert "Demo" not in html and "สาธิต" not in html  # ยังไม่มีชุดสาธิต — ใช้ "นัดปรึกษาออกแบบ"
+        for bad in ("เพลิง", "อัคคีภัย", "%", "24 ชั่วโมง"):
+            assert bad not in landing_pages.PAGES[slug]["lead"] + "".join(landing_pages.PAGES[slug]["pains"])
+    multi = client.get("/solutions/multi-room-central-control").text
+    assert "สูงสุด 20 ห้องต่อชุดควบคุม" in multi and "เครือข่ายเดียวกัน" in multi
+    assert "200 ห้อง" not in multi                # ใบงานแคมเปญ: ไม่โฆษณา 200 ห้อง
+    assert "Graphic Paging" not in client.get("/solutions/graphic-room-control").text
+    assert client.get("/solutions/nope").status_code == 404
+    assert "/solutions/one-touch-meeting" in client.get("/sitemap.xml").text

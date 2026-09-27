@@ -122,7 +122,7 @@ def classify_channel(source: str, medium: str, referrer: str = "", own_host: str
 SALES_STAGES = [
     ("new", "ใหม่ · รอติดต่อ"),
     ("contacted", "ติดต่อแล้ว"),
-    ("demo", "นัด Demo"),
+    ("demo", "นัดปรึกษาออกแบบ"),
     ("quoted", "เสนอราคา"),
     ("won", "ปิดงาน"),
     ("lost", "ไม่สำเร็จ"),
@@ -143,7 +143,7 @@ CONTACT_METHODS = [
 ]
 CONTACT_METHOD_LABELS = dict(CONTACT_METHODS)
 
-REQUEST_TYPES = [("consult", "ปรึกษา / ประเมิน"), ("demo", "ขอนัด Demo"), ("quote", "ขอใบเสนอราคา")]
+REQUEST_TYPES = [("consult", "ปรึกษา / ประเมิน"), ("demo", "ขอนัดปรึกษาออกแบบ"), ("quote", "ขอใบเสนอราคา")]
 REQUEST_TYPE_LABELS = dict(REQUEST_TYPES)
 
 # สถานะเดิม (Lead.status) → (sales_stage, qualification) ใช้ตอน migrate ครั้งเดียว
@@ -167,7 +167,7 @@ def legacy_status_to_new(status: str) -> tuple:
 
 
 CAMPAIGN_GOALS = [
-    ("demo", "ขอ Demo"),
+    ("demo", "นัดปรึกษาออกแบบระบบ"),
     ("quote", "ขอใบเสนอราคา"),
     ("lead", "ให้กรอกฟอร์ม / ติดต่อ"),
     ("awareness", "สร้างการรับรู้"),

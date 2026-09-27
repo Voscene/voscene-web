@@ -79,7 +79,8 @@
         </div>
         <div>
             <label class="block text-sm font-medium mb-1">ผู้รับผิดชอบ</label>
-            <input name="owner" value="{{ v('owner') }}" class="{{ ui.input_cls }}" placeholder="ชื่อ">
+            <input name="owner" list="team-names" value="{{ v('owner') }}" class="{{ ui.input_cls }}" placeholder="เลือกหรือพิมพ์ชื่อ">
+            <datalist id="team-names">{% for name in team or [] %}<option value="{{ name }}">{% endfor %}</datalist>
         </div>
         <div>
             <label class="block text-sm font-medium mb-1">สถานะ</label>

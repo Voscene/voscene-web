@@ -139,6 +139,52 @@ def contact_format_error(phone: str, email: str) -> str | None:
     return None
 
 
+# ============ กัน CSRF ในหลังบ้าน ============
+
+UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+
+def _host_of(url: str) -> str:
+    from urllib.parse import urlsplit
+    try:
+        return (urlsplit(url).netloc or "").lower()
+    except ValueError:
+        return ""
+
+
+class AdminOriginGuard:
+    """คำขอที่แก้ข้อมูลในหลังบ้าน (/admin/*) ต้องมาจากหน้าเว็บของเราเอง
+
+    ตรวจ Origin (ไม่มีค่อยดู Referer) เทียบกับ Host ของคำขอ — แนวทาง OWASP "Verifying
+    origin with standard headers" ซ้อนกับ cookie SameSite=Lax ที่มีอยู่แล้ว
+    เว็บอื่นจึงหลอกให้เบราว์เซอร์ของแอดมินที่ล็อกอินค้างส่งฟอร์มเข้ามาไม่ได้
+
+    เขียนเป็น ASGI middleware ล้วน (อ่านแค่ header) — ไม่แตะ body จึงไม่ต้องพักไฟล์
+    อัปโหลด 50 MB ไว้ในหน่วยความจำ · endpoint สาธารณะ (/api/*) ไม่อยู่ในขอบเขตนี้
+    """
+
+    def __init__(self, app, extra_hosts: tuple = ()):
+        self.app = app
+        self.extra_hosts = {h.lower() for h in extra_hosts if h}
+
+    async def __call__(self, scope, receive, send):
+        if (scope["type"] == "http" and scope["method"] in UNSAFE_METHODS
+                and scope["path"].startswith("/admin")):
+            headers = {k.decode("latin-1").lower(): v.decode("latin-1") for k, v in scope["headers"]}
+            host = headers.get("host", "").lower()
+            source = headers.get("origin") or headers.get("referer") or ""
+            src_host = _host_of(source) if source and source != "null" else ""
+            if not src_host or (src_host != host and src_host not in self.extra_hosts):
+                body = ("คำขอถูกปฏิเสธเพื่อความปลอดภัย (ไม่ได้ส่งมาจากหน้าหลังบ้านของเว็บนี้) — "
+                        "กลับไปที่หน้าหลังบ้านแล้วลองใหม่อีกครั้ง").encode("utf-8")
+                await send({"type": "http.response.start", "status": 403,
+                            "headers": [(b"content-type", b"text/plain; charset=utf-8"),
+                                        (b"content-length", str(len(body)).encode())]})
+                await send({"type": "http.response.body", "body": body})
+                return
+        await self.app(scope, receive, send)
+
+
 # ============ Security headers ============
 
 # CSP นี้ยังต้องเปิด 'unsafe-inline' + 'unsafe-eval' เพราะเว็บใช้ Tailwind Play CDN

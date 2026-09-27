@@ -637,6 +637,11 @@ async def campaign_link_create(cid: int, request: Request, db: Session = Depends
 
 # ============ หน้า: เนื้อหาและปฏิทิน ============
 
+def _team(db: Session) -> list:
+    """ชื่อที่แสดงของบัญชีที่ใช้งานอยู่ — ใช้เป็นตัวเลือกช่องผู้รับผิดชอบ (ยังพิมพ์ชื่ออื่นได้)"""
+    return [u.label for u in db.query(User).filter(User.is_active.is_(True)).order_by(User.username)]
+
+
 def _media(item: ContentItem) -> list:
     try:
         data = json.loads(item.media or "[]")
@@ -692,7 +697,7 @@ async def content_new(request: Request, db: Session = Depends(get_db),
     camps = db.query(Campaign).filter(Campaign.status != "archived").order_by(Campaign.name).all()
     pre = {"campaign_id": mc.parse_int(request.query_params.get("campaign"))}
     return _render(request, "content_edit.html", user, tab="content", item=None, media=[],
-                   campaigns=camps, link=None, errors=[], pre=pre)
+                   campaigns=camps, link=None, errors=[], pre=pre, team=_team(db))
 
 
 @router.get("/content/{iid}", response_class=HTMLResponse)
@@ -707,7 +712,7 @@ async def content_edit(iid: int, request: Request, db: Session = Depends(get_db)
                .order_by(AuditLog.created_at.desc()).limit(20).all())
     return _render(request, "content_edit.html", user, tab="content", item=item,
                    media=_media(item), campaigns=camps, link=link, errors=[], pre={},
-                   lead_count=leads, history=history,
+                   lead_count=leads, history=history, team=_team(db),
                    error=request.query_params.get("error", ""))
 
 

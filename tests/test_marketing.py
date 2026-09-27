@@ -40,9 +40,14 @@ from migrations import run_migrations  # noqa: E402
 main.marketing.bind(main.templates, _TMP)  # ไฟล์สื่อที่ทดสอบอัปโหลดไปลงโฟลเดอร์ชั่วคราว
 
 
+def new_client() -> TestClient:
+    """เหมือนเบราว์เซอร์จริง: ฟอร์มในหลังบ้านส่ง Origin ของเว็บตัวเองมาด้วยเสมอ"""
+    return TestClient(main.app, headers={"Origin": "http://testserver"})
+
+
 @pytest.fixture(scope="module")
 def client():
-    with TestClient(main.app) as c:
+    with new_client() as c:
         yield c
 
 
@@ -158,7 +163,7 @@ PROTECTED_POST = [
 
 
 def test_marketing_requires_login():
-    with TestClient(main.app) as anon:
+    with new_client() as anon:
         for url in PROTECTED_GET:
             r = anon.get(url, follow_redirects=False)
             assert r.status_code == 303 and r.headers["location"] == "/admin/login", url
@@ -476,7 +481,7 @@ def test_ad_tags_wait_for_consent(client):
 
 
 def _login(username, password):
-    c = TestClient(main.app)
+    c = new_client()
     r = c.post("/admin/login", data={"username": username, "password": password}, follow_redirects=False)
     assert r.headers["location"] == "/admin", (username, r.headers["location"])
     return c
@@ -539,7 +544,7 @@ def test_roles_accounts_and_assignment(admin):
     assert r.headers["location"].endswith("saved=1")
     r = sc.get("/admin/leads", follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"] == "/admin/login"
-    r = TestClient(main.app).post("/admin/login", data={"username": "rotjana", "password": "staff-pass-123"},
+    r = new_client().post("/admin/login", data={"username": "rotjana", "password": "staff-pass-123"},
                                   follow_redirects=False)
     assert r.headers["location"].startswith("/admin/login?error")
     s.close()
@@ -604,6 +609,63 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
     r = admin.post("/admin/marketing/ai/draft", json={"service": "one_touch", "channel": "line_oa"})
     assert r.json()["ok"] and r.json()["warnings"] == []
 
-    with TestClient(main.app) as anon:
+    with new_client() as anon:
         r = anon.post("/admin/marketing/ai/draft", json={"service": "one_touch"}, follow_redirects=False)
         assert r.status_code == 303
+
+
+def test_admin_posts_need_same_origin(admin):
+    from database import Content
+    s = db()
+    before = s.query(Content).filter_by(key="contact_email").one().value
+    # เว็บอื่นหลอกส่งฟอร์ม (cookie แอดมินติดไปด้วย แต่ Origin เป็นของเว็บอื่น)
+    r = admin.post("/admin/content/update", data={"content_contact_email": "evil@x.com"},
+                   headers={"Origin": "https://evil.example"}, follow_redirects=False)
+    assert r.status_code == 403
+    # ไม่มีทั้ง Origin และ Referer → ปฏิเสธ
+    bare = TestClient(main.app)
+    bare.cookies = admin.cookies
+    assert bare.post("/admin/content/update", data={"content_contact_email": "evil@x.com"},
+                     follow_redirects=False).status_code == 403
+    s.expire_all()
+    assert s.query(Content).filter_by(key="contact_email").one().value == before
+    # Referer จากหน้าเว็บเดียวกันผ่าน · หน้า GET ไม่ถูกตรวจ · API สาธารณะไม่ถูกตรวจ
+    r = bare.post("/admin/marketing/spend/add", data={}, headers={"Referer": "http://testserver/admin/marketing/spend"},
+                  follow_redirects=False)
+    assert r.status_code == 303
+    assert bare.get("/admin/marketing").status_code == 200
+    r = TestClient(main.app).post("/api/event", json={"event": "line_click", "sid": "origin-free-001"})
+    assert r.status_code == 204
+    s.close()
+
+
+def test_password_change_logs_out_other_sessions(admin):
+    from auth import COOKIE_NAME
+    from jose import jwt
+    admin.post("/admin/users/create", data={"username": "benz", "display_name": "เบนซ์",
+                                            "role": "staff", "password": "benz-pass-111"})
+    phone = _login("benz", "benz-pass-111")      # เครื่องที่ 1
+    laptop = _login("benz", "benz-pass-111")     # เครื่องที่ 2
+    r = laptop.post("/admin/settings/password", data={"current_password": "benz-pass-111",
+                                                       "new_password": "short"}, follow_redirects=False)
+    assert "too_short" in r.headers["location"]
+    r = laptop.post("/admin/settings/password", data={"current_password": "benz-pass-111",
+                                                       "new_password": "benz-pass-222"}, follow_redirects=False)
+    assert r.headers["location"].endswith("saved=1")
+    assert laptop.get("/admin/leads", follow_redirects=False).status_code == 200  # เครื่องที่เปลี่ยนใช้ต่อได้
+    r = phone.get("/admin/leads", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/admin/login"      # เครื่องอื่นหลุด
+    # cookie รุ่นเก่า (ไม่มี pv) ใช้ไม่ได้
+    old = jwt.encode({"sub": "1", "exp": 4102444800}, os.environ["SECRET_KEY"], algorithm="HS256")
+    legacy = new_client()
+    legacy.cookies.set(COOKIE_NAME, old)
+    assert legacy.get("/admin", follow_redirects=False).status_code == 303
+    # เจ้าของรีเซ็ตรหัสให้ → session ของคนนั้นหลุดเหมือนกัน
+    from database import User
+    s = db()
+    uid = s.query(User).filter_by(username="benz").one().id
+    s.close()
+    admin.post(f"/admin/users/{uid}/update", data={"role": "staff", "is_active": "on",
+                                                   "display_name": "เบนซ์", "new_password": "reset-pass-333"})
+    assert laptop.get("/admin/leads", follow_redirects=False).status_code == 303
+    assert "เบนซ์" in admin.get("/admin/marketing/content/new").text  # ตัวเลือกผู้รับผิดชอบ

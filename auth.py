@@ -1,3 +1,5 @@
+import hashlib
+import hmac
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Request, HTTPException, Depends
@@ -29,9 +31,18 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     return user
 
 
-def create_session_token(user_id: int) -> str:
+def password_version(user: User) -> str:
+    """ลายนิ้วมือสั้น ๆ ของรหัสผ่านปัจจุบัน — เปลี่ยนรหัสเมื่อไหร่ ค่านี้เปลี่ยน session เก่าทุกเครื่องหลุด
+
+    ได้จาก HMAC(SECRET_KEY, hash รหัสผ่าน) จึงไม่เปิดเผย hash จริงใน cookie
+    """
+    return hmac.new(settings.SECRET_KEY.encode(), (user.password_hash or "").encode(),
+                    hashlib.sha256).hexdigest()[:16]
+
+
+def create_session_token(user: User) -> str:
     expire = datetime.utcnow() + timedelta(hours=TOKEN_EXPIRE_HOURS)
-    payload = {"sub": str(user_id), "exp": expire}
+    payload = {"sub": str(user.id), "pv": password_version(user), "exp": expire}
     return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
 
 
@@ -47,6 +58,9 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> Optiona
     user = db.query(User).filter_by(id=user_id).first()
     # บัญชีที่ถูกปิด → cookie เดิมใช้ไม่ได้ทันที ไม่ต้องรอหมดอายุ 7 วัน
     if not user or user.is_active is False:
+        return None
+    # รหัสผ่านถูกเปลี่ยนหลังออก cookie นี้ (หรือ cookie รุ่นเก่าที่ไม่มี pv) → ต้องล็อกอินใหม่
+    if not hmac.compare_digest(str(payload.get("pv") or ""), password_version(user)):
         return None
     return user
 

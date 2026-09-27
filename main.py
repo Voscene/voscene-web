@@ -32,7 +32,7 @@ from auth import (
 from ai_service import analyze_requirement, consult_disabled, _unavailable as ai_unavailable
 from seed import run_seed
 from security import (
-    SecurityHeadersMiddleware, client_ip, rate_limited, honeypot_tripped,
+    SecurityHeadersMiddleware, AdminOriginGuard, client_ip, rate_limited, honeypot_tripped,
     contact_format_error, login_lock_remaining, record_login_failure,
     clear_login_failures, ANALYZE_RULES, LEAD_RULES, LOGIN_RULES,
 )
@@ -47,6 +47,10 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 app.add_middleware(SecurityHeadersMiddleware)
+# กัน CSRF: POST เข้า /admin/* ต้องมาจากหน้าเว็บนี้เอง · APP_URL นับเป็นต้นทางที่ถูกด้วย
+# (เผื่อ proxy ส่ง Host ภายในมาแทนชื่อโดเมนจริง)
+app.add_middleware(AdminOriginGuard, extra_hosts=(
+    (settings.APP_URL or '').split('://', 1)[-1].split('/', 1)[0],))
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -501,10 +505,13 @@ async def login_submit(
         return RedirectResponse("/admin/login?error=invalid", status_code=303)
 
     clear_login_failures(ip)
-    token = create_session_token(user.id)
-    resp = RedirectResponse("/admin", status_code=303)
+    return _with_session(RedirectResponse("/admin", status_code=303), user)
+
+
+def _with_session(resp, user: User):
+    """ออก cookie ล็อกอิน — ผูกกับรหัสผ่านปัจจุบัน (เปลี่ยนรหัส = cookie เก่าทุกเครื่องใช้ไม่ได้)"""
     resp.set_cookie(
-        COOKIE_NAME, token,
+        COOKIE_NAME, create_session_token(user),
         max_age=TOKEN_EXPIRE_HOURS * 3600,
         httponly=True,
         samesite="lax",
@@ -1244,11 +1251,13 @@ async def admin_change_password(
         return RedirectResponse("/admin/login", status_code=303)
     if not pwd_context.verify(current_password, user.password_hash):
         return RedirectResponse("/admin/settings?error=wrong_password", status_code=303)
-    if len(new_password) < 6:
+    if len(new_password) < MIN_PASSWORD:
         return RedirectResponse("/admin/settings?error=too_short", status_code=303)
     user.password_hash = pwd_context.hash(new_password)
+    _user_audit(db, user, "password_change", user.id, {"password": "changed"})
     db.commit()
-    return RedirectResponse("/admin/settings?saved=1", status_code=303)
+    # เครื่องอื่นที่ล็อกอินค้างด้วยรหัสเก่าหลุดทันที — เครื่องที่กดเปลี่ยนได้ cookie ใหม่ ใช้ต่อได้เลย
+    return _with_session(RedirectResponse("/admin/settings?saved=1", status_code=303), user)
 
 
 if __name__ == "__main__":

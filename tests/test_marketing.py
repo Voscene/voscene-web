@@ -791,3 +791,38 @@ def test_chat_ref_from_line_message(admin):
                                                 "chat_ref": "อะไรก็ไม่รู้"}, follow_redirects=False)
     assert "error=" in r.headers["location"]
     s.close()
+
+
+def test_dashboard_is_daily_work_view(admin):
+    s = db()
+    r = admin.post("/admin/leads/create", data={"name": "นัดวันนี้ทดสอบ", "contact_method": "phone",
+                                                "phone": "0845550000"}, follow_redirects=False)
+    lid = int(r.headers["location"].split("/")[-1].split("?")[0])
+    admin.post(f"/admin/leads/{lid}/update", data={
+        "sales_stage": "contacted", "qualification": "pending",
+        "next_follow_up": (mc.bkk_today()).isoformat(), "assigned_to": "1"})
+    html = admin.get("/admin").text
+    assert "นัดติดตามของฉัน" in html and "นัดวันนี้ทดสอบ" in html and "นัดวันนี้" in html
+    assert "+ เพิ่ม Lead" in html
+    assert "(AI)" not in html and "ใน Scope" not in html  # การ์ด/คอลัมน์ AI เก่าไม่อยู่แล้ว
+    s.close()
+
+
+def test_seed_splits_sales_and_tech_phone_once():
+    import seed
+    from database import Content
+    s = db()
+    row = s.query(Content).filter_by(key="contact_phone").one()
+    row.value = "\r\n".join(["รจนา 088-886 4660", "LINE : @CSIPROAV"])  # ค่าบน production ก่อนแก้
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    value = s.query(Content).filter_by(key="contact_phone").one().value
+    assert "ฝ่ายเทคนิค : เบนซ์ 099-345 1998" in value and "ฝ่ายขาย : รจนา" in value
+    # แอดมินแก้เป็นแบบอื่นแล้ว → บูตรอบหลังไม่ทับ
+    s.query(Content).filter_by(key="contact_phone").update({"value": "ติดต่อ 02-000-0000"})
+    s.commit()
+    seed.run_seed()
+    s.expire_all()
+    assert s.query(Content).filter_by(key="contact_phone").one().value == "ติดต่อ 02-000-0000"
+    s.close()

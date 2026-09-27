@@ -596,26 +596,39 @@ async def admin_dashboard(request: Request, db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse("/admin/login", status_code=303)
 
+    # หน้าทำงานประจำวัน — Lead มาจาก LINE/โทรที่ทีมบันทึกเอง (ไม่มีฟอร์มแล้ว)
+    from database import WebEvent
+    today = mc.bkk_today()
     real = db.query(Lead).filter(Lead.status != "anonymous")
-    total_leads = real.count()
-    in_scope = db.query(Lead).filter_by(ai_in_scope=True).count()
-    # รอติดต่อ = ขั้น "ใหม่" ที่ไม่ใช่รายการซ้ำและไม่สงสัยสแปม
-    new_leads = real.filter(Lead.sales_stage == "new", Lead.duplicate_of.is_(None),
-                            Lead.qualification != "spam").count()
-    recent_leads = real.order_by(Lead.created_at.desc()).limit(5).all()
-    total_posts = db.query(BlogPost).count()
-    published_posts = db.query(BlogPost).filter_by(is_published=True).count()
-
+    active = real.filter(Lead.duplicate_of.is_(None), Lead.qualification != "spam")
+    open_stages = Lead.sales_stage.notin_(("won", "lost"))
+    waiting = active.filter(Lead.sales_stage == "new")
+    followups = (active.filter(open_stages, Lead.next_follow_up.isnot(None),
+                               Lead.next_follow_up <= today)
+                 .order_by(Lead.next_follow_up).all())
+    mine = [l for l in followups if l.assigned_to == user.id]
+    others = [l for l in followups if l.assigned_to != user.id]
+    t0, t1 = mc.bkk_range_to_utc(today, today)
+    m0, _ = mc.bkk_range_to_utc(today.replace(day=1), today)
+    clicks = lambda ev, since: (db.query(WebEvent)  # noqa: E731
+                                .filter(WebEvent.event == ev, WebEvent.created_at >= since).count())
+    stats = {
+        "waiting": waiting.count(),
+        "waiting_unassigned": waiting.filter(Lead.assigned_to.is_(None)).count(),
+        "my_open": active.filter(open_stages, Lead.assigned_to == user.id).count(),
+        "followups_due": len(followups),
+        "leads_month": active.filter(Lead.created_at >= m0).count(),
+        "fit_month": active.filter(Lead.created_at >= m0, Lead.qualification == "fit").count(),
+        "line_today": clicks("line_click", t0), "phone_today": clicks("phone_click", t0),
+        "line_month": clicks("line_click", m0),
+    }
+    team = {u.id: u for u in db.query(User).all()}
     return templates.TemplateResponse("admin/dashboard.html", {
-        "request": request,
-        "user": user,
-        "total_leads": total_leads,
-        "in_scope_leads": in_scope,
-        "new_leads": new_leads,
-        "recent_leads": recent_leads,
-        "total_posts": total_posts,
-        "published_posts": published_posts,
-        "settings": settings,
+        "request": request, "user": user, "settings": settings, "today": today,
+        "stats": stats, "my_followups": mine, "other_followups": others,
+        "unassigned": waiting.filter(Lead.assigned_to.is_(None)).order_by(Lead.created_at.desc()).limit(8).all(),
+        "recent_leads": real.order_by(Lead.created_at.desc()).limit(8).all(),
+        "team": team, **_lead_ctx(),
     })
 
 

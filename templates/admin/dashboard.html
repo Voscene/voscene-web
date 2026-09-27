@@ -1,65 +1,86 @@
 {% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
 {% block title %}Dashboard{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block page_title %}สวัสดี {{ user.label }}{% endblock %}
+{% block header_actions %}
+<div class="flex gap-2">
+    <a href="/admin/leads?owner=me" class="{{ ui.btn2_cls }} hidden sm:inline-flex">Lead ของฉัน</a>
+    <a href="/admin/leads/new" class="{{ ui.btn_cls }}">+ เพิ่ม Lead</a>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-        <div class="text-sm text-slate-500">Lead ทั้งหมด</div>
-        <div class="text-3xl font-bold mt-1">{{ total_leads }}</div>
+{% macro lead_row(l, show_date='created') -%}
+<li class="px-4 py-2.5 flex items-center justify-between gap-3 text-sm">
+    <a href="/admin/leads/{{ l.id }}" class="min-w-0">
+        <span class="font-medium text-blue-700 hover:underline">{{ l.name }}</span>
+        {% if l.company %}<span class="text-slate-400"> · {{ l.company }}</span>{% endif %}
+        <span class="block text-xs text-slate-500 truncate">
+            {% if l.contact_method %}{{ CONTACT_METHOD_LABELS.get(l.contact_method, l.contact_method) }} · {% endif %}{{ channel_label(l.channel) }}
+            {% if l.assigned_to in team %} · {{ team[l.assigned_to].label }}{% endif %}
+        </span>
+    </a>
+    <span class="flex-shrink-0 text-right">
+        {{ ui.stage_badge(l.sales_stage, SALES_STAGE_LABELS) }}
+        {% if show_date == 'follow' %}
+        <span class="block text-xs mt-0.5 {% if l.next_follow_up < today %}text-red-600 font-semibold{% else %}text-amber-700{% endif %}">
+            {% if l.next_follow_up < today %}เลยนัด {{ (today - l.next_follow_up).days }} วัน{% else %}นัดวันนี้{% endif %}
+        </span>
+        {% else %}
+        <span class="block text-xs text-slate-400 mt-0.5">{{ l.created_at | bkk('%d/%m %H:%M') }}</span>
+        {% endif %}
+    </span>
+</li>
+{%- endmacro %}
+
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    <a href="/admin/leads?filter=followup&owner=me" class="block">{{ ui.kpi('นัดติดตามของฉัน (วันนี้/เลยนัด)', my_followups | length, 'ทั้งทีม ' ~ stats.followups_due ~ ' รายการ', 'text-red-600' if my_followups else '') }}</a>
+    <a href="/admin/leads?filter=new" class="block">{{ ui.kpi('รอติดต่อ', stats.waiting, 'ยังไม่มีผู้รับผิดชอบ ' ~ stats.waiting_unassigned, 'text-amber-600' if stats.waiting else '') }}</a>
+    <a href="/admin/leads?owner=me" class="block">{{ ui.kpi('Lead ของฉันที่ยังเปิดอยู่', stats.my_open) }}</a>
+    <a href="/admin/marketing" class="block">{{ ui.kpi('คลิกปุ่ม LINE บนเว็บวันนี้', stats.line_today, 'เดือนนี้ ' ~ stats.line_month ~ ' · คลิกเบอร์วันนี้ ' ~ stats.phone_today) }}</a>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h2 class="font-semibold text-sm">นัดติดตามของฉัน</h2>
+            <a href="/admin/leads?filter=followup&owner=me" class="text-xs text-blue-600 hover:underline">ทั้งหมด →</a>
+        </div>
+        {% if my_followups %}
+        <ul class="divide-y divide-slate-100">{% for l in my_followups %}{{ lead_row(l, 'follow') }}{% endfor %}</ul>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ไม่มีนัดที่ถึงกำหนดวันนี้ ✓</div>{% endif %}
+        {% if other_followups %}
+        <details class="border-t border-slate-100">
+            <summary class="px-4 py-2 text-xs text-slate-500 cursor-pointer">นัดของคนอื่น / ยังไม่มอบหมาย ({{ other_followups | length }})</summary>
+            <ul class="divide-y divide-slate-100">{% for l in other_followups %}{{ lead_row(l, 'follow') }}{% endfor %}</ul>
+        </details>
+        {% endif %}
     </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-        <div class="text-sm text-slate-500">อยู่ในขอบเขต (AI)</div>
-        <div class="text-3xl font-bold mt-1 text-emerald-600">{{ in_scope_leads }}</div>
-    </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-        <div class="text-sm text-slate-500">รอติดต่อ</div>
-        <div class="text-3xl font-bold mt-1 text-amber-600">{{ new_leads }}</div>
-    </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-5">
-        <div class="text-sm text-slate-500">บทความ ({{ published_posts }} เผยแพร่)</div>
-        <div class="text-3xl font-bold mt-1">{{ total_posts }}</div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+            <h2 class="font-semibold text-sm">รอติดต่อ · ยังไม่มีผู้รับผิดชอบ</h2>
+            <a href="/admin/leads?filter=new&owner=none" class="text-xs text-blue-600 hover:underline">ทั้งหมด →</a>
+        </div>
+        {% if unassigned %}
+        <ul class="divide-y divide-slate-100">{% for l in unassigned %}{{ lead_row(l) }}{% endfor %}</ul>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ทุก Lead ใหม่มีผู้รับผิดชอบแล้ว ✓</div>{% endif %}
     </div>
 </div>
 
-<div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-        <h2 class="font-semibold">Lead ล่าสุด</h2>
-        <a href="/admin/leads" class="text-sm text-blue-600 hover:underline">ดูทั้งหมด →</a>
+<div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
+    <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+        <h2 class="font-semibold text-sm">Lead ล่าสุด</h2>
+        <a href="/admin/leads" class="text-xs text-blue-600 hover:underline">ดูทั้งหมด →</a>
     </div>
     {% if recent_leads %}
-    <table class="w-full">
-        <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
-            <tr>
-                <th class="px-6 py-3 text-left">ลูกค้า</th>
-                <th class="px-6 py-3 text-left">บริษัท</th>
-                <th class="px-6 py-3 text-left">AI</th>
-                <th class="px-6 py-3 text-left">วันที่</th>
-                <th class="px-6 py-3"></th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-            {% for lead in recent_leads %}
-            <tr class="hover:bg-slate-50">
-                <td class="px-6 py-4 font-medium">{{ lead.name }}</td>
-                <td class="px-6 py-4 text-slate-600">{{ lead.company or '—' }}</td>
-                <td class="px-6 py-4">
-                    {% if lead.ai_in_scope %}
-                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs">✓ ใน Scope</span>
-                    {% else %}
-                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">⚠ นอก Scope</span>
-                    {% endif %}
-                </td>
-                <td class="px-6 py-4 text-slate-500 text-sm">{{ lead.created_at.strftime('%d %b %H:%M') }}</td>
-                <td class="px-6 py-4 text-right">
-                    <a href="/admin/leads/{{ lead.id }}" class="text-blue-600 text-sm hover:underline">ดู</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <ul class="divide-y divide-slate-100">{% for l in recent_leads %}{{ lead_row(l) }}{% endfor %}</ul>
     {% else %}
-    <div class="p-12 text-center text-slate-500">ยังไม่มี Lead</div>
+    <div class="p-8 text-center text-sm text-slate-500">
+        ยังไม่มี Lead — ลูกค้าที่ทัก LINE หรือโทรเข้ามา กด <a href="/admin/leads/new" class="text-blue-600 underline">+ เพิ่ม Lead</a> เพื่อบันทึก
+    </div>
     {% endif %}
 </div>
+
+<p class="text-xs text-slate-400">เดือนนี้: Lead ใหม่ (ไม่ซ้ำ) {{ stats.leads_month }} · ตรงกลุ่ม {{ stats.fit_month }} — ดูรายละเอียดที่ <a href="/admin/marketing" class="text-blue-600 hover:underline">การตลาด → ภาพรวม</a></p>
 {% endblock %}

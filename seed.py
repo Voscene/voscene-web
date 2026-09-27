@@ -63,6 +63,23 @@ def _fingerprint(value) -> str:
     return hashlib.sha256((value or "").encode()).hexdigest()[:16]
 
 
+# เจ้าของขอ 2026-09-26 ให้แยกฝ่ายขาย/ฝ่ายเทคนิค — ค่าบน production ยังเป็นแบบเดิม (ยังไม่ได้แก้ในหลังบ้าน)
+# seed จึงเปลี่ยนให้ตอนบูต เฉพาะเมื่อค่ายังตรงกับของเดิมทุกบรรทัด ถ้าแอดมินแก้เป็นอย่างอื่นแล้วไม่แตะ
+CONTACT_PHONE_DEFAULT = "\n".join([
+    "ฝ่ายขาย : รจนา 088-886 4660",
+    "ฝ่ายเทคนิค : เบนซ์ 099-345 1998",
+    "LINE : @CSIPROAV",
+])
+OLD_CONTACT_PHONES = {
+    ("รจนา 088-886 4660", "LINE : @CSIPROAV"),
+    ("088-886-4660",),
+}
+
+
+def _lines(value) -> tuple:
+    return tuple(l.strip() for l in (value or "").splitlines() if l.strip())
+
+
 DEFAULT_CONTENT = [
     # ===== Hero Section =====
     ("hero_badge", "AI-Powered AV Control · Now in Thailand", "Badge ใต้ navbar", "hero", "text"),
@@ -111,7 +128,7 @@ DEFAULT_CONTENT = [
     ("ga4_id", "", "Google Analytics 4 ID", "tracking", "text"),
     ("meta_pixel_id", "", "Meta (Facebook) Pixel ID", "tracking", "text"),
     ("contact_subtitle", "Ready to transform your AV experience? — ทัก LINE หรือโทรหาทีมงานได้โดยตรง ปรึกษาฟรี ไม่มีข้อผูกมัด", "คำอธิบาย Contact", "contact", "textarea"),
-    ("contact_phone", "088-886-4660", "เบอร์โทร (ใส่หลายเบอร์ได้ ขึ้นบรรทัดใหม่)", "contact", "textarea"),
+    ("contact_phone", CONTACT_PHONE_DEFAULT, "เบอร์โทร (ใส่หลายเบอร์ได้ ขึ้นบรรทัดใหม่)", "contact", "textarea"),
     ("contact_email", "hello@voscene.com", "อีเมล", "contact", "text"),
     ("contact_address", "Bangkok, Thailand · Serving Southeast Asia", "ที่อยู่ (รองรับ 2-3 บรรทัด)", "contact", "textarea"),
     ("contact_hours", "จันทร์-ศุกร์ 09:00-18:00", "เวลาทำการ", "contact", "text"),
@@ -279,6 +296,9 @@ def run_seed():
                 if key in FORM_RETIRE and FORM_RETIRE[key] in (existing.value or ""):
                     existing.value = value
                     ai_retired += 1
+                    changed = True
+                if key == "contact_phone" and _lines(existing.value) in OLD_CONTACT_PHONES:
+                    existing.value = value
                     changed = True
                 # ร่างนโยบายที่ยังเป็นฉบับแรกทุกตัวอักษร (ยังไม่มีใครแก้) → อัปเดตเป็นฉบับไม่มีฟอร์ม
                 # ถ้าเจ้าของแก้ร่างไปแล้ว ไม่แตะ

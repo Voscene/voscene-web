@@ -3,6 +3,8 @@
  * - เก็บใน sessionStorage ของแท็บเท่านั้น: ไม่มีคุกกี้ ไม่มีตัวระบุถาวร ปิดแท็บ = หาย
  * - ส่งขึ้นเซิร์ฟเวอร์ 2 ทางเท่านั้น: แนบไปกับฟอร์มตอนผู้ใช้กดส่งเอง (vsAttribution)
  *   และตอนคลิก LINE/โทร (ครั้งเดียวต่อ session ต่อประเภท)
+ * - คลิก LINE/โทรครั้งแรกของ session ส่งต่อให้ window.trackLead → GA4 generate_lead / Meta Lead
+ *   (เฉพาะผู้ชมที่กดยอมรับคุกกี้แล้ว — ไม่งั้น gtag/fbq ไม่มีอยู่ในหน้า)
  * - ทุกอย่างอยู่ใน try/catch — สคริปต์นี้พังต้องไม่ทำให้ฟอร์มพัง
  */
 (function () {
@@ -61,6 +63,9 @@
     try {
       if (window.dataLayer) window.dataLayer.push({ event: type });
       if (!store || store.getItem('vs_ev_' + type)) return; // นับแล้วใน session นี้
+      // ส่งเป็น conversion ให้ GA4/Meta ด้วย (ครั้งเดียวต่อ session เหมือนรายงานของเรา)
+      // trackLead ใน base.html ไม่ส่งอะไรถ้าผู้ชมยังไม่กดยอมรับคุกกี้ — gtag/fbq ยังไม่ถูกโหลด
+      if (typeof window.trackLead === 'function') window.trackLead(type === 'line_click' ? 'line' : 'phone');
       var s = sid();
       if (!s) return;
       var a = read() || {};

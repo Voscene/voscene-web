@@ -109,8 +109,9 @@
     </script>
     {% endif %}
     <script>
-      // One call site for the conversion both forms share. No-ops when no tag is
-      // installed, so the forms never depend on tracking being configured.
+      // The one conversion call site — vs-track.js calls it on the first LINE/phone click
+      // of a session ('line' / 'phone'). No-ops until the visitor accepts cookies, because
+      // gtag/fbq only exist after loadTags() runs.
       window.trackLead = function (source) {
         try {
           if (window.dataLayer) window.dataLayer.push({ event: 'generate_lead', lead_source: source });

@@ -134,7 +134,7 @@ DEFAULT_CONTENT = [
     ("hero_title_line2", "smart spaces.", "บรรทัดที่ 2 (สี gradient)", "hero", "text"),
     ("hero_subtitle_th", "ระบบควบคุม AV ขับเคลื่อนด้วย AI ออกแบบเพื่อองค์กรไทย", "บรรทัดภาษาไทย", "hero", "text"),
     ("hero_tagline", "Voice on SCENE · Speak. Control. Transform.", "Slogan", "hero", "text"),
-    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ติดตั้งใน 24 ชั่วโมง ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ รองรับอุปกรณ์ AV หลากหลายยี่ห้อ — 48 ยี่ห้อ · 1,000+ รุ่น ผ่านโปรโตคอลมาตรฐาน (PJLink · VISCA · webOS/Tizen · DMX ฯลฯ)", "คำอธิบาย Hero", "hero", "textarea"),
+    ("hero_description", "Voscene เปลี่ยนห้องประชุม โรงแรม ห้องเรียน และพื้นที่ event ให้กลายเป็น smart space ที่ควบคุมด้วยภาษาธรรมชาติ ผ่าน AI Thai/English — ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ รองรับอุปกรณ์ AV หลากหลายยี่ห้อ — 48 ยี่ห้อ · 1,000+ รุ่น ผ่านโปรโตคอลมาตรฐาน (PJLink · VISCA · webOS/Tizen · DMX ฯลฯ)", "คำอธิบาย Hero", "hero", "textarea"),
     ("hero_cta_primary", "Book a Demo", "ปุ่มหลัก", "hero", "text"),
     ("hero_cta_secondary", "ดูฟีเจอร์", "ปุ่มรอง", "hero", "text"),
     ("hero_mission", "\"พูดสิ่งที่อยากทำ\" — Voscene จัดการที่เหลือให้", "Mission Statement (quote-style)", "hero", "textarea"),
@@ -194,7 +194,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ติดตั้งใน 24 ชั่วโมง · ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 
@@ -300,14 +300,16 @@ def run_seed():
         AI_CONSULT_RETIRE = {} if settings.AI_CONSULT_ENABLED else {"contact_subtitle": "วิเคราะห์"}
         FORM_RETIRE = {"contact_subtitle": "กรอก"}
         # 2026-09-27 เจ้าของตัดสินถ้อยคำก่อนยิงโฆษณา: เลิกตัวเลข "ประหยัด 60-80%" (ไม่มีเอกสารเทียบราคารองรับ)
-        # และ "~200 ห้อง" (ใช้ "รองรับการขยายได้ 200 ห้อง") — แทนเฉพาะวลีเก่าในค่าที่เก็บอยู่ ส่วนอื่นที่แอดมินแก้ไว้คงเดิม
+        # "ติดตั้งใน 24 ชั่วโมง" (ตัดออก ไม่สัญญาระยะเวลา) และ "~200 ห้อง" (ใช้ "รองรับการขยายได้ 200 ห้อง") — แทนเฉพาะวลีเก่าในค่าที่เก็บอยู่ ส่วนอื่นที่แอดมินแก้ไว้คงเดิม
         # stat_1 เป็นคู่ตัวเลข/คำอธิบาย → แทนเฉพาะเมื่อยังเป็นค่าเดิมทั้งช่อง
         CLAIM_REWRITES = {
             "stat_1_value": [("60-80%", "ประหยัดกว่า")],
             "stat_1_label": [("ประหยัดกว่าระบบ AV แบรนด์ใหญ่", "ระบบควบคุม AV ต่างประเทศ")],
-            "hero_description": [("ราคาประหยัดกว่าระบบ AV ระดับโลก 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ")],
+            "hero_description": [("ราคาประหยัดกว่าระบบ AV ระดับโลก 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ"),
+                                 ("ติดตั้งใน 24 ชั่วโมง ", "")],
             "about_description": [("แต่ราคาประหยัดกว่า 60-80%", "แต่ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ")],
-            "seo_description": [("ประหยัด 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ"),
+            "seo_description": [("ติดตั้งใน 24 ชั่วโมง · ", ""),
+                                ("ประหยัด 60-80%", "ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ"),
                                 ("ออกแบบให้ขยายถึง ~200 ห้อง", "รองรับการขยายได้ 200 ห้อง"),
                                 ("(20 ห้อง/controller · รองรับการขยาย)", "(20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง)")],
         }

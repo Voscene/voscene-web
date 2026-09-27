@@ -911,7 +911,7 @@ def test_claim_rewrites_before_ads():
     old = {
         "stat_1_value": "60-80%",
         "stat_1_label": "ประหยัดกว่าระบบ AV แบรนด์ใหญ่",
-        "seo_description": "ซอฟต์แวร์ควบคุม AV · ประหยัด 60-80% · Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง) · ข้อความที่เจ้าของเขียนเอง",
+        "seo_description": "ซอฟต์แวร์ควบคุม AV · ติดตั้งใน 24 ชั่วโมง · ประหยัด 60-80% · Multi-Room (20 ห้อง/controller · ออกแบบให้ขยายถึง ~200 ห้อง) · ข้อความที่เจ้าของเขียนเอง",
     }
     for k, v in old.items():
         s.query(Content).filter_by(key=k).update({"value": v})
@@ -946,3 +946,10 @@ def test_claim_rewrites_before_ads():
     why = TestClient(main.app).get("/why").text
     assert "Emergency PA" not in why and "รองรับการเชื่อมต่อระบบประกาศเหตุฉุกเฉิน" in why
     assert "AI-powered commands" not in why and "รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์" in why
+    assert "24 hours" not in why and "Setup Time" not in why          # ไม่สัญญาระยะเวลาติดตั้ง
+    features = TestClient(main.app).get("/features").text
+    assert "Thai NLP" not in features and "LLM Powered" not in features  # การ์ด AI ใช้ถ้อยคำเจ้าของ
+    assert features.count("รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์") >= 1
+    s = db()
+    assert "24 ชั่วโมง" not in s.query(Content).filter_by(key="seo_description").one().value
+    s.close()

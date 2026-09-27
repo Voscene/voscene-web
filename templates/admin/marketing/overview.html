@@ -63,6 +63,9 @@
                 <th class="px-4 py-2 text-left">ช่องทาง</th>
                 <th class="px-4 py-2 text-left">การเชื่อมต่อ / ที่มาข้อมูล</th>
                 <th class="px-4 py-2 text-right">ค่าโฆษณา</th>
+                <th class="px-4 py-2 text-right bg-emerald-50/60">คลิก LINE</th>
+                <th class="px-4 py-2 text-right bg-emerald-50/60">ค่าโฆษณา/คลิก LINE</th>
+                <th class="px-4 py-2 text-right">คลิกโทร</th>
                 <th class="px-4 py-2 text-right">Lead</th>
                 <th class="px-4 py-2 text-right">ตรงกลุ่ม</th>
                 <th class="px-4 py-2 text-right">ต้นทุน/ตรงกลุ่ม</th>
@@ -85,6 +88,9 @@
                     {% if not row.spend_applicable %}<span class="text-slate-400 text-xs">ไม่มีค่าโฆษณา</span>
                     {% else %}{{ ui.money(row.spend, 'ยังไม่มีการบันทึกค่าโฆษณาของช่องทางนี้ในช่วงนี้') }}{% endif %}
                 </td>
+                <td class="px-4 py-2 text-right font-semibold bg-emerald-50/60">{{ row.line_clicks }}</td>
+                <td class="px-4 py-2 text-right whitespace-nowrap bg-emerald-50/60">{{ ui.money(row.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
+                <td class="px-4 py-2 text-right">{{ row.phone_clicks }}</td>
                 <td class="px-4 py-2 text-right">{{ row.unique }}</td>
                 <td class="px-4 py-2 text-right font-semibold text-emerald-700">{{ row.fit }}</td>
                 <td class="px-4 py-2 text-right whitespace-nowrap">{{ ui.money(row.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>

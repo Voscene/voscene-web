@@ -364,17 +364,25 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
     # ---- ตามช่องทาง ----
     last_spend = dict(db.query(AdSpend.channel, func.max(AdSpend.created_at))
                       .group_by(AdSpend.channel).all())
+    # คลิก LINE / โทร ต่อกลุ่ม — ทีมคุยกับลูกค้าใน LINE เป็นหลัก (ไม่ได้บันทึก Lead ทุกราย)
+    # ตัวเลขนี้จึงเป็นตัววัดโฆษณาที่ไม่ต้องพึ่งทีม: คนกดปุ่ม ≠ คนส่งข้อความจริง
+    def _clicks(evs: list, spend) -> dict:
+        line = sum(1 for e in evs if e.event == "line_click")
+        return {"line_clicks": line, "phone_clicks": sum(1 for e in evs if e.event == "phone_click"),
+                "cost_per_line_click": mc.cost_per(spend, line)}
+
     by_channel = []
     keys = [channel] if channel else mc.REPORT_CHANNELS
     for key in keys:
         cl = [l for l in leads if (l.channel or "unknown") == key]
         cs = [r for r in spend_rows if r.channel == key]
+        ce = [e for e in events if (e.channel or "unknown") == key]
         st = _lead_stats(cl)
         conn = connector_for_channel(key)
         conn_code, conn_label = conn.status() if conn else ("manual", "ไม่มีการเชื่อมต่อ (กรอกเอง)")
         always = key in ("google_ads", "facebook_ads", "facebook_page", "facebook_group",
                          "tiktok", "other", "unknown")
-        if not always and not cl and not cs:
+        if not always and not cl and not cs and not ce:
             continue
         spend = _sum_spend(cs)
         by_channel.append({
@@ -384,13 +392,17 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
             "last_update": mc.utc_to_bkk(last_spend.get(key)),
             "connection": conn_label, "connection_code": conn_code,
             "cpl_fit": mc.cost_per(spend, st["fit"]),
+            **_clicks(ce, spend),
             **st,
         })
 
     # ---- ตามแคมเปญ ----
-    camp_ids = {l.campaign_id for l in leads if l.campaign_id} | \
-               {r.campaign_id for r in spend_rows if r.campaign_id}
     campaigns = {c.id: c for c in db.query(Campaign).all()}
+    code_to_id = {c.code: c.id for c in campaigns.values()}
+    ev_camp = {id(e): code_to_id.get((e.utm_campaign or "").strip().lower()) for e in events}
+    camp_ids = {l.campaign_id for l in leads if l.campaign_id} | \
+               {r.campaign_id for r in spend_rows if r.campaign_id} | \
+               {cid for cid in ev_camp.values() if cid}
     active_ids = {c.id for c in campaigns.values() if c.status == "active"}
     by_campaign = []
     for cid in sorted(camp_ids | active_ids, key=lambda i: campaigns[i].name if i in campaigns else ""):
@@ -399,19 +411,23 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
             continue
         cl = [l for l in leads if l.campaign_id == cid]
         cs = [r for r in spend_rows if r.campaign_id == cid]
+        ce = [e for e in events if ev_camp[id(e)] == cid]
         st = _lead_stats(cl)
         spend = _sum_spend(cs)
         by_campaign.append({"id": cid, "label": camp.name, "code": camp.code,
                             "service": camp.service, "budget": camp.budget,
-                            "spend": spend, "cpl_fit": mc.cost_per(spend, st["fit"]), **st})
+                            "spend": spend, "cpl_fit": mc.cost_per(spend, st["fit"]),
+                            **_clicks(ce, spend), **st})
     no_camp_leads = [l for l in leads if not l.campaign_id]
     no_camp_spend = [r for r in spend_rows if not r.campaign_id]
-    if no_camp_leads or no_camp_spend:
+    no_camp_events = [e for e in events if not ev_camp[id(e)]]
+    if no_camp_leads or no_camp_spend or no_camp_events:
         st = _lead_stats(no_camp_leads)
         spend = _sum_spend(no_camp_spend)
         by_campaign.append({"id": None, "label": "ไม่ผูกแคมเปญ / ไม่ทราบ", "code": "",
                             "service": "", "budget": None, "spend": spend,
-                            "cpl_fit": mc.cost_per(spend, st["fit"]), **st})
+                            "cpl_fit": mc.cost_per(spend, st["fit"]),
+                            **_clicks(no_camp_events, spend), **st})
 
     # ---- ตามเนื้อหา / โพสต์ (ไม่มีค่าโฆษณาระดับโพสต์ในรุ่นนี้) ----
     by_content = []
@@ -442,8 +458,7 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
         "spend_rows": len(spend_rows),
         "cpl_fit": mc.cost_per(total_spend, stats["fit"]),
         "cpl_unique": mc.cost_per(total_spend, stats["unique"]),
-        "line_clicks": sum(1 for e in events if e.event == "line_click"),
-        "phone_clicks": sum(1 for e in events if e.event == "phone_click"),
+        **_clicks(events, total_spend),
         "by_channel": by_channel, "by_campaign": by_campaign, "by_content": by_content,
         "sources": [
             {"label": "Lead", "how": "ทีมงานบันทึกจาก LINE / โทร (+ ฟอร์มเว็บรุ่นเก่า)",
@@ -1091,12 +1106,17 @@ async def reports_export(request: Request, kind: str = "channel", db: Session = 
                          user: User = Depends(require_admin)):
     ctx = _report_ctx(request, db)
     r = ctx["r"]
-    common = ["lead_unique", "lead_fit", "cost_per_fit_lead", "quoted", "won", "won_value"]
+    common = ["line_clicks", "phone_clicks", "cost_per_line_click",
+              "lead_unique", "lead_fit", "cost_per_fit_lead", "quoted", "won", "won_value"]
+
+    def _common(x) -> list:
+        return [x["line_clicks"], x["phone_clicks"], _fmt(x["cost_per_line_click"]),
+                x["unique"], x["fit"], _fmt(x["cpl_fit"]), x["quoted"], x["won"], _fmt(x["won_value"])]
+
     if kind == "campaign":
         header = ["campaign", "utm_campaign", "service", "budget", "spend"] + common
         rows = [[x["label"], x["code"], mc.SERVICE_MAP.get(x["service"], {}).get("label", ""),
-                 _fmt(x["budget"]), _fmt(x["spend"]), x["unique"], x["fit"], _fmt(x["cpl_fit"]),
-                 x["quoted"], x["won"], _fmt(x["won_value"])] for x in r["by_campaign"]]
+                 _fmt(x["budget"]), _fmt(x["spend"])] + _common(x) for x in r["by_campaign"]]
     elif kind == "content":
         header = ["type", "id", "label", "channel", "lead_unique", "lead_fit", "quoted", "won"]
         rows = [[x["kind"], x["id"], x["label"], mc.channel_label(x["channel"]), x["unique"],
@@ -1120,9 +1140,8 @@ async def reports_export(request: Request, kind: str = "channel", db: Session = 
     else:
         kind = "channel"
         header = ["channel", "connection", "spend_source", "spend"] + common
-        rows = [[x["label"], x["connection"], "/".join(x["spend_sources"]), _fmt(x["spend"]),
-                 x["unique"], x["fit"], _fmt(x["cpl_fit"]), x["quoted"], x["won"],
-                 _fmt(x["won_value"])] for x in r["by_channel"]]
+        rows = [[x["label"], x["connection"], "/".join(x["spend_sources"]), _fmt(x["spend"])]
+                + _common(x) for x in r["by_channel"]]
     name = f"voscene-{kind}-{r['start']}_{r['end']}.csv"
     _audit(db, user, "report_export", "report", None, {"kind": kind, "start": r["start"],
                                                         "end": r["end"], "rows": len(rows)})

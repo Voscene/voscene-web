@@ -873,3 +873,29 @@ def test_login_cookie_secure_when_not_debug(admin):
         assert "admin_session=" in cookie and "Secure" in cookie and "HttpOnly" in cookie
     finally:
         main.settings.DEBUG = True
+
+
+def test_line_clicks_by_channel_and_campaign(admin, client):
+    today = mc.bkk_today().isoformat()
+    s = db()
+    rep0 = main.marketing.compute_report(s, mc.bkk_today(), mc.bkk_today())
+    g0 = next(x for x in rep0["by_channel"] if x["key"] == "google_ads")["line_clicks"]
+    for sid in ("clk-g-000001", "clk-g-000002"):
+        client.post("/api/event", json={"event": "line_click", "sid": sid, "path": "/",
+                                        "utm_source": "google", "utm_medium": "cpc",
+                                        "utm_campaign": "one-touch-gov-q4"})
+    client.post("/api/event", json={"event": "phone_click", "sid": "clk-g-000001", "path": "/",
+                                    "utm_source": "google", "utm_medium": "cpc",
+                                    "utm_campaign": "one-touch-gov-q4"})
+    rep = main.marketing.compute_report(s, mc.bkk_today(), mc.bkk_today())
+    g = next(x for x in rep["by_channel"] if x["key"] == "google_ads")
+    assert g["line_clicks"] == g0 + 2 and g["phone_clicks"] >= 1
+    camp = next(x for x in rep["by_campaign"] if x["code"] == "one-touch-gov-q4")
+    assert camp["line_clicks"] >= 2
+    if camp["spend"]:
+        assert camp["cost_per_line_click"] == camp["spend"] / camp["line_clicks"]
+    html = admin.get(f"/admin/marketing/reports?start={today}&end={today}").text
+    assert "ค่าโฆษณา/คลิก LINE" in html
+    csv_text = admin.get(f"/admin/marketing/reports/export.csv?kind=channel&start={today}&end={today}").text
+    assert "line_clicks" in csv_text and "cost_per_line_click" in csv_text
+    s.close()

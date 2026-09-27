@@ -50,12 +50,15 @@
         <a href="/admin/marketing/reports/export.csv?kind=channel&{{ qs }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
     </div>
     <div class="overflow-x-auto"><table class="w-full text-sm">
-        {{ table_head(['ช่องทาง', 'ค่าโฆษณา', 'Lead', 'ตรงกลุ่ม', 'รอตรวจ', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        {{ table_head(['ช่องทาง', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead', 'ตรงกลุ่ม', 'รอตรวจ', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_channel %}
         <tr>
             <td class="px-3 py-2 font-medium whitespace-nowrap">{{ x.label }} <div class="text-[11px] font-normal text-slate-400">{{ x.connection }}{% if x.spend_sources %} · {{ x.spend_sources | join(', ') }}{% endif %}</div></td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{% if x.spend_applicable %}{{ ui.money(x.spend) }}{% else %}<span class="text-xs text-slate-400">ไม่มีค่าโฆษณา</span>{% endif %}</td>
+            <td class="px-3 py-2 text-right font-semibold">{{ x.line_clicks }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
+            <td class="px-3 py-2 text-right">{{ x.phone_clicks }}</td>
             <td class="px-3 py-2 text-right">{{ x.unique }}</td>
             <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
             <td class="px-3 py-2 text-right text-slate-500">{{ x.pending }}</td>
@@ -76,13 +79,16 @@
     </div>
     {% if r.by_campaign %}
     <div class="overflow-x-auto"><table class="w-full text-sm">
-        {{ table_head(['แคมเปญ', 'งบ', 'ค่าโฆษณา', 'Lead', 'ตรงกลุ่ม', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        {{ table_head(['แคมเปญ', 'งบ', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead', 'ตรงกลุ่ม', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_campaign %}
         <tr>
             <td class="px-3 py-2">{% if x.id %}<a href="/admin/marketing/campaigns/{{ x.id }}" class="font-medium text-blue-700 hover:underline">{{ x.label }}</a><div class="text-[11px] text-slate-400 font-mono">{{ x.code }}</div>{% else %}<span class="text-slate-500">{{ x.label }}</span>{% endif %}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.budget, 'ไม่ได้ตั้งงบ') }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.spend) }}</td>
+            <td class="px-3 py-2 text-right font-semibold">{{ x.line_clicks }}</td>
+            <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
+            <td class="px-3 py-2 text-right">{{ x.phone_clicks }}</td>
             <td class="px-3 py-2 text-right">{{ x.unique }}</td>
             <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>

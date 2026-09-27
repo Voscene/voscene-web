@@ -10,7 +10,10 @@ class Settings(BaseSettings):
     # visitor's own machine. Override in .env for local work if needed.
     APP_URL: str = "https://www.voscene.com"
     SECRET_KEY: str = "change-this-to-random-string-min-32-chars"
-    DEBUG: bool = True
+    # ค่าเริ่มต้น "ปิด" — เดิมเป็น True และ Render ไม่ได้ตั้ง env นี้ production จึงรันโหมด DEBUG
+    # มาตลอด (cookie ล็อกอินไม่ติดธง Secure) จนหน้า /admin/settings จับได้ 2026-09-27
+    # เครื่องพัฒนาเปิดเองใน .env (DEBUG=True) เพราะ localhost เป็น http ล้วน
+    DEBUG: bool = False
 
     DATABASE_URL: str = "sqlite:///./data.db"
 

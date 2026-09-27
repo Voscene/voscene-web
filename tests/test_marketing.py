@@ -856,3 +856,20 @@ def test_settings_security_panel(admin):
     assert "✓ ปิดอยู่" not in html  # เทสรันด้วย DEBUG=True → ต้องขึ้นเตือน ไม่ใช่ผ่าน
     assert "ตั้งแล้ว" in html          # คีย์เทสยาวพอ ไม่ใช่ค่าตัวอย่าง
     assert os.environ["SECRET_KEY"] not in html  # ไม่แสดงค่าจริง
+
+
+def test_debug_is_off_unless_set():
+    from config import Settings
+    assert Settings.model_fields["DEBUG"].default is False  # production ไม่ตั้ง env = ปิด
+
+
+def test_login_cookie_secure_when_not_debug(admin):
+    main.settings.DEBUG = False
+    try:
+        c = new_client()
+        r = c.post("/admin/login", data={"username": "admin", "password": "test-password-123"},
+                   follow_redirects=False)
+        cookie = r.headers.get("set-cookie", "")
+        assert "admin_session=" in cookie and "Secure" in cookie and "HttpOnly" in cookie
+    finally:
+        main.settings.DEBUG = True

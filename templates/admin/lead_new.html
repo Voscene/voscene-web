@@ -5,6 +5,7 @@
 {% block header_actions %}<a href="/admin/leads" class="text-sm text-blue-600 hover:underline">← Lead ทั้งหมด</a>{% endblock %}
 
 {% block content %}
+{% set sales = settings.SALES_TRACKING_ENABLED %}
 {% if error %}{{ ui.alert(error) }}{% endif %}
 <form method="post" action="/admin/leads/create" class="bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-5 max-w-3xl">
     <p class="text-sm text-slate-500">บันทึกลูกค้าที่ทัก LINE หรือโทรเข้ามา — เว็บไม่มีฟอร์มแล้ว รายงานการตลาดนับจากรายการที่ทีมบันทึกตรงนี้</p>
@@ -84,6 +85,7 @@
                 {% for s in SERVICES %}<option value="{{ s.key }}">{{ s.label }}</option>{% endfor %}
             </select>
         </div>
+        {% if sales %}
         <div>
             <label class="block text-sm font-medium mb-1.5">ผลคัดกรอง</label>
             <select name="qualification" class="{{ ui.input_cls }}">
@@ -97,10 +99,11 @@
                 {% for u in team %}<option value="{{ u.id }}" {% if u.id == user.id %}selected{% endif %}>{{ u.label }}</option>{% endfor %}
             </select>
         </div>
+        {% endif %}
     </div>
 
     <div>
-        <label class="block text-sm font-medium mb-1.5">บันทึกติดตาม (ไม่บังคับ)</label>
+        <label class="block text-sm font-medium mb-1.5">หมายเหตุ (ไม่บังคับ)</label>
         <textarea name="note" rows="2" maxlength="4000" class="{{ ui.input_cls }}" placeholder="เช่น คุยทาง LINE แล้ว ขอรูปห้องเพิ่ม นัดคุยวันศุกร์"></textarea>
     </div>
 

@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     # เปิดกลับได้ด้วย env ใน Render แต่ต้องใส่ฟอร์มกลับในเทมเพลต + แก้นโยบายความเป็นส่วนตัวด้วย
     WEB_FORMS_ENABLED: bool = False
 
+    # ส่วนติดตามงานขายในหลังบ้าน (ขั้นการขาย · ผู้รับผิดชอบ · นัดติดตาม · ผลคัดกรอง · เสนอราคา/ปิดงาน)
+    # เจ้าของ 2026-09-27: หลังบ้าน = เตรียมสื่อ + มอนิเตอร์สื่อเท่านั้น งานขายทำนอกเว็บ → ซ่อนไว้
+    # ปิด = แค่ไม่แสดง ข้อมูลและ route เดิมยังอยู่ครบ เปิดกลับได้ด้วย env
+    SALES_TRACKING_ENABLED: bool = False
+
     # Analytics / ad tracking. Empty = nothing is injected at all (no requests,
     # no cookies). Paste the IDs into the Render dashboard to switch them on
     # without a code change or redeploy.

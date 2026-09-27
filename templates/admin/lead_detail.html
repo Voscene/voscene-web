@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+{% set sales = settings.SALES_TRACKING_ENABLED %}
 {% if error %}{{ ui.alert(error) }}{% endif %}
 {% if lead.duplicate_of %}
 <div class="mb-4 px-4 py-3 rounded-lg border bg-amber-50 border-amber-200 text-amber-900 text-sm flex flex-wrap items-center justify-between gap-2">
@@ -35,6 +36,7 @@
             </div>
         </div>
 
+        {% if sales %}
         <!-- Sales -->
         <form method="post" action="/admin/leads/{{ lead.id }}/update" class="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div class="px-4 md:px-6 py-3 border-b border-slate-200 bg-slate-50">
@@ -114,6 +116,7 @@
             </ul>
             {% else %}<div class="px-6 py-4 text-sm text-slate-400">ยังไม่มีบันทึก</div>{% endif %}
         </div>
+        {% endif %}
 
         {% if lead.ai_analysis %}
         <details class="bg-white rounded-xl border border-slate-200 p-4 md:p-6">
@@ -127,7 +130,7 @@
         </details>
         {% endif %}
 
-        {% if history %}
+        {% if sales and history %}
         <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
             <summary class="cursor-pointer font-semibold">ประวัติการแก้สถานะ</summary>
             <ul class="mt-2 space-y-1 text-xs text-slate-600">

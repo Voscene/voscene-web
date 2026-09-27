@@ -7,22 +7,25 @@
 {% endblock %}
 
 {% block content %}
+{% set sales = settings.SALES_TRACKING_ENABLED %}
 {% set s = r.stats %}
 {% set qs = 'start=' ~ filters.start ~ '&end=' ~ filters.end ~ '&channel=' ~ filters.channel %}
 {{ ui.filters('/admin/marketing/reports', filters, mk) }}
 
 <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
     <h2 class="font-semibold text-sm mb-3">เส้นทางลูกค้า ({{ filters.start }} → {{ filters.end }}{% if filters.channel %} · {{ mk.channel_label(filters.channel) }}{% endif %})</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center text-sm">
-        {% for label, value, hint in [
-            ('ผู้เข้าเว็บ', none, 'ยังไม่เชื่อมข้อมูล'),
+    {% set funnel = [
+            ('ผู้เข้าเว็บ', none, 'ดูใน GA4'),
             ('คลิก LINE', r.line_clicks, 'ไม่นับเป็น Lead'),
             ('คลิกโทร', r.phone_clicks, 'ไม่นับเป็น Lead'),
             ('Lead ที่บันทึก', s.submitted, 'รวมซ้ำ/สแปม'),
-            ('Lead ไม่ซ้ำ', s.unique, 'ตัดซ้ำ + สแปม'),
+            ('Lead ไม่ซ้ำ', s.unique, 'ตัดซ้ำ + สแปม')] %}
+    {% if sales %}{% set funnel = funnel + [
             ('ตรงกลุ่ม', s.fit, 'ทีมงานคัดกรองแล้ว'),
             ('เสนอราคา', s.quoted, 'ขั้นเสนอราคา/ปิดงาน'),
-            ('ปิดงาน', s.won, s.won_value | money if s.won else '')] %}
+            ('ปิดงาน', s.won, s.won_value | money if s.won else '')] %}{% endif %}
+    <div class="grid grid-cols-2 sm:grid-cols-4 {{ 'lg:grid-cols-8' if sales else 'lg:grid-cols-5' }} gap-2 text-center text-sm">
+        {% for label, value, hint in funnel %}
         <div class="rounded-lg border border-slate-200 py-2 px-1">
             <div class="text-xl font-bold {% if value is none %}text-slate-300{% endif %}">{% if value is none %}—{% else %}{{ value }}{% endif %}</div>
             <div class="text-xs font-medium">{{ label }}</div>
@@ -33,8 +36,11 @@
     <div class="flex flex-wrap gap-x-6 gap-y-1 mt-3 text-sm text-slate-600">
         <span>ค่าโฆษณา <b>{{ ui.money(r.spend) }}</b></span>
         <span>ต้นทุน/Lead ไม่ซ้ำ <b>{{ ui.money(r.cpl_unique, 'ต้องมีทั้งค่าโฆษณาและ Lead') }}</b></span>
+        <span>ค่าโฆษณา/คลิก LINE <b>{{ ui.money(r.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</b></span>
+        {% if sales %}
         <span>ต้นทุน/Lead ตรงกลุ่ม <b>{{ ui.money(r.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</b></span>
         <span>นัดปรึกษาออกแบบ <b>{{ s.demo_requests }}</b> · ขอราคา <b>{{ s.quote_requests }}</b></span>
+        {% endif %}
     </div>
 </div>
 
@@ -50,7 +56,7 @@
         <a href="/admin/marketing/reports/export.csv?kind=channel&{{ qs }}" class="text-xs text-blue-600 hover:underline">ส่งออก CSV</a>
     </div>
     <div class="overflow-x-auto"><table class="w-full text-sm">
-        {{ table_head(['ช่องทาง', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead', 'ตรงกลุ่ม', 'รอตรวจ', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        {{ table_head(['ช่องทาง', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead'] + (['ตรงกลุ่ม', 'รอตรวจ', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด'] if sales else [])) }}
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_channel %}
         <tr>
@@ -60,12 +66,14 @@
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
             <td class="px-3 py-2 text-right">{{ x.phone_clicks }}</td>
             <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            {% if sales %}
             <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
             <td class="px-3 py-2 text-right text-slate-500">{{ x.pending }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
             <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
             <td class="px-3 py-2 text-right">{{ x.won }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ x.won_value | money if x.won else '—' }}</td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
@@ -79,7 +87,7 @@
     </div>
     {% if r.by_campaign %}
     <div class="overflow-x-auto"><table class="w-full text-sm">
-        {{ table_head(['แคมเปญ', 'งบ', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead', 'ตรงกลุ่ม', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด']) }}
+        {{ table_head(['แคมเปญ', 'งบ', 'ค่าโฆษณา', 'คลิก LINE', 'ค่าโฆษณา/คลิก LINE', 'คลิกโทร', 'Lead'] + (['ตรงกลุ่ม', 'ต้นทุน/ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน', 'มูลค่าปิด'] if sales else [])) }}
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_campaign %}
         <tr>
@@ -90,11 +98,13 @@
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
             <td class="px-3 py-2 text-right">{{ x.phone_clicks }}</td>
             <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            {% if sales %}
             <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
             <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
             <td class="px-3 py-2 text-right">{{ x.won }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ x.won_value | money if x.won else '—' }}</td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
@@ -109,7 +119,7 @@
     </div>
     {% if r.by_content %}
     <div class="overflow-x-auto"><table class="w-full text-sm">
-        {{ table_head(['เนื้อหา / โพสต์', 'ช่องทาง', 'Lead', 'ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน']) }}
+        {{ table_head(['เนื้อหา / โพสต์', 'ช่องทาง', 'Lead'] + (['ตรงกลุ่ม', 'เสนอราคา', 'ปิดงาน'] if sales else [])) }}
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_content %}
         <tr>
@@ -119,9 +129,11 @@
             </td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ mk.channel_label(x.channel) }}</td>
             <td class="px-3 py-2 text-right">{{ x.unique }}</td>
+            {% if sales %}
             <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ x.fit }}</td>
             <td class="px-3 py-2 text-right">{{ x.quoted }}</td>
             <td class="px-3 py-2 text-right">{{ x.won }}</td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>

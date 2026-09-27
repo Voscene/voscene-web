@@ -811,10 +811,25 @@ def test_dashboard_is_daily_work_view(admin):
     admin.post(f"/admin/leads/{lid}/update", data={
         "sales_stage": "contacted", "qualification": "pending",
         "next_follow_up": (mc.bkk_today()).isoformat(), "assigned_to": "1"})
+    # ค่าเริ่มต้น (เจ้าของ 2026-09-27): หลังบ้าน = สื่อเท่านั้น → ไม่มีส่วนติดตามงานขาย
+    assert main.settings.SALES_TRACKING_ENABLED is False
     html = admin.get("/admin").text
-    assert "นัดติดตามของฉัน" in html and "นัดวันนี้ทดสอบ" in html and "นัดวันนี้" in html
-    assert "+ เพิ่ม Lead" in html
+    assert "นัดติดตามของฉัน" not in html and "รอติดต่อ" not in html
+    assert "คลิกปุ่ม LINE วันนี้" in html and "+ เพิ่ม Lead" in html and "นัดวันนี้ทดสอบ" in html
     assert "(AI)" not in html and "ใน Scope" not in html  # การ์ด/คอลัมน์ AI เก่าไม่อยู่แล้ว
+    for url, hidden in [("/admin/leads", "ขั้นการขาย"), (f"/admin/leads/{lid}", "นัดติดตามครั้งถัดไป"),
+                        ("/admin/leads/new", "ผลคัดกรอง"), ("/admin/marketing", "นัดติดตาม Lead"),
+                        ("/admin/marketing/reports", "มูลค่าปิด")]:
+        page = admin.get(url)
+        assert page.status_code == 200 and hidden not in page.text, url
+    # เปิดสวิตช์กลับ → หน้าทำงานประจำวันแบบเดิม (ข้อมูลไม่หาย)
+    main.settings.SALES_TRACKING_ENABLED = True
+    try:
+        html = admin.get("/admin").text
+        assert "นัดติดตามของฉัน" in html and "นัดวันนี้ทดสอบ" in html and "นัดวันนี้" in html
+        assert "ขั้นการขาย" in admin.get("/admin/leads").text
+    finally:
+        main.settings.SALES_TRACKING_ENABLED = False
     s.close()
 
 

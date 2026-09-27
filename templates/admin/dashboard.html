@@ -4,12 +4,14 @@
 {% block page_title %}สวัสดี {{ user.label }}{% endblock %}
 {% block header_actions %}
 <div class="flex gap-2">
-    <a href="/admin/leads?owner=me" class="{{ ui.btn2_cls }} hidden sm:inline-flex">Lead ของฉัน</a>
+    {% if settings.SALES_TRACKING_ENABLED %}<a href="/admin/leads?owner=me" class="{{ ui.btn2_cls }} hidden sm:inline-flex">Lead ของฉัน</a>{% endif %}
+    <a href="/admin/marketing/content/new" class="{{ ui.btn2_cls }} hidden sm:inline-flex">+ เนื้อหา</a>
     <a href="/admin/leads/new" class="{{ ui.btn_cls }}">+ เพิ่ม Lead</a>
 </div>
 {% endblock %}
 
 {% block content %}
+{% set sales = settings.SALES_TRACKING_ENABLED %}
 {% macro lead_row(l, show_date='created') -%}
 <li class="px-4 py-2.5 flex items-center justify-between gap-3 text-sm">
     <a href="/admin/leads/{{ l.id }}" class="min-w-0">
@@ -17,11 +19,11 @@
         {% if l.company %}<span class="text-slate-400"> · {{ l.company }}</span>{% endif %}
         <span class="block text-xs text-slate-500 truncate">
             {% if l.contact_method %}{{ CONTACT_METHOD_LABELS.get(l.contact_method, l.contact_method) }} · {% endif %}{{ channel_label(l.channel) }}
-            {% if l.assigned_to in team %} · {{ team[l.assigned_to].label }}{% endif %}
+            {% if sales and l.assigned_to in team %} · {{ team[l.assigned_to].label }}{% endif %}
         </span>
     </a>
     <span class="flex-shrink-0 text-right">
-        {{ ui.stage_badge(l.sales_stage, SALES_STAGE_LABELS) }}
+        {% if sales %}{{ ui.stage_badge(l.sales_stage, SALES_STAGE_LABELS) }}{% endif %}
         {% if show_date == 'follow' %}
         <span class="block text-xs mt-0.5 {% if l.next_follow_up < today %}text-red-600 font-semibold{% else %}text-amber-700{% endif %}">
             {% if l.next_follow_up < today %}เลยนัด {{ (today - l.next_follow_up).days }} วัน{% else %}นัดวันนี้{% endif %}
@@ -33,6 +35,7 @@
 </li>
 {%- endmacro %}
 
+{% if sales %}
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
     <a href="/admin/leads?filter=followup&owner=me" class="block">{{ ui.kpi('นัดติดตามของฉัน (วันนี้/เลยนัด)', my_followups | length, 'ทั้งทีม ' ~ stats.followups_due ~ ' รายการ', 'text-red-600' if my_followups else '') }}</a>
     <a href="/admin/leads?filter=new" class="block">{{ ui.kpi('รอติดต่อ', stats.waiting, 'ยังไม่มีผู้รับผิดชอบ ' ~ stats.waiting_unassigned, 'text-amber-600' if stats.waiting else '') }}</a>
@@ -67,6 +70,21 @@
         {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ทุก Lead ใหม่มีผู้รับผิดชอบแล้ว ✓</div>{% endif %}
     </div>
 </div>
+{% else %}
+{# หลังบ้าน = เตรียมสื่อ + มอนิเตอร์สื่อ (เจ้าของ 2026-09-27) — ไม่มีงานติดตามลูกค้า #}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+    <a href="/admin/marketing" class="block">{{ ui.kpi('คลิกปุ่ม LINE วันนี้', stats.line_today, 'ครั้งเดียวต่อการเข้าเว็บ') }}</a>
+    <a href="/admin/marketing" class="block">{{ ui.kpi('คลิกปุ่ม LINE เดือนนี้', stats.line_month) }}</a>
+    <a href="/admin/marketing" class="block">{{ ui.kpi('คลิกเบอร์โทรวันนี้', stats.phone_today) }}</a>
+    <a href="/admin/leads" class="block">{{ ui.kpi('Lead ที่บันทึกเดือนนี้', stats.leads_month, 'ไม่ซ้ำ') }}</a>
+</div>
+<div class="flex flex-wrap gap-2 mb-6 text-sm">
+    <a href="/admin/marketing/campaigns" class="{{ ui.btn2_cls }}">แคมเปญ + ลิงก์ติดตาม</a>
+    <a href="/admin/marketing/content" class="{{ ui.btn2_cls }}">คลังเนื้อหา / ปฏิทิน</a>
+    <a href="/admin/marketing/spend" class="{{ ui.btn2_cls }}">บันทึกค่าโฆษณา</a>
+    <a href="/admin/marketing/reports" class="{{ ui.btn2_cls }}">รายงานผลสื่อ</a>
+</div>
+{% endif %}
 
 <div class="bg-white rounded-xl border border-slate-200 overflow-hidden mb-6">
     <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
@@ -82,5 +100,5 @@
     {% endif %}
 </div>
 
-<p class="text-xs text-slate-400">เดือนนี้: Lead ใหม่ (ไม่ซ้ำ) {{ stats.leads_month }} · ตรงกลุ่ม {{ stats.fit_month }} — ดูรายละเอียดที่ <a href="/admin/marketing" class="text-blue-600 hover:underline">การตลาด → ภาพรวม</a></p>
+<p class="text-xs text-slate-400">เดือนนี้: Lead ใหม่ (ไม่ซ้ำ) {{ stats.leads_month }}{% if sales %} · ตรงกลุ่ม {{ stats.fit_month }}{% endif %} — ดูรายละเอียดที่ <a href="/admin/marketing" class="text-blue-600 hover:underline">การตลาด → ภาพรวม</a></p>
 {% endblock %}

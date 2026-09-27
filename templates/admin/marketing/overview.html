@@ -7,18 +7,25 @@
 {% endblock %}
 
 {% block content %}
+{% set sales = settings.SALES_TRACKING_ENABLED %}
 {% set s = r.stats %}
 {{ ui.filters('/admin/marketing', filters, mk) }}
 
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
     {{ ui.kpi('ค่าโฆษณา', ui.money(r.spend, 'ยังไม่มีการบันทึกค่าโฆษณาในช่วงนี้'), 'กรอกเอง / นำเข้า CSV' if r.spend is not none else 'ยังไม่มีข้อมูลในช่วงนี้') }}
     {{ ui.kpi('Lead ใหม่ (ไม่ซ้ำ)', s.unique, 'บันทึก ' ~ s.submitted ~ ' · ซ้ำ ' ~ s.duplicates ~ ' · สงสัยสแปม ' ~ s.spam) }}
+    {% if sales %}
     {{ ui.kpi('Lead ตรงกลุ่ม', s.fit, 'รอตรวจอีก ' ~ s.pending ~ ' ราย', 'text-emerald-600') }}
     {{ ui.kpi('ต้นทุนต่อ Lead ตรงกลุ่ม', ui.money(r.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่มอย่างน้อย 1 ราย'), 'ค่าโฆษณา ÷ Lead ตรงกลุ่ม') }}
+    {% else %}
+    {{ ui.kpi('คลิกปุ่ม LINE', r.line_clicks, 'ครั้งเดียวต่อการเข้าเว็บ', 'text-emerald-600') }}
+    {{ ui.kpi('ค่าโฆษณาต่อคลิก LINE', ui.money(r.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE'), 'ค่าโฆษณา ÷ คลิก LINE') }}
+    {% endif %}
     {{ ui.kpi('ผู้เข้าเว็บไซต์', ui.na('ยังไม่เชื่อม GA4'), 'ยังไม่เชื่อมข้อมูล (ระยะ 2)', 'text-slate-400') }}
 </div>
 
 <div class="grid lg:grid-cols-3 gap-4 mb-6">
+    {% if sales %}
     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4">
         <div class="flex items-center justify-between mb-3">
             <h2 class="font-semibold text-sm">สถานะการขาย <span class="font-normal text-slate-400">(Lead ไม่ซ้ำที่เข้ามาในช่วงนี้ · สถานะปัจจุบัน)</span></h2>
@@ -36,6 +43,7 @@
             <span>มูลค่างานที่ปิดได้ <b class="text-emerald-700">{{ s.won_value | money if s.won else '—' }}</b></span>
         </div>
     </div>
+    {% endif %}
     <div class="bg-white rounded-xl border border-slate-200 p-4">
         <h2 class="font-semibold text-sm mb-3">การติดต่อเข้ามา</h2>
         <dl class="text-sm space-y-2">
@@ -67,10 +75,12 @@
                 <th class="px-4 py-2 text-right bg-emerald-50/60">ค่าโฆษณา/คลิก LINE</th>
                 <th class="px-4 py-2 text-right">คลิกโทร</th>
                 <th class="px-4 py-2 text-right">Lead</th>
+                {% if sales %}
                 <th class="px-4 py-2 text-right">ตรงกลุ่ม</th>
                 <th class="px-4 py-2 text-right">ต้นทุน/ตรงกลุ่ม</th>
                 <th class="px-4 py-2 text-right">เสนอราคา</th>
                 <th class="px-4 py-2 text-right">ปิดงาน</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -92,10 +102,12 @@
                 <td class="px-4 py-2 text-right whitespace-nowrap bg-emerald-50/60">{{ ui.money(row.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>
                 <td class="px-4 py-2 text-right">{{ row.phone_clicks }}</td>
                 <td class="px-4 py-2 text-right">{{ row.unique }}</td>
+                {% if sales %}
                 <td class="px-4 py-2 text-right font-semibold text-emerald-700">{{ row.fit }}</td>
                 <td class="px-4 py-2 text-right whitespace-nowrap">{{ ui.money(row.cpl_fit, 'ต้องมีทั้งค่าโฆษณาและ Lead ตรงกลุ่ม') }}</td>
                 <td class="px-4 py-2 text-right">{{ row.quoted }}</td>
                 <td class="px-4 py-2 text-right">{{ row.won }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
@@ -121,6 +133,7 @@
         </ul>
         {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ยังไม่มีโพสต์ที่วางแผนไว้</div>{% endif %}
     </div>
+    {% if sales %}
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
             <h2 class="font-semibold text-sm">นัดติดตาม Lead (ภายใน 7 วัน / เลยกำหนด)</h2>
@@ -137,6 +150,7 @@
         </ul>
         {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ไม่มีนัดติดตาม</div>{% endif %}
     </div>
+    {% endif %}
 </div>
 
 <div class="grid lg:grid-cols-2 gap-4">

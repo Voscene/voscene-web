@@ -23,6 +23,14 @@
         <option value="">ทุกแคมเปญ</option>
         {% for cid, c in campaigns.items() %}<option value="{{ cid }}" {% if f.campaign == cid %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
     </select>
+    <select name="service" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกบริการ</option>
+        {% for s in mk.SERVICES if s.key != 'other' %}<option value="{{ s.key }}" {% if f.service == s.key %}selected{% endif %}>{{ s.label }}</option>{% endfor %}
+    </select>
+    <select name="audience" class="border border-slate-300 rounded-lg px-2 py-1.5 text-sm bg-white">
+        <option value="">ทุกกลุ่มเป้าหมาย</option>
+        {% for k, label in mk.AUDIENCES %}<option value="{{ k }}" {% if f.audience == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
     <button class="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm">กรอง</button>
     <div class="ml-auto flex rounded-lg border border-slate-300 overflow-hidden text-sm">
         <a href="?view=list&status={{ f.status }}&channel={{ f.channel }}&campaign={{ f.campaign }}" class="px-3 py-1.5 {% if view != 'calendar' %}bg-slate-800 text-white{% else %}bg-white{% endif %}">รายการ</a>
@@ -78,7 +86,8 @@
         <tbody class="divide-y divide-slate-100">
             {% for it in items %}
             <tr class="hover:bg-slate-50">
-                <td class="px-4 py-2"><a href="/admin/marketing/content/{{ it.id }}" class="font-medium text-blue-700 hover:underline">{{ it.title }}</a></td>
+                <td class="px-4 py-2"><a href="/admin/marketing/content/{{ it.id }}" class="font-medium text-blue-700 hover:underline">{{ it.title }}</a>
+                    {% if it.service or it.audience %}<div class="text-[11px] text-slate-500">{{ mk.SERVICE_MAP[it.service].label if it.service in mk.SERVICE_MAP else '' }}{% if it.service and it.audience %} · {% endif %}{{ mk.AUDIENCE_LABELS.get(it.audience, '') }}</div>{% endif %}</td>
                 <td class="px-4 py-2 whitespace-nowrap">{{ mk.channel_label(it.channel) if it.channel else '—' }}</td>
                 <td class="px-4 py-2">{{ campaigns[it.campaign_id].name if it.campaign_id in campaigns else '—' }}</td>
                 <td class="px-4 py-2 whitespace-nowrap">{{ it.planned_at.strftime('%d/%m/%y %H:%M') if it.planned_at else '—' }}</td>

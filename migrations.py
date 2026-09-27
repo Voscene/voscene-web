@@ -120,10 +120,18 @@ def _m003_contact_method(conn, Base) -> str:
     return f"leads +{len(added)} columns, {n} existing leads marked web_form"
 
 
+def _m004_content_tags(conn, Base) -> str:
+    """เนื้อหาจัดหมวดตามบริการ + กลุ่มเป้าหมาย (2026-09-27) · เนื้อหาเดิมเว้นว่าง = ยังไม่จัดหมวด"""
+    added = _add_columns(conn, "mk_content", Base.metadata.tables["mk_content"])
+    return f"mk_content +{len(added)} columns"
+
+
 MIGRATIONS = [
     ("001_marketing", _m001_marketing),
     ("002_users_roles", _m002_users_roles),
     ("003_contact_method", _m003_contact_method),
+    # หมายเหตุ: branch shelved/line-webhook มี 004 ของตัวเอง — ถ้าเอากลับมาใช้ให้เปลี่ยนเป็น 005
+    ("004_content_tags", _m004_content_tags),
 ]
 
 

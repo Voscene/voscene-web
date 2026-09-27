@@ -183,6 +183,8 @@ class ContentItem(Base):
     channel = Column(String(32), default="")
     campaign_id = Column(Integer, nullable=True)
     media = Column(Text, default="[]")  # JSON: [{stored, name, size}]
+    service = Column(String(32), default="")    # 004: หมวดตามบริการ
+    audience = Column(String(24), default="")   # 004: กลุ่มเป้าหมาย
     destination = Column(String(512), default="")
     tracking_link_id = Column(Integer, nullable=True)
     planned_at = Column(DateTime, nullable=True)  # เวลาไทย (naive)

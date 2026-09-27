@@ -12,6 +12,16 @@
 <div class="grid lg:grid-cols-3 gap-6">
 <form method="post" action="/admin/marketing/content/save" enctype="multipart/form-data" class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-4 md:p-6 space-y-4">
     {% if item %}<input type="hidden" name="id" value="{{ item.id }}">{% endif %}
+    {% if not item %}
+    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <div class="text-xs font-medium text-slate-600 mb-2">เริ่มจากแม่แบบ (ไม่บังคับ) — เติมหัวข้อ หมวด และโครงข้อความให้ แล้วแก้ต่อเอง</div>
+        <div class="flex flex-wrap gap-2">
+            {% for t in mk.CONTENT_TEMPLATES %}
+            <button type="button" class="tpl-btn {{ ui.btn2_cls }} !py-1 !text-xs" data-title="{{ t.title }}" data-service="{{ t.service }}" data-audience="{{ t.audience }}" data-body="{{ t.outline }}&#10;&#10;{{ t.cta }} ทัก LINE @CSIPROAV">{{ t.title }}</button>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     <div>
         <label class="block text-sm font-medium mb-1">หัวข้อ *</label>
         <input name="title" required value="{{ v('title') }}" class="{{ ui.input_cls }}">
@@ -29,6 +39,20 @@
             <select name="campaign_id" class="{{ ui.input_cls }}">
                 <option value="">— ไม่ผูก —</option>
                 {% for c in campaigns %}<option value="{{ c.id }}" data-service="{{ c.service }}" data-goal="{{ c.goal }}" data-audience="{{ c.audience }}" {% if v('campaign_id') | string == c.id | string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">หมวด: บริการ</label>
+            <select name="service" class="{{ ui.input_cls }}">
+                <option value="">— ไม่ระบุ —</option>
+                {% for s in mk.SERVICES if s.key != 'other' %}<option value="{{ s.key }}" {% if v('service') == s.key %}selected{% endif %}>{{ s.label }}</option>{% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">หมวด: กลุ่มเป้าหมาย</label>
+            <select name="audience" class="{{ ui.input_cls }}">
+                <option value="">— ไม่ระบุ —</option>
+                {% for k, label in mk.AUDIENCES %}<option value="{{ k }}" {% if v('audience') == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
             </select>
         </div>
     </div>
@@ -186,6 +210,17 @@
         if (opt.dataset.goal) $('ai-goal').value = opt.dataset.goal;
     }
     if (campaignSel) { campaignSel.addEventListener('change', syncFromCampaign); syncFromCampaign(); }
+
+    // แม่แบบเนื้อหา — เติมเฉพาะช่องที่ยังว่าง ไม่ทับสิ่งที่พิมพ์ไว้แล้ว
+    document.querySelectorAll('.tpl-btn').forEach((b) => b.addEventListener('click', () => {
+        const f = b.closest('form');
+        if (!f.title.value) f.title.value = b.dataset.title;
+        if (!f.service.value) f.service.value = b.dataset.service;
+        if (!f.audience.value) f.audience.value = b.dataset.audience;
+        if (!$('body-text').value) $('body-text').value = b.dataset.body;
+        const s = $('ai-service').querySelector(`option[value="${b.dataset.service}"]`);
+        if (s && !s.disabled) $('ai-service').value = b.dataset.service;
+    }));
 
     async function run() {
         const btn = $('ai-go');

@@ -610,12 +610,19 @@ def test_ai_draft_grounded_and_checked(admin, monkeypatch):
 
     # บริการที่ยังไม่ยืนยัน → ไม่ร่าง และไม่เรียก AI
     sent.clear()
+    monkeypatch.setitem(mc.SERVICE_MAP["integrator"], "claim", "unconfirmed")
     r = admin.post("/admin/marketing/ai/draft", json={"service": "integrator", "channel": "facebook_page"})
     assert r.status_code == 400 and "ยังไม่ได้รับการยืนยัน" in r.json()["error"] and not sent
+    monkeypatch.setitem(mc.SERVICE_MAP["integrator"], "claim", "conditions")
+    # พันธมิตร (เจ้าของ 2026-09-27): ร่างได้พร้อมแนวทาง · เตือนคำ Demo และส่วนลด
+    r = admin.post("/admin/marketing/ai/draft", json={"service": "integrator", "channel": "facebook_page"})
+    assert r.status_code == 200 and "คุณรับงานติดตั้ง เราช่วยออกแบบและเชื่อมระบบควบคุม" in sent["messages"][1]["content"]
+    warn = " ".join(marketing_ai.check_draft("นัด Demo ได้เลย พันธมิตรรับส่วนลด 10%", "integrator"))
+    assert "Demo" in warn and "พันธมิตร" in warn
 
     # ข้อความสะอาด → ไม่มีคำเตือน
     async def clean_llm(messages):
-        return "เข้าห้องแล้วแตะปุ่มเดียว จอ ไมค์ เสียง พร้อมประชุม — ขอนัดสาธิตได้เลย"
+        return "เข้าห้องแล้วแตะปุ่มเดียว จอ ไมค์ เสียง พร้อมประชุม — นัดปรึกษาออกแบบระบบได้เลย"
     monkeypatch.setattr(marketing_ai, "call_llm", clean_llm)
     r = admin.post("/admin/marketing/ai/draft", json={"service": "one_touch", "channel": "line_oa"})
     assert r.json()["ok"] and r.json()["warnings"] == []
@@ -982,3 +989,20 @@ def test_campaign_landing_pages(client):
     assert "Graphic Paging" not in client.get("/solutions/graphic-room-control").text
     assert client.get("/solutions/nope").status_code == 404
     assert "/solutions/one-touch-meeting" in client.get("/sitemap.xml").text
+
+
+def test_content_tags_and_templates(admin):
+    """หลังบ้าน = เตรียมสื่อ + ดูผลสื่อ (เจ้าของ 2026-09-27) · เนื้อหาจัดหมวดบริการ/กลุ่มเป้าหมาย"""
+    r = admin.post("/admin/marketing/content/save", data={
+        "title": "ดูแลหลายห้อง IT", "service": "multi_room", "audience": "it_team"}, follow_redirects=False)
+    assert r.status_code == 303
+    s = db()
+    item = s.query(ContentItem).filter_by(title="ดูแลหลายห้อง IT").one()
+    assert (item.service, item.audience) == ("multi_room", "it_team")
+    s.close()
+    assert "ดูแลหลายห้อง IT" in admin.get("/admin/marketing/content?audience=it_team").text
+    assert "ดูแลหลายห้อง IT" not in admin.get("/admin/marketing/content?audience=partner").text
+    for tpl in mc.CONTENT_TEMPLATES:
+        assert "Demo" not in tpl["title"] + tpl["outline"] + tpl["cta"]
+    assert "เพิ่มระบบควบคุมในงานของผู้ติดตั้ง" in admin.get("/admin/marketing/content/new").text
+    assert mc.classify_channel("youtube", "video") == "youtube"

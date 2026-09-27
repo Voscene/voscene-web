@@ -35,8 +35,9 @@ SERVICES = [
              "เกินกว่านั้นใช้คำว่า \"รองรับการขยายได้ 200 ห้อง\" (เจ้าของตัดสิน 2026-09-27 · "
              "SW 2026-08-02: Master Controller ยังไม่มีโค้ด — เช็คสถานะก่อนรับงานเกิน 20 ห้อง)"},
     {"key": "integrator", "label": "ระบบควบคุมสำหรับบริษัทติดตั้ง AV / ผู้รับเหมา",
-     "claim": "unconfirmed",
-     "note": "ยังไม่มีเงื่อนไขพาร์ทเนอร์/ราคาสำหรับผู้รับเหมาที่ยืนยันแล้ว — ถาม PM ก่อนยิงโฆษณา"},
+     "claim": "conditions",
+     "note": "ใช้แนวทาง \"คุณรับงานติดตั้ง เราช่วยออกแบบและเชื่อมระบบควบคุม\" (เจ้าของ 2026-09-27) · "
+             "ห้ามระบุส่วนลด ส่วนแบ่ง หรือเงื่อนไขราคาพันธมิตร — เจ้าของกำหนดเป็นรายกรณี"},
     {"key": "other", "label": "อื่น ๆ / ยังไม่ระบุ", "claim": "ready", "note": ""},
 ]
 SERVICE_MAP = {s["key"]: s for s in SERVICES}
@@ -62,6 +63,8 @@ CHANNELS = [
      "open_url": "https://www.facebook.com/groups/", "spend": False},
     {"key": "tiktok", "label": "TikTok", "source": "tiktok", "medium": "social",
      "open_url": "https://www.tiktok.com/", "spend": True},
+    {"key": "youtube", "label": "YouTube", "source": "youtube", "medium": "video",
+     "open_url": "https://studio.youtube.com/", "spend": True},
     {"key": "line_oa", "label": "LINE OA", "source": "line", "medium": "social",
      "open_url": "https://manager.line.biz/", "spend": True},
     {"key": "email", "label": "อีเมล", "source": "email", "medium": "email",
@@ -102,6 +105,8 @@ def classify_channel(source: str, medium: str, referrer: str = "", own_host: str
             return "facebook_page"
         if s == "tiktok":
             return "tiktok"
+        if s in ("youtube", "yt"):
+            return "youtube"
         if s == "line":
             return "line_oa"
         if m == "email" or s == "email":
@@ -142,6 +147,48 @@ CONTACT_METHODS = [
     ("walkin", "พบตัว / งานแสดงสินค้า / แนะนำต่อ"), ("web_form", "ฟอร์มบนเว็บ (รุ่นเก่า)"),
 ]
 CONTACT_METHOD_LABELS = dict(CONTACT_METHODS)
+
+# ============ หมวดเนื้อหา + แม่แบบ — เป็นแนวทาง ไม่ใช่โพสต์ (เจ้าของ 2026-09-27) ============
+# ไม่มีชุดสาธิตควบคุมอุปกรณ์จริง → ห้ามคำว่า Demo / สาธิต · คลิปใช้บันทึกหน้าจอซอฟต์แวร์
+AUDIENCES = [
+    ("existing_customer", "ลูกค้าเดิมของ CSI"),
+    ("room_admin", "ผู้ดูแลห้องประชุม / ผู้ใช้ห้อง"),
+    ("it_team", "ทีม IT / ผู้ดูแลระบบ"),
+    ("building", "ฝ่ายอาคาร"),
+    ("partner", "พันธมิตร / ผู้ติดตั้ง"),
+]
+AUDIENCE_LABELS = dict(AUDIENCES)
+CTAS = ["ส่งรายการอุปกรณ์เพื่อประเมินการเชื่อมต่อ", "นัดปรึกษาออกแบบระบบ"]
+CONTENT_TEMPLATES = [
+    {"key": "before_after", "title": "ก่อน–หลัง: จากหลายรีโมตเป็นหน้าควบคุมเดียว",
+     "service": "single_panel", "audience": "existing_customer", "cta": CTAS[0],
+     "outline": "\n".join([
+         "ก่อน: รีโมตหลายตัว / ขั้นตอนเปิดห้องที่ยุ่งยาก",
+         "หลัง: หน้าควบคุมเดียวที่รวมอุปกรณ์เดิมที่รองรับ",
+         "เงื่อนไข: ตรวจรุ่น พอร์ต และโปรโตคอลก่อน — ไม่รับประกันว่าใช้ของเดิมได้ทั้งหมด"])},
+    {"key": "screen_clip", "title": "คลิปหน้าจอควบคุม: กดปุ่มเดียวแล้วซีนทำงาน",
+     "service": "one_touch", "audience": "room_admin", "cta": CTAS[1],
+     "outline": "\n".join([
+         "บันทึกหน้าจอซอฟต์แวร์: กด “เริ่มประชุม” → ซีนเปลี่ยน → กด “เลิกประชุม”",
+         "ห้ามสื่อว่าเป็นการควบคุมอุปกรณ์จริงในคลิป (ยังไม่มีชุดสาธิต)",
+         "เงื่อนไข: ควบคุมได้เฉพาะอุปกรณ์ที่รองรับและผ่านการตั้งค่าแล้ว"])},
+    {"key": "user_problem", "title": "แก้ปัญหาผู้ใช้เปิดห้องประชุมไม่เป็น",
+     "service": "one_touch", "audience": "room_admin", "cta": CTAS[1],
+     "outline": "\n".join([
+         "ปัญหา: ต้องเรียกเจ้าหน้าที่ทุกครั้ง / ไม่รู้ลำดับเปิดเครื่อง",
+         "ทางแก้: ผู้ใช้เห็นเฉพาะปุ่มที่ต้องใช้ ช่างตั้งค่าให้ตอนติดตั้ง"])},
+    {"key": "multi_room_it", "title": "ดูแลหลายห้องจากจุดเดียว สำหรับทีม IT",
+     "service": "multi_room", "audience": "it_team", "cta": CTAS[1],
+     "outline": "\n".join([
+         "ปัญหา: ต้องเดินดูทีละห้อง",
+         "ทางแก้: Dashboard ดูสถานะและสั่งงานอุปกรณ์ที่รองรับ",
+         "เงื่อนไขทุกครั้ง: สูงสุด 20 ห้องต่อชุดควบคุม และทุกห้องอยู่ในเครือข่ายเดียวกัน"])},
+    {"key": "installer", "title": "เพิ่มระบบควบคุมในงานของผู้ติดตั้ง",
+     "service": "integrator", "audience": "partner", "cta": CTAS[1],
+     "outline": "\n".join([
+         "แนวทาง: “คุณรับงานติดตั้ง เราช่วยออกแบบและเชื่อมระบบควบคุม”",
+         "ห้ามระบุส่วนลด ส่วนแบ่ง หรือเงื่อนไขราคาพันธมิตร"])},
+]
 
 REQUEST_TYPES = [("consult", "ปรึกษา / ประเมิน"), ("demo", "ขอนัดปรึกษาออกแบบ"), ("quote", "ขอใบเสนอราคา")]
 REQUEST_TYPE_LABELS = dict(REQUEST_TYPES)

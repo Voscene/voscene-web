@@ -71,6 +71,8 @@ def _catalog() -> dict:
         "GROUP_POST_STATUS_LABELS": mc.GROUP_POST_STATUS_LABELS,
         "RELEVANCE": mc.RELEVANCE, "RELEVANCE_LABELS": mc.RELEVANCE_LABELS,
         "UNKNOWN_SOURCE": mc.UNKNOWN_SOURCE,
+        "AUDIENCES": mc.AUDIENCES, "AUDIENCE_LABELS": mc.AUDIENCE_LABELS,
+        "CONTENT_TEMPLATES": mc.CONTENT_TEMPLATES, "CTAS": mc.CTAS,
     }
 
 
@@ -683,6 +685,11 @@ async def content_list(request: Request, db: Session = Depends(get_db),
     campaign_id = mc.parse_int(qp.get("campaign"))
     if campaign_id:
         q = q.filter(ContentItem.campaign_id == campaign_id)
+    service, audience = qp.get("service", ""), qp.get("audience", "")
+    if service in mc.SERVICE_MAP:
+        q = q.filter(ContentItem.service == service)
+    if audience in mc.AUDIENCE_LABELS:
+        q = q.filter(ContentItem.audience == audience)
 
     today = mc.bkk_today()
     month = qp.get("month", "")
@@ -706,7 +713,8 @@ async def content_list(request: Request, db: Session = Depends(get_db),
                    prev_month=f"{prev_m.year}-{prev_m.month:02d}",
                    next_month=f"{next_m.year}-{next_m.month:02d}",
                    campaigns=camps, f={"status": status, "channel": channel,
-                                       "campaign": campaign_id or ""})
+                                       "campaign": campaign_id or "",
+                                       "service": service, "audience": audience})
 
 
 @router.get("/content/new", response_class=HTMLResponse)
@@ -805,6 +813,9 @@ async def content_save(request: Request, db: Session = Depends(get_db),
     item.planned_at = _parse_dt_local(_s(form, "planned_at", 20))
     item.owner = _s(form, "owner", 100)
     item.notes = _s(form, "notes", 4000)
+    svc, aud = _s(form, "service", 32), _s(form, "audience", 24)
+    item.service = svc if svc in mc.SERVICE_MAP else ""
+    item.audience = aud if aud in mc.AUDIENCE_LABELS else ""
     item.status = status
     db.flush()
 

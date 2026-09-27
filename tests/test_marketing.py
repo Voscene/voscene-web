@@ -756,3 +756,38 @@ def test_web_forms_closed_by_default(client):
     s.expire_all()
     assert s.query(Lead).count() == before  # ไม่มีอะไรถูกบันทึก
     s.close()
+
+
+def test_chat_ref_from_line_message(admin):
+    # ตัวอ่านรหัส: ทั้งข้อความแชตทั้งก้อน / เฉพาะรหัส / เข้าเว็บตรง / อ่านไม่ออก
+    full = "สวัสดีครับ สนใจระบบ Voscene\n(รหัสอ้างอิง: one-touch-gov-q4/facebook.group/fg7)"
+    assert mc.parse_chat_ref(full) == {"utm_source": "facebook", "utm_medium": "group",
+                                       "utm_campaign": "one-touch-gov-q4", "utm_content": "fg7",
+                                       "referrer": ""}
+    assert mc.parse_chat_ref("-/google.cpc")["utm_campaign"] == ""
+    assert mc.parse_chat_ref("web") == {"utm_source": "", "utm_medium": "", "utm_campaign": "",
+                                        "utm_content": "", "referrer": ""}
+    assert mc.parse_chat_ref("web/google.com")["referrer"] == "https://google.com/"
+    assert mc.parse_chat_ref("สวัสดีครับ อยากได้ราคา") is None
+    assert mc.parse_chat_ref("abc/def") is None  # ไม่มี source.medium
+
+    s = db()
+    camp = s.query(Campaign).filter_by(code="one-touch-gov-q4").one()
+    item = s.query(ContentItem).filter_by(campaign_id=camp.id).first()
+    # รหัสชนะช่องที่เลือกเอง (เลือก unknown ไว้ แต่รหัสบอก Facebook Page + โพสต์ในคลัง)
+    r = admin.post("/admin/leads/create", data={
+        "name": "ลูกค้าจากแชต", "contact_method": "line", "channel": "unknown",
+        "chat_ref": f"(รหัสอ้างอิง: one-touch-gov-q4/facebook.social/ci{item.id}-page)"},
+        follow_redirects=False)
+    lead = s.get(Lead, int(r.headers["location"].split("/")[-1].split("?")[0]))
+    assert (lead.channel, lead.campaign_id, lead.content_item_id) == ("facebook_page", camp.id, item.id)
+    assert lead.utm_source == "facebook" and lead.service_interest == "one_touch"
+    # เข้าเว็บจาก Google (ไม่มี UTM) → ค้นหาทั่วไป
+    r = admin.post("/admin/leads/create", data={"name": "จาก Google", "contact_method": "line",
+                                                "chat_ref": "web/google.co.th"}, follow_redirects=False)
+    assert s.get(Lead, int(r.headers["location"].split("/")[-1].split("?")[0])).channel == "organic_search"
+    # รหัสเสีย → แจ้ง ไม่บันทึก
+    r = admin.post("/admin/leads/create", data={"name": "x", "contact_method": "line",
+                                                "chat_ref": "อะไรก็ไม่รู้"}, follow_redirects=False)
+    assert "error=" in r.headers["location"]
+    s.close()

@@ -60,6 +60,19 @@ APP_VERSION = os.getenv("APP_VERSION", "2.0.0")
 templates.env.globals["APP_VERSION"] = APP_VERSION
 
 
+def _asset_version(path: str) -> str:
+    """รหัสสั้นจากเนื้อหาไฟล์ — ต่อท้าย URL (?v=) ให้เบราว์เซอร์โหลดใหม่ทันทีที่ไฟล์เปลี่ยน
+    ไม่งั้นผู้เข้าชมเดิมจะใช้สคริปต์เก่าในแคชต่อไปอีกนาน"""
+    import hashlib
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:10]
+    except OSError:
+        return APP_VERSION
+
+
+templates.env.globals["VS_TRACK_V"] = _asset_version("static/js/vs-track.js")
+
+
 # Contact numbers are free text from the CMS (may hold a name and several lines),
 # so linkify the number runs instead of wrapping the whole field.
 _PHONE_RE = re.compile(r"0\d[\d\s\-]{7,12}\d")
@@ -836,6 +849,20 @@ async def admin_lead_create(request: Request, db: Session = Depends(get_db)):
     if channel not in mc.CHANNEL_MAP:
         channel = "unknown"
     camp = db.get(Campaign, mc.parse_int(form.get("campaign_id")) or 0)
+    # รหัสอ้างอิงจากข้อความ LINE (ปุ่มบนเว็บพิมพ์ไว้ให้) แม่นกว่าการถามลูกค้า → ชนะช่องที่เลือกเอง
+    ref_text = get("chat_ref", 500)
+    ref = mc.parse_chat_ref(ref_text)
+    if ref_text and not ref:
+        from urllib.parse import quote
+        return RedirectResponse(f"/admin/leads/new?error={quote('อ่านรหัสอ้างอิงไม่ออก — คัดลอกทั้งบรรทัดจากแชต หรือเว้นว่างแล้วเลือกช่องทางเอง')}",
+                                status_code=303)
+    ref_content = (None, None)
+    if ref:
+        channel = mc.classify_channel(ref["utm_source"], ref["utm_medium"], ref["referrer"],
+                                      mc.site_host(settings.APP_URL))
+        if ref["utm_campaign"]:
+            camp = db.query(Campaign).filter_by(code=ref["utm_campaign"]).first() or camp
+        ref_content = mc.parse_content_ref(ref["utm_content"])
     service = get("service_interest", 32)
     rt = get("request_type", 16)
     qual = get("qualification", 16)
@@ -853,6 +880,13 @@ async def admin_lead_create(request: Request, db: Session = Depends(get_db)):
         request_type=rt if rt in mc.REQUEST_TYPE_LABELS else "",
         assigned_to=assignee,
     )
+    if ref:
+        lead.utm_source, lead.utm_medium = ref["utm_source"][:128], ref["utm_medium"][:128]
+        lead.utm_campaign = ref["utm_campaign"][:128] or lead.utm_campaign
+        lead.utm_content, lead.referrer = ref["utm_content"][:128], ref["referrer"][:512]
+        ci, gp = ref_content
+        lead.content_item_id = ci if ci and db.get(ContentItem, ci) else None
+        lead.group_post_id = gp if gp and db.get(FbGroupPost, gp) else None
     # ใช้ตัวตรวจซ้ำเดียวกับฟอร์ม (ไม่มี form_ms / honeypot → ไม่ติดป้ายสแปม)
     marketing.screen_lead(db, lead, {}, honeypot=False)
     db.add(lead)
@@ -861,7 +895,8 @@ async def admin_lead_create(request: Request, db: Session = Depends(get_db)):
     if note:
         db.add(LeadNote(lead_id=lead.id, text=note, created_by=user.username))
     _lead_audit(db, user, "lead_create_manual", lead.id,
-                {"contact_method": method, "channel": channel, "campaign": camp.code if camp else ""})
+                {"contact_method": method, "channel": channel, "campaign": camp.code if camp else "",
+                 "chat_ref": bool(ref)})
     db.commit()
     return RedirectResponse(f"/admin/leads/{lead.id}?saved=1", status_code=303)
 

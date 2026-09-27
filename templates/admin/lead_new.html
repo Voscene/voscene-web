@@ -45,7 +45,12 @@
     </div>
 
     <div class="rounded-lg border border-slate-200 p-4 space-y-4 bg-slate-50">
-        <div class="text-sm font-medium">ลูกค้าเห็นเราจากที่ไหน <span class="font-normal text-slate-500">— ถามลูกค้าได้ ช่วยให้รายงานรู้ว่าโฆษณาไหนได้ผล</span></div>
+        <div class="text-sm font-medium">ลูกค้าเห็นเราจากที่ไหน <span class="font-normal text-slate-500">— ช่วยให้รายงานรู้ว่าโฆษณาไหนได้ผล</span></div>
+        <div>
+            <label class="block text-xs text-slate-500 mb-1">รหัสอ้างอิงจากแชต LINE (ถ้ามี)</label>
+            <input name="chat_ref" maxlength="500" class="{{ ui.input_cls }} font-mono" placeholder="วางบรรทัด (รหัสอ้างอิง: …) จากข้อความแรกของลูกค้า">
+            <p class="text-[11px] text-slate-400 mt-1">ลูกค้าที่กดปุ่ม LINE บนเว็บจะส่งรหัสนี้มากับข้อความแรก — ถ้าวางไว้ ระบบเติมช่องทาง / แคมเปญ / โพสต์ให้เอง (ชนะช่องด้านล่าง) · ไม่มีรหัส = ถามลูกค้าแล้วเลือกเอง</p>
+        </div>
         <div class="grid sm:grid-cols-2 gap-4">
             <div>
                 <label class="block text-xs text-slate-500 mb-1">ช่องทาง</label>

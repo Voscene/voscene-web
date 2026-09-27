@@ -77,11 +77,40 @@
     } catch (e) { /* ignore */ }
   }
 
+  // ---- รหัสอ้างอิงในข้อความ LINE ----
+  // เว็บไม่มีฟอร์มแล้ว แหล่งที่มาจะหายตรงจุดที่ลูกค้ากด LINE จึงพิมพ์รหัสสั้น ๆ ไว้ในข้อความแรกให้
+  // ทีมคัดลอกไปวางใน "+ เพิ่ม Lead" (marketing_core.parse_chat_ref อ่านรูปแบบเดียวกันนี้)
+  //   แคมเปญ/source.medium[/content]  ·  ไม่มี UTM = web หรือ web/โฮสต์ที่พามา
+  function slug(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60); }
+  function chatRef() {
+    var a = read() || {};
+    if (a.utm_source || a.utm_campaign) {
+      var ref = (slug(a.utm_campaign) || '-') + '/' + slug(a.utm_source) + '.' + slug(a.utm_medium);
+      return a.utm_content ? ref + '/' + slug(a.utm_content) : ref;
+    }
+    try { if (a.referrer) return 'web/' + bare(new URL(a.referrer).hostname); } catch (e) { /* ignore */ }
+    return 'web';
+  }
+  function lineMessageUrl(href) {
+    // เฉพาะลิงก์ที่รู้ LINE ID (…/ti/p/@ID) — lin.ee ย่อไม่มี ID ให้ใช้ลิงก์เดิม
+    var m = /line\.me\/R\/ti\/p\/(@[A-Za-z0-9._-]+)/i.exec(href);
+    if (!m) return '';
+    var text = 'สวัสดีครับ สนใจระบบ Voscene\n(รหัสอ้างอิง: ' + chatRef() + ')';
+    return 'https://line.me/R/oaMessage/' + encodeURIComponent(m[1]) + '/?' + encodeURIComponent(text);
+  }
+  window.vsChatRef = chatRef;
+
   document.addEventListener('click', function (e) {
     var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
     if (!a) return;
     var href = a.getAttribute('href') || '';
     if (href.indexOf('tel:') === 0) track('phone_click');
-    else if (/(^|\/\/)(line\.me|lin\.ee)\//i.test(href)) track('line_click');
+    else if (/(^|\/\/)(line\.me|lin\.ee)\//i.test(href)) {
+      track('line_click');
+      try {
+        var withRef = lineMessageUrl(href);
+        if (withRef) a.setAttribute('href', withRef); // เปลี่ยนก่อนเบราว์เซอร์เปิดลิงก์ (capture phase)
+      } catch (err) { /* ใช้ลิงก์เดิม */ }
+    }
   }, true);
 })();

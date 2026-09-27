@@ -324,6 +324,37 @@ def parse_content_ref(utm_content: str) -> tuple:
     return None, None
 
 
+_CHAT_REF_RE = re.compile(r"(?:รหัสอ้างอิง\s*[:：]\s*)?([a-z0-9_\-]+(?:/[a-z0-9_.\-]+){0,2})", re.I)
+
+
+def parse_chat_ref(text: str) -> Optional[dict]:
+    """อ่านรหัสอ้างอิงที่ปุ่ม LINE บนเว็บพิมพ์ไว้ในข้อความแรก (vs-track.js → chatRef)
+
+    รับได้ทั้งข้อความแชตทั้งก้อน หรือเฉพาะรหัส · รูปแบบ:
+      แคมเปญ/source.medium[/content]  → มาจากลิงก์ติดตาม
+      web · web/โฮสต์                  → เข้าเว็บตรง / มาจากเว็บอื่น (ไม่มี UTM)
+    อ่านไม่ออก → None (ไม่เดา)
+    """
+    text = (text or "").strip()
+    if not text:
+        return None
+    marked = re.search(r"รหัสอ้างอิง\s*[:：]\s*([^\s)]+)", text)
+    raw = (marked.group(1) if marked else text).strip().lower()
+    if not _CHAT_REF_RE.fullmatch(raw):
+        return None
+    parts = raw.split("/")
+    if parts[0] == "web":
+        host = parts[1] if len(parts) > 1 else ""
+        return {"utm_source": "", "utm_medium": "", "utm_campaign": "", "utm_content": "",
+                "referrer": f"https://{host}/" if host else ""}
+    if len(parts) < 2 or "." not in parts[1]:
+        return None
+    source, medium = parts[1].split(".", 1)
+    campaign = "" if parts[0] == "-" else parts[0]
+    return {"utm_source": source, "utm_medium": medium, "utm_campaign": campaign,
+            "utm_content": parts[2] if len(parts) > 2 else "", "referrer": ""}
+
+
 def clean_utm_value(value: str) -> str:
     """ค่าที่มาจากเบราว์เซอร์ — ตัดความยาว ตัดอักขระควบคุม ไม่แปลงอย่างอื่น"""
     value = re.sub(r"[\x00-\x1f\x7f]", "", (value or "")).strip()

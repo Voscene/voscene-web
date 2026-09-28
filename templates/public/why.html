@@ -94,69 +94,113 @@
     </div>
 </section>
 
-<!-- moved from the homepage: HOW WE COMPARE -->
+{# HOW WE COMPARE — เจ้าของ 2026-09-28: ภาษาไทย คำกลาง ๆ ไม่โจมตีระบบอื่น (คำที่แปลยากมีวงเล็บอังกฤษ)
+   แถว Setup Time ตัดตั้งแต่ 2026-09-27 — ไม่สัญญาระยะเวลาติดตั้ง #}
 <section class="py-20 md:py-28 bg-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
             <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">HOW WE COMPARE</div>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">Traditional AV vs <span class="text-electric">Voscene</span></h2>
-            <p class="text-slate-600 text-lg font-th">ทำไม Voscene ถึงต่างจากระบบ AV ดั้งเดิม</p>
+            <h2 class="font-th text-3xl md:text-5xl font-semibold mb-4 text-navy">เทียบกับ<span class="text-electric">ระบบควบคุมแบบทั่วไป</span></h2>
+            <p class="text-slate-600 text-lg font-th">จุดที่ Voscene ออกแบบต่างออกไป — แต่ละระบบเหมาะกับงานต่างกัน เลือกตามการใช้งานของห้อง</p>
         </div>
 
-        <div class="card rounded-2xl overflow-hidden">
+        {# มือถือ: การ์ดเรียงลง (ตาราง 3 คอลัมน์แคบเกินไป) #}
+        <div class="md:hidden space-y-3 font-th">
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">หน้าจอควบคุม (Touch Panel)</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: มักใช้จอสัมผัสเฉพาะรุ่นของระบบ</div>
+                <div class="text-sm text-electric font-semibold">Voscene: ใช้เบราว์เซอร์บนแท็บเล็ต มือถือ หรือคอมพิวเตอร์</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">การตั้งค่าระบบ (Programming)</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: ตั้งค่าด้วยซอฟต์แวร์ของระบบนั้น โดยผู้เชี่ยวชาญเฉพาะ</div>
+                <div class="text-sm text-electric font-semibold">Voscene: ช่างตั้งค่าผ่านหน้าเว็บ ไม่ต้องเขียนโปรแกรม</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">เชื่อมอุปกรณ์หลายยี่ห้อ (Multi-protocol)</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: ขึ้นกับไดรเวอร์ที่ผู้ผลิตระบบรองรับ</div>
+                <div class="text-sm text-electric font-semibold">Voscene: ใช้โปรโตคอลมาตรฐาน เชื่อมได้หลายยี่ห้อ</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">หน้าจอภาษาไทย</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: ขึ้นกับการออกแบบหน้าจอของแต่ละงาน</div>
+                <div class="text-sm text-electric font-semibold">Voscene: มีภาษาไทยในตัว</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">กล้องหันตามคนพูด (Auto Tracking)</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: มักใช้อุปกรณ์ติดตามแยกต่างหาก</div>
+                <div class="text-sm text-electric font-semibold">Voscene: ทำงานร่วมกับชุดไมค์ประชุมที่รองรับ</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">ชุดไมค์ประชุม (Conference System)</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: เชื่อมต่อตามที่ออกแบบในแต่ละโครงการ</div>
+                <div class="text-sm text-electric font-semibold">Voscene: มีโมดูลเชื่อมต่อสำหรับรุ่นที่รองรับ</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">LINE</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: ขึ้นกับการพัฒนาเพิ่มของแต่ละงาน</div>
+                <div class="text-sm text-electric font-semibold">Voscene: สั่งงานและรับแจ้งเตือนผ่าน LINE</div>
+            </div>
+            <div class="card rounded-xl p-4">
+                <div class="font-semibold text-navy mb-2">AI</div>
+                <div class="text-xs text-slate-500 mb-1">ระบบควบคุมทั่วไป: ขึ้นกับระบบและส่วนเสริม</div>
+                <div class="text-sm text-electric font-semibold">Voscene: รองรับการเชื่อมต่อ AI</div>
+            </div>
+        </div>
+        <div class="hidden md:block card rounded-2xl overflow-hidden">
             <table class="w-full">
                 <thead>
                     <tr class="border-b border-slate-200 bg-cloud">
-                        <th class="px-6 py-4 text-left font-display font-semibold text-navy text-sm">FEATURE</th>
-                        <th class="px-6 py-4 text-left text-slate-500 font-mono text-xs tracking-wider">TRADITIONAL AV</th>
-                        <th class="px-6 py-4 text-left text-electric font-mono text-xs tracking-wider font-bold border-l-2 border-electric bg-electric/[0.06]">★ VOSCENE</th>
+                        <th class="px-4 md:px-6 py-4 text-left font-th font-semibold text-navy text-sm">หัวข้อ</th>
+                        <th class="px-4 md:px-6 py-4 text-left text-slate-500 font-th text-sm">ระบบควบคุมทั่วไป</th>
+                        <th class="px-4 md:px-6 py-4 text-left text-electric font-th text-sm font-bold border-l-2 border-electric bg-electric/[0.06]">Voscene</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm font-th">
-                    {# แถว Setup Time (<24 hours) ตัดออก 2026-09-27 — เจ้าของไม่ให้สัญญาระยะเวลาติดตั้ง #}
                     <tr class="border-b border-slate-100 bg-slate-50/50">
-                        <td class="px-6 py-3.5 font-medium text-navy">Touch Panel</td>
-                        <td class="px-6 py-3.5 text-slate-500">Required, expensive</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Not needed (browser)</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">หน้าจอควบคุม (Touch Panel)</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">มักใช้จอสัมผัสเฉพาะรุ่นของระบบ</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">ใช้เบราว์เซอร์บนแท็บเล็ต มือถือ หรือคอมพิวเตอร์</td>
                     </tr>
                     <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">Programming</td>
-                        <td class="px-6 py-3.5 text-slate-500">Specialist required</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">In-browser settings</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">การตั้งค่าระบบ (Programming)</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">ตั้งค่าด้วยซอฟต์แวร์ของระบบนั้น โดยผู้เชี่ยวชาญเฉพาะ</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">ช่างตั้งค่าผ่านหน้าเว็บ ไม่ต้องเขียนโปรแกรม</td>
                     </tr>
                     <tr class="border-b border-slate-100 bg-slate-50/50">
-                        <td class="px-6 py-3.5 font-medium text-navy">Multi-protocol</td>
-                        <td class="px-6 py-3.5 text-slate-500">Vendor-locked</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Open standards</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">เชื่อมอุปกรณ์หลายยี่ห้อ (Multi-protocol)</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">ขึ้นกับไดรเวอร์ที่ผู้ผลิตระบบรองรับ</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">ใช้โปรโตคอลมาตรฐาน เชื่อมได้หลายยี่ห้อ</td>
                     </tr>
                     <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">Thai Language</td>
-                        <td class="px-6 py-3.5 text-slate-500">Rare</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native support</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">หน้าจอภาษาไทย</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">ขึ้นกับการออกแบบหน้าจอของแต่ละงาน</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">มีภาษาไทยในตัว</td>
                     </tr>
                     <tr class="border-b border-slate-100 bg-slate-50/50">
-                        <td class="px-6 py-3.5 font-medium text-navy">Video Tracking</td>
-                        <td class="px-6 py-3.5 text-slate-500">Separate hardware device</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Built-in capability</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">กล้องหันตามคนพูด (Auto Tracking)</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">มักใช้อุปกรณ์ติดตามแยกต่างหาก</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">ทำงานร่วมกับชุดไมค์ประชุมที่รองรับ</td>
                     </tr>
                     <tr class="border-b border-slate-100">
-                        <td class="px-6 py-3.5 font-medium text-navy">Conference Integration</td>
-                        <td class="px-6 py-3.5 text-slate-500">Custom programming</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Standard integration</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">ชุดไมค์ประชุม (Conference System)</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">เชื่อมต่อตามที่ออกแบบในแต่ละโครงการ</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">มีโมดูลเชื่อมต่อสำหรับรุ่นที่รองรับ</td>
                     </tr>
                     <tr class="border-b border-slate-100 bg-slate-50/50">
-                        <td class="px-6 py-3.5 font-medium text-navy">LINE Integration</td>
-                        <td class="px-6 py-3.5 text-slate-500">None</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">Native — control + alerts</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">LINE</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">ขึ้นกับการพัฒนาเพิ่มของแต่ละงาน</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">สั่งงานและรับแจ้งเตือนผ่าน LINE</td>
                     </tr>
                     <tr>
-                        <td class="px-6 py-3.5 font-medium text-navy">AI Control</td>
-                        <td class="px-6 py-3.5 text-slate-500">Add-on, limited</td>
-                        <td class="px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">รองรับการเชื่อมต่อ AI</td>
+                        <td class="px-4 md:px-6 py-3.5 font-medium text-navy">AI</td>
+                        <td class="px-4 md:px-6 py-3.5 text-slate-500">ขึ้นกับระบบและส่วนเสริม</td>
+                        <td class="px-4 md:px-6 py-3.5 text-electric font-semibold border-l-2 border-electric/40 bg-electric/[0.04]">รองรับการเชื่อมต่อ AI</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <p class="text-center text-slate-500 text-xs font-th mt-4">ความสามารถของระบบอื่นขึ้นกับผู้ผลิตและการออกแบบแต่ละงาน · Voscene ควบคุมได้เฉพาะอุปกรณ์ที่รองรับและผ่านการตั้งค่าแล้ว</p>
     </div>
 </section>
 

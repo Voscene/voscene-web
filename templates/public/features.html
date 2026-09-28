@@ -458,143 +458,46 @@
     </div>
 </section>
 
-<!-- Protocol Support -->
+<!-- Protocol Support — เจ้าของ 2026-09-28: เล่าแบบ "คุมอุปกรณ์อะไรได้" ภาษาไทย กระชับ · ชื่อโปรโตคอลเป็นป้ายเล็กสำหรับช่าง
+     ตัดรายละเอียดภายใน (พอร์ต UDP, MD5, token, sensor bus) และป้าย NEW V2 · คงป้าย อุปกรณ์เสริม / กำลังพัฒนา -->
 <section class="py-20 bg-cloud border-y border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">Protocol ที่รองรับ</h2>
-            <p class="text-slate-600 max-w-2xl mx-auto font-th">รองรับอุปกรณ์ AV หลากหลายยี่ห้อที่ใช้โปรโตคอลมาตรฐาน — ไม่ต้องมีรุ่นในลิสต์ก็คุมได้ถ้าพูดโปรโตคอลที่รองรับ</p>
+            <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">คุมอุปกรณ์อะไรได้บ้าง</h2>
+            <p class="text-slate-600 max-w-2xl mx-auto font-th">ใช้โปรโตคอลมาตรฐาน จึงคุมได้หลายยี่ห้อ — รุ่นไม่อยู่ในรายการก็คุมได้ ถ้ารองรับโปรโตคอลเดียวกัน</p>
         </div>
 
+        {% set devices = [
+            ('electric', 'โปรเจกเตอร์', 'PJLink · LAN', ['เปิด–ปิด และเลือกช่องภาพ', 'ดูสถานะและชั่วโมงหลอดภาพ'], ''),
+            ('signal', 'Smart TV / จอแสดงผล', 'LAN · Wake-on-LAN', ['เปิดเครื่องผ่านเครือข่าย', 'เลือกช่องภาพ'], ''),
+            ('purple', 'สวิตช์ภาพ · มิกเซอร์ · แอมป์', 'RS-232 · Telnet', ['สลับภาพไปยังจอต่าง ๆ', 'ปรับและปิดเสียงรายช่อง'], 'addon'),
+            ('amber', 'ไฟห้อง', 'DMX512', ['หรี่ไฟ และไฟ LED สี', 'ตั้งฉากแสงตามซีน'], 'addon'),
+            ('pink', 'จอม้วนไฟฟ้า · ปลั๊กไฟ', 'รีเลย์', ['ขึ้น–ลงจอ', 'เปิด–ปิดไฟและอุปกรณ์ทั้งห้อง'], 'addon'),
+            ('rose', 'อุปกรณ์รุ่นเก่า (รีโมต)', 'IR', ['เรียนรู้คำสั่งจากรีโมตเดิม', 'สั่งผ่านตัวส่ง IR บนเครือข่าย ไม่ต้องเดินสาย'], 'addon'),
+            ('emerald', 'กล้อง PTZ', 'VISCA over IP', ['หมุน ซูม เรียกตำแหน่งที่ตั้งไว้', 'ได้สูงสุด 4 ตัวต่อชุดควบคุม'], ''),
+            ('emerald', 'ชุดไมค์ประชุม', 'LAN', ['เปิด–ปิดไมค์', 'กล้องหันตามคนพูดอัตโนมัติ'], ''),
+            ('emerald', 'ระบบประชุมทางไกล', 'LAN', ['เข้า–ออกห้องประชุม ปิดเสียง', 'สั่งพร้อมซีนในปุ่มเดียว'], ''),
+            ('cyan', 'ระบบประกาศหลายโซน', 'Multicast', ['ประกาศพร้อมกันหลายห้อง', 'ประกาศเหตุฉุกเฉิน'], 'dev'),
+        ] %}
+        {% set colors = {'electric': ('border-l-electric', 'text-electric'), 'signal': ('border-l-signal', 'text-signal'),
+            'purple': ('border-l-purple-500', 'text-purple-600'), 'amber': ('border-l-amber-500', 'text-amber-600'),
+            'pink': ('border-l-pink-500', 'text-pink-600'), 'rose': ('border-l-rose-500', 'text-rose-600'),
+            'emerald': ('border-l-emerald-500', 'text-emerald-600'), 'cyan': ('border-l-cyan-500', 'text-cyan-600')} %}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-            <div class="card rounded-xl p-5 border-l-4 border-l-electric">
-                <div class="text-electric font-semibold mb-2">PJLink / TCP-IP</div>
+            {% for color, title, proto, points, tag in devices %}
+            {% set border, text = colors[color] %}
+            <div class="card rounded-xl p-5 border-l-4 {{ border }} relative">
+                {% if tag == 'addon' %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold font-th" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
+                {% elif tag == 'dev' %}<span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-th">กำลังพัฒนา</span>{% endif %}
+                <div class="{{ text }} font-semibold font-th text-lg pr-20">{{ title }}</div>
+                <div class="text-[11px] text-slate-500 font-mono mb-2">{{ proto }}</div>
                 <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Projector เปิด-ปิด</li>
-                    <li>• Input Source เลือก</li>
-                    <li>• Lamp Hours / Status</li>
-                    <li>• MD5 authentication · 5+ brands</li>
+                    {% for p in points %}<li>• {{ p }}</li>{% endfor %}
                 </ul>
             </div>
-            <div class="card rounded-xl p-5 border-l-4 border-l-signal">
-                <div class="text-signal font-semibold mb-2">WebSocket / WoL</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Smart TV Control</li>
-                    <li>• Wake-on-LAN Power On</li>
-                    <li>• Input Source Select</li>
-                    <li>• WebOS / Tizen / REST+IRCC</li>
-                </ul>
-            </div>
-            <div class="card rounded-xl p-5 border-l-4 border-l-purple-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
-                <div class="text-purple-600 font-semibold mb-2">RS232 / Telnet</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Video Matrix Switcher</li>
-                    <li>• Audio Mixer / Amplifier</li>
-                    <li>• Serial Control อุปกรณ์</li>
-                    <li>• Baud Rate ปรับได้</li>
-                </ul>
-            </div>
-            <div class="card rounded-xl p-5 border-l-4 border-l-amber-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
-                <div class="text-amber-600 font-semibold mb-2">DMX512</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Lighting Dimmer</li>
-                    <li>• RGB / RGBW LED</li>
-                    <li>• 512 Channel</li>
-                    <li>• Scene + Fade</li>
-                </ul>
-            </div>
-            <div class="card rounded-xl p-5 border-l-4 border-l-pink-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
-                <div class="text-pink-600 font-semibold mb-2">GPIO / Relay</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Motorized Screen</li>
-                    <li>• Room Lighting On/Off</li>
-                    <li>• AC / Power Control</li>
-                    <li>• Bypass Failsafe</li>
-                </ul>
-            </div>
-            <!-- NEW V2: VISCA-IP -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                <div class="text-emerald-600 font-semibold mb-2">VISCA-IP</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• PTZ Camera control</li>
-                    <li>• UDP 52381 / 1259</li>
-                    <li>• Up to 4 cameras per unit</li>
-                    <li>• Industry-standard PTZ</li>
-                </ul>
-            </div>
-            <!-- NEW V2: Conference TCP -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                <div class="text-emerald-600 font-semibold mb-2">Conference TCP</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Discussion / dome mic systems</li>
-                    <li>• Mic on/off · channel routing</li>
-                    <li>• Auto-tracking integration</li>
-                    <li>• Parliament-grade</li>
-                </ul>
-            </div>
-            <!-- NEW V2: Video Conf TCP -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                <div class="text-emerald-600 font-semibold mb-2">Video Conf TCP</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Room controller API</li>
-                    <li>• Join / leave / mute / layout</li>
-                    <li>• Scene-triggered actions</li>
-                </ul>
-            </div>
-            <!-- NEW V2: OAuth -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                <div class="text-emerald-600 font-semibold mb-2">OAuth 2.0 Device Flow</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Calendar / cloud integration</li>
-                    <li>• Device-pairing (no password)</li>
-                    <li>• Refresh-token rotation</li>
-                    <li>• Per-room credentials</li>
-                </ul>
-            </div>
-            <!-- IR (kept) -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-rose-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
-                <div class="text-rose-600 font-semibold mb-2">IR (Infrared)</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Learn + Send IR codes</li>
-                    <li>• Network IR blaster</li>
-                    <li>• Legacy device control</li>
-                    <li>• No cabling — Wi-Fi / LAN</li>
-                </ul>
-            </div>
-            <!-- NEW V2: 1-Wire / I²C / SPI (also add-on module) -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-emerald-500 relative">
-                <div class="absolute top-3 right-3 flex flex-col items-end gap-1">
-                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                    <span class="px-2 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-semibold" title="ต้องมีโมดูลฮาร์ดแวร์เสริม">อุปกรณ์เสริม</span>
-                </div>
-                <div class="text-emerald-600 font-semibold mb-2">1-Wire · I²C · SPI</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• Internal sensor bus</li>
-                    <li>• Digital temp / humidity</li>
-                    <li>• Status displays</li>
-                    <li>• Environmental monitoring</li>
-                </ul>
-            </div>
-            <!-- RTP/UDP — In development -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-cyan-500 relative">
-                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs">กำลังพัฒนา</span>
-                <div class="text-cyan-600 font-semibold mb-2">RTP / UDP Multicast</div>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• PA Multicast Audio</li>
-                    <li>• Multi-room Sync</li>
-                    <li>• Emergency Broadcast</li>
-                    <li>• Low Latency</li>
-                </ul>
-            </div>
+            {% endfor %}
         </div>
+        <p class="text-center text-slate-500 text-xs font-th mt-6">ควบคุมได้เฉพาะอุปกรณ์ที่รองรับและผ่านการตั้งค่าระบบแล้ว · ทีมตรวจรุ่นและพอร์ตก่อนทุกครั้ง</p>
     </div>
 </section>
 

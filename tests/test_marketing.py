@@ -967,7 +967,10 @@ def test_claim_rewrites_before_ads():
     assert "60-80" not in html and "~200" not in html and "รองรับการขยายได้ 200 ห้อง" in html
     assert "รองรับการขยายได้ 200 ห้อง" in TestClient(main.app).get("/pricing").text
     why = TestClient(main.app).get("/why").text
-    assert "Emergency PA" not in why and "รองรับการเชื่อมต่อระบบประกาศเหตุฉุกเฉิน" in why
+    assert "Emergency PA" not in why
+    # เจ้าของ 2026-09-28: ตัด USE CASES (ซ้ำหน้าแรก) + ย่อส่วนผู้ดูแลระบบเหลือ 5 การ์ด
+    assert "Built for" not in why and "Hardware Watchdog" not in why and "API Keys" not in why
+    assert why.count("rounded-2xl p-6\">") >= 5 and "ช่างตั้งค่าและดูแลระยะไกลได้" in why
     assert "AI-powered commands" not in why and "รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์" in why
     assert "24 hours" not in why and "Setup Time" not in why          # ไม่สัญญาระยะเวลาติดตั้ง
     for leak in ("build เดียว", "Git pull", "container rebuild", "SSH", "ticket", "SLA 24/7"):  # ภาษาภายในทีม / ยังไม่ยืนยัน

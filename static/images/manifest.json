@@ -1,4 +1,80 @@
 {
+ "EPPO-Graphic-Audio": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "972c10335a",
+  "w": 1700
+ },
+ "EPPO-Graphic-Audio-light": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "6a811ebe11",
+  "w": 1700
+ },
+ "EPPO-Graphic-Switcher": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "059e07c6df",
+  "w": 1700
+ },
+ "EPPO-Graphic-Switcher-light": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "6263ed5c16",
+  "w": 1700
+ },
+ "core-ai-assist": {
+  "ext": ".jpg",
+  "h": 320,
+  "sizes": [
+   320
+  ],
+  "v": "362112ea5f",
+  "w": 320
+ },
+ "core-multi-protocol": {
+  "ext": ".jpg",
+  "h": 320,
+  "sizes": [
+   320
+  ],
+  "v": "affef849e9",
+  "w": 320
+ },
+ "core-total-control": {
+  "ext": ".jpg",
+  "h": 320,
+  "sizes": [
+   320
+  ],
+  "v": "dfa5d290a2",
+  "w": 320
+ },
+ "core-zero-install": {
+  "ext": ".jpg",
+  "h": 320,
+  "sizes": [
+   320
+  ],
+  "v": "cf1b216e1c",
+  "w": 320
+ },
  "feature-ai-agent": {
   "ext": ".jpg",
   "h": 589,
@@ -268,5 +344,204 @@
   ],
   "v": "c45674da4e",
   "w": 1700
+ },
+ "mission-break": {
+  "ext": ".jpg",
+  "h": 764,
+  "sizes": [
+   1100
+  ],
+  "v": "a7b8a83052",
+  "w": 1100
+ },
+ "mission-room-tablet": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "4d0c831cac",
+  "w": 1600
+ },
+ "mission-theme-01": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "bbbe88bf27",
+  "w": 560
+ },
+ "mission-theme-02": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "651e92aa27",
+  "w": 560
+ },
+ "mission-theme-03": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "8816ac6365",
+  "w": 560
+ },
+ "mission-theme-04": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "cb4723ef16",
+  "w": 560
+ },
+ "mission-theme-05": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "8882d34e5f",
+  "w": 560
+ },
+ "mission-theme-06": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "b28580b978",
+  "w": 560
+ },
+ "mission-theme-07": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "a0627f5dcd",
+  "w": 560
+ },
+ "mission-theme-08": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "483abd25a4",
+  "w": 560
+ },
+ "mission-theme-09": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "83d10f2abe",
+  "w": 560
+ },
+ "mission-theme-10": {
+  "ext": ".jpg",
+  "h": 389,
+  "sizes": [
+   560
+  ],
+  "v": "acf488f246",
+  "w": 560
+ },
+ "mission-user-mode": {
+  "ext": ".jpg",
+  "h": 1112,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "7f016e52e0",
+  "w": 1600
+ },
+ "usecase-boardroom": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "5536c3a47e",
+  "w": 1600
+ },
+ "usecase-hall": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "66236870ab",
+  "w": 1600
+ },
+ "usecase-multiroom": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "4f8369843f",
+  "w": 1600
+ },
+ "usecase-pa": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "29771ec781",
+  "w": 1600
+ },
+ "usecase-parliament": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "ac855ffe61",
+  "w": 1600
+ },
+ "usecase-training": {
+  "ext": ".jpg",
+  "h": 900,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "60debac360",
+  "w": 1600
+ },
+ "voscene-devices-hero-v4": {
+  "ext": ".jpg",
+  "h": 1100,
+  "sizes": [
+   900,
+   2200
+  ],
+  "v": "147c9c80fd",
+  "w": 2200
+ },
+ "voscene-devices-hero-v4-light": {
+  "ext": ".jpg",
+  "h": 1100,
+  "sizes": [
+   900,
+   2200
+  ],
+  "v": "89e9bfe3b7",
+  "w": 2200
  }
 }

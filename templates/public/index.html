@@ -1,4 +1,5 @@
 {% extends "public/base.html" %}
+{% import "public/_img.html" as im %}
 
 {% block body_class %}theme-dark bg-[#070711] text-slate-300{% endblock %}
 
@@ -146,7 +147,7 @@
             <div class="relative">
                 <div class="absolute -inset-6 bg-electric/20 rounded-[2.5rem] blur-3xl pointer-events-none"></div>
                 <div class="relative rounded-2xl overflow-hidden bg-white shadow-2xl ring-1 ring-black/5">
-                    <div class="theme-swap"><img src="/static/images/voscene-devices-hero-v4-light.jpg" alt="Voscene ใช้งานได้ทุกอุปกรณ์ — จอคอมพิวเตอร์ แท็บเล็ต และมือถือ ผ่านเบราว์เซอร์" class="w-full block" loading="eager"><img src="/static/images/voscene-devices-hero-v4.jpg" alt="" aria-hidden="true" class="swap-dark w-full block" loading="eager"></div>
+                    <div class="theme-swap" data-start="dark">{{ im.pic('voscene-devices-hero-v4-light', 'Voscene ใช้งานได้ทุกอุปกรณ์ — จอคอมพิวเตอร์ แท็บเล็ต และมือถือ ผ่านเบราว์เซอร์', img_cls='w-full h-auto block', defer=True, sizes='(min-width: 900px) 896px, 100vw') }}{{ im.pic('voscene-devices-hero-v4', cls='swap-dark', img_cls='w-full h-full block', aria_hidden=True, priority=True, sizes='(min-width: 900px) 896px, 100vw') }}</div>
                 </div>
             </div>
         </div>
@@ -188,8 +189,7 @@
 
 <!-- Mission + Stats — one-screen presentation of User Mode -->
 <section class="relative py-12 md:py-14 lg:py-10 overflow-hidden bg-cloud">
-    <!-- Optional photo backdrop (falls back gracefully if file missing) -->
-    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/static/images/mission-bg.jpg')"></div>
+    {# (เดิมมีภาพพื้นหลัง mission-bg.jpg แต่ไม่มีไฟล์จริง — ขอไฟล์ที่ 404 ทุกครั้งที่เปิดหน้า จึงเอาออก) #}
     <!-- Subtle dot-grid texture so the section never feels flat -->
     <div class="absolute inset-0 opacity-[0.5]" style="background-image: radial-gradient(circle, rgb(255 255 255 / 0.08) 1px, transparent 1.2px); background-size: 22px 22px;"></div>
     <!-- Decorative gradient blobs -->
@@ -224,20 +224,14 @@
            driven by --row so the whole block scales and the section stays one screen. #}
         <div class="mission-shots mt-8 lg:mt-10">
             <figure class="mission-main">
-                <img src="/static/images/mission-room-tablet.jpg"
-                     alt="แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว"
-                     class="w-full h-full object-contain rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl" loading="lazy" width="1600" height="900">
+                {{ im.pic('mission-room-tablet', 'แท็บเล็ตวางบนโต๊ะห้องประชุม แสดงหน้าจอ Voscene ปุ่ม “แตะเพื่อประชุม” ปุ่มเดียว', img_cls='w-full h-full object-contain rounded-xl md:rounded-2xl ring-1 ring-white/10 shadow-2xl', sizes='(min-width: 768px) 50vw, 100vw') }}
             </figure>
             <div class="mission-side">
                 <figure class="min-h-0">
-                    <img src="/static/images/mission-user-mode.jpg"
-                         alt="โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว"
-                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1600" height="1112">
+                    {{ im.pic('mission-user-mode', 'โหมดผู้ใช้ของ Voscene — ปุ่มพักเบรก เลิกใช้ห้อง ปรับเสียง เลือกแหล่งสัญญาณภาพ และเปิดปิดจอ อยู่ในหน้าเดียว', img_cls='w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl', sizes='(min-width: 768px) 50vw, 100vw') }}
                 </figure>
                 <figure class="min-h-0">
-                    <img src="/static/images/mission-break.jpg"
-                         alt="หน้าจอพักเบรกของ Voscene — แสดงเวลาที่พักมาแล้ว พร้อมปุ่มกลับเข้าประชุม"
-                         class="w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl" loading="lazy" width="1100" height="764">
+                    {{ im.pic('mission-break', 'หน้าจอพักเบรกของ Voscene — แสดงเวลาที่พักมาแล้ว พร้อมปุ่มกลับเข้าประชุม', img_cls='w-full h-full object-contain rounded-lg md:rounded-xl ring-1 ring-white/10 shadow-xl', sizes='(min-width: 768px) 50vw, 100vw') }}
                 </figure>
             </div>
         </div>
@@ -256,10 +250,7 @@
                         {% for i in range(1, 11) %}
                         <div class="shrink-0 px-2">
                             <div class="w-[132px] md:w-[158px] rounded-lg overflow-hidden ring-1 ring-white/10 shadow-lg">
-                                <img src="/static/images/mission-theme-{{ '%02d'|format(i) }}.jpg"
-                                     alt="{% if pass == 1 %}ตัวอย่างธีมหน้าจอต้อนรับแบบที่ {{ i }}{% endif %}"
-                                     {% if pass == 2 %}aria-hidden="true"{% endif %}
-                                     class="w-full block" loading="lazy" width="560" height="389">
+                                {{ im.pic('mission-theme-%02d'|format(i), ('ตัวอย่างธีมหน้าจอต้อนรับแบบที่ ' ~ i) if pass == 1 else '', img_cls='w-full h-auto block', aria_hidden=(pass == 2), sizes='158px') }}
                             </div>
                         </div>
                         {% endfor %}
@@ -356,42 +347,42 @@
 
         <div class="grid md:grid-cols-3 gap-6">
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-boardroom.jpg" alt="ห้องประชุมผู้บริหาร" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-boardroom', 'ห้องประชุมผู้บริหาร', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <h3 class="font-display font-semibold text-lg mb-1.5 text-navy">ห้องประชุมผู้บริหาร</h3>
                     <p class="text-slate-600 text-sm font-th">ประชุมบ่อย ต้องเริ่มได้ทันที — ซีนเดียวจบ ไม่ต้องมีคนคุมห้อง</p>
                 </div>
             </div>
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-training.jpg" alt="ห้องอบรมและสัมมนา" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-training', 'ห้องอบรมและสัมมนา', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <h3 class="font-display font-semibold text-lg mb-1.5 text-navy">ห้องอบรม · สัมมนา</h3>
                     <p class="text-slate-600 text-sm font-th">สลับแหล่งภาพบ่อย หลายจอ — เลือกได้จากหน้าจอเดียว</p>
                 </div>
             </div>
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-hall.jpg" alt="หอประชุมขนาดใหญ่" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-hall', 'หอประชุมขนาดใหญ่', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <h3 class="font-display font-semibold text-lg mb-1.5 text-navy">หอประชุมขนาดใหญ่</h3>
                     <p class="text-slate-600 text-sm font-th">อุปกรณ์เยอะ หลายโซน — จัดกลุ่มและเรียกใช้เป็นชุดได้</p>
                 </div>
             </div>
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-parliament.jpg" alt="ห้องประชุมสภาและห้องพิจารณา — ไมค์ประจำที่หลายตัว หลายจอ" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-parliament', 'ห้องประชุมสภาและห้องพิจารณา — ไมค์ประจำที่หลายตัว หลายจอ', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <h3 class="font-display font-semibold text-lg mb-1.5 text-navy">ห้องประชุมสภา · ห้องพิจารณา</h3>
                     <p class="text-slate-600 text-sm font-th">ไมค์ประจำที่หลายตัว หลายจอ — เปิด-ปิดไมค์รายตัว และสลับภาพขึ้นแต่ละจอ จากหน้าจอเดียว <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></p>
                 </div>
             </div>
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-multiroom.jpg" alt="คุมหลายห้องพร้อมกันจากจอเดียว" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-multiroom', 'คุมหลายห้องพร้อมกันจากจอเดียว', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <h3 class="font-display font-semibold text-lg mb-1.5 text-navy">คุมหลายห้องพร้อมกัน</h3>
                     <p class="text-slate-600 text-sm font-th">เห็นสถานะและสั่งงานทุกห้องจากจอเดียว สูงสุด 20 ห้องต่อชุดควบคุม — ศูนย์กลางล่ม แต่ละห้องยังคุมเองได้ <span class="text-slate-400">(ทุกห้องอยู่ในวงเครือข่ายเดียวกัน)</span></p>
                 </div>
             </div>
             <div class="card rounded-2xl overflow-hidden">
-                <img src="/static/images/usecase-pa.jpg" alt="ระบบประกาศทั่วอาคาร — เลือกโซนประกาศจากผังอาคารจริง" class="w-full aspect-video object-cover" loading="lazy">
+                {{ im.pic('usecase-pa', 'ระบบประกาศทั่วอาคาร — เลือกโซนประกาศจากผังอาคารจริง', img_cls='w-full aspect-video object-cover', sizes='(min-width: 768px) 360px, 100vw') }}
                 <div class="p-6">
                     <div class="flex items-center gap-2 mb-1.5">
                         <h3 class="font-display font-semibold text-lg text-navy">ระบบประกาศทั่วอาคาร</h3>

@@ -1,4 +1,5 @@
 {% extends "public/base.html" %}
+{% import "public/_img.html" as im %}
 {% block title %}ทำไมต้องเลือก Voscene — ระบบควบคุม AV สำหรับองค์กร{% endblock %}
 {% block description %}เหตุผลที่หน่วยงานเลือก Voscene — เทียบกับระบบ AV แบบเดิม ภาพหน้าจอจริง ห้องที่รองรับ และเครื่องมือฝั่งผู้ดูแลระบบ{% endblock %}
 {% block body_class %}theme-dark bg-[#070711] text-slate-300{% endblock %}
@@ -29,22 +30,22 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             <div class="card rounded-2xl p-8 border-l-4 border-l-electric">
-                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-zero-install.jpg" alt="Zero Installation" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm">{{ im.pic('core-zero-install', 'Zero Installation', img_cls='w-full h-full object-cover', sizes='64px') }}</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Zero Installation</h3>
                 <p class="text-slate-600 font-th">เปิดเบราว์เซอร์ พิมพ์ IP ใช้งานได้ทันที ไม่ต้องติดตั้งซอฟต์แวร์ ไม่ต้องใช้ Touch Panel ราคาแพง — รองรับทุกแพลตฟอร์ม ติดตั้งเป็นแอปบนหน้าจอมือถือได้ (PWA)</p>
             </div>
             <div class="card rounded-2xl p-8 border-l-4 border-l-signal">
-                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-total-control.jpg" alt="Total Control" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm">{{ im.pic('core-total-control', 'Total Control', img_cls='w-full h-full object-cover', sizes='64px') }}</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Total Control</h3>
                 <p class="text-slate-600 font-th">คุมทั้งห้องจากหน้าจอเดียว — สลับซีน ลากแหล่งสัญญาณบนผังห้องแบบกราฟิก ปรับภาพและเสียง สั่งการได้เบ็ดเสร็จในสัมผัสเดียว</p>
             </div>
             <div class="card rounded-2xl p-8 border-l-4 border-l-sky">
-                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-multi-protocol.jpg" alt="Multi-Protocol" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm">{{ im.pic('core-multi-protocol', 'Multi-Protocol', img_cls='w-full h-full object-cover', sizes='64px') }}</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">Multi-Protocol</h3>
                 <p class="text-slate-400 font-th">รองรับโปรโตคอลมาตรฐานอุตสาหกรรม — ควบคุมอุปกรณ์แทบทุกยี่ห้อที่ใช้โปรโตคอลเดียวกัน ไม่ผูกกับ Vendor</p>
             </div>
             <div class="card rounded-2xl p-8 border-l-4 border-l-electric-400">
-                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm"><img src="/static/images/core-ai-assist.jpg" alt="AI Assist" class="w-full h-full object-cover" loading="lazy"></div>
+                <div class="w-16 h-16 rounded-xl overflow-hidden mb-4 ring-1 ring-slate-200 shadow-sm">{{ im.pic('core-ai-assist', 'AI Assist', img_cls='w-full h-full object-cover', sizes='64px') }}</div>
                 <h3 class="font-display text-xl font-semibold mb-2 text-navy">AI Assist</h3>
                 <p class="text-slate-600 font-th">รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์</p>
             </div>
@@ -71,7 +72,7 @@
             <!-- Graphic Video Switcher -->
             <div class="group">
                 <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg group-hover:shadow-2xl transition">
-                    <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Switcher-light.jpg" alt="Graphic Video Switcher — ผังห้องแบบภาพ ลากแหล่งสัญญาณไปวางบนจอ" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Switcher.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
+                    <div class="theme-swap" data-start="dark">{{ im.pic('EPPO-Graphic-Switcher-light', 'Graphic Video Switcher — ผังห้องแบบภาพ ลากแหล่งสัญญาณไปวางบนจอ', defer=True) }}{{ im.pic('EPPO-Graphic-Switcher', cls='swap-dark', img_cls='w-full h-full', aria_hidden=True, defer=False) }}</div>
                 </div>
                 <div class="mt-5">
                     <h3 class="font-display text-xl font-semibold text-white mb-1">Graphic Video Switcher</h3>
@@ -82,7 +83,7 @@
             <!-- Graphic Audio Mixer -->
             <div class="group">
                 <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-lg group-hover:shadow-2xl transition">
-                    <div class="theme-swap"><img src="/static/images/EPPO-Graphic-Audio-light.jpg" alt="Graphic Audio Mixer — ปรับระดับเสียงแต่ละช่องบนหน้าจอ" class="w-full h-auto" loading="lazy"><img src="/static/images/EPPO-Graphic-Audio.jpg" alt="" aria-hidden="true" class="swap-dark w-full h-auto" loading="lazy"></div>
+                    <div class="theme-swap" data-start="light">{{ im.pic('EPPO-Graphic-Audio-light', 'Graphic Audio Mixer — ปรับระดับเสียงแต่ละช่องบนหน้าจอ', defer=False) }}{{ im.pic('EPPO-Graphic-Audio', cls='swap-dark', img_cls='w-full h-full', aria_hidden=True, defer=True) }}</div>
                 </div>
                 <div class="mt-5">
                     <h3 class="font-display text-xl font-semibold text-white mb-1">Graphic Audio Mixer</h3>

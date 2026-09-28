@@ -18,7 +18,7 @@ from PIL import Image
 
 ROOT = Path(__file__).parent / "static" / "images"
 # ภาพที่ใช้ผ่าน macro pic() — เพิ่มชื่อที่นี่เมื่อใช้ macro กับภาพใหม่
-PREFIXES = ("feature-",)
+PREFIXES = ("feature-", "voscene-devices-hero-v4", "mission-", "usecase-", "core-", "EPPO-Graphic-")
 QUALITY = 80
 SMALL_W = 900
 

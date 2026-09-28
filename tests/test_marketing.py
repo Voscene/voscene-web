@@ -1076,7 +1076,8 @@ def test_only_active_channels_shown(admin, client):
 def test_pricing_page_thai_three_parts():
     """หน้าราคา (เจ้าของ 2026-09-28): ไทย กระชับ · วิธีคิดราคา 3 ส่วนอยู่บน · ไม่มีป้ายยอดนิยม · ปุ่ม LINE"""
     html = TestClient(main.app).get("/pricing").text
-    assert html.index("ราคาคิดจาก") < html.index("เลือกตามขนาดงาน")
+    body = html[html.index("<main"):]
+    assert body.index("ราคาคิดจาก") < body.index("เลือกตามขนาดงาน")
     for word in ("ห้องเดียว", "หลายห้อง", "องค์กร", "ใบเสนอราคาของห้องคุณ", "นัดปรึกษาออกแบบระบบ",
                  "/solutions/one-touch-meeting", "/solutions/multi-room-central-control"):
         assert word in html, word

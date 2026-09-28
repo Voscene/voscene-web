@@ -1071,3 +1071,14 @@ def test_only_active_channels_shown(admin, client):
     assert "mk_active_channels" not in admin.get("/admin/content").text  # ไม่โผล่ในหน้าแก้เนื้อหาเว็บ
     admin.post("/admin/marketing/data-sources/channels",
                data={"active": list(marketing.DEFAULT_ACTIVE_CHANNELS)})
+
+
+def test_pricing_page_thai_three_parts():
+    """หน้าราคา (เจ้าของ 2026-09-28): ไทย กระชับ · วิธีคิดราคา 3 ส่วนอยู่บน · ไม่มีป้ายยอดนิยม · ปุ่ม LINE"""
+    html = TestClient(main.app).get("/pricing").text
+    assert html.index("ราคาคิดจาก") < html.index("เลือกตามขนาดงาน")
+    for word in ("ห้องเดียว", "หลายห้อง", "องค์กร", "ใบเสนอราคาของห้องคุณ", "นัดปรึกษาออกแบบระบบ",
+                 "/solutions/one-touch-meeting", "/solutions/multi-room-central-control"):
+        assert word in html, word
+    for word in ("MOST POPULAR", "Contact for pricing", "INCLUDES", "Source code escrow", "warranty"):
+        assert word not in html, word

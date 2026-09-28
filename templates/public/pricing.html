@@ -1,119 +1,201 @@
 {% extends "public/base.html" %}
-{% block title %}Editions — {{ settings.APP_NAME }}{% endblock %}
+{# หน้าราคา (เจ้าของ 2026-09-28): ภาษาไทย กระชับ · วิธีคิดราคา 3 ส่วนอยู่บนสุด · แพ็กเกจโยงกับปัญหาลูกค้า (หน้า /solutions)
+   ข้อความแพ็กเกจมาจาก seed.DEFAULT_PACKAGES (seed เขียนทับทุกครั้งที่ deploy) · ไม่มีป้าย "ยอดนิยม" (ยังไม่มีข้อมูลยอดขายรองรับ)
+   ปุ่ม LINE ใช้ลิงก์ line.me/R/ti/p/@… → vs-track.js แนบรหัสอ้างอิง + นับคลิก เหมือนหน้าอื่น #}
+{% block title %}ราคาและรูปแบบการติดตั้ง — {{ settings.APP_NAME }}{% endblock %}
+{% block description %}วิธีคิดราคา Voscene 3 ส่วน: ระบบควบคุม · อุปกรณ์เสริมตามหน้างาน · ติดตั้ง — เลือกตามขนาดงาน ห้องเดียว หลายห้อง หรือองค์กร · ประเมินอุปกรณ์เดิมและปรึกษาออกแบบฟรี{% endblock %}
 {% block body_class %}theme-dark bg-[#070711] text-slate-300{% endblock %}
 
+{% macro line_button(label, big=False) %}
+{% if c.contact_line %}
+<a href="{{ c.contact_line | line_href }}" target="_blank" rel="noopener"
+   class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#06C755] hover:bg-[#05A647] text-white font-semibold transition {{ 'px-7 py-4 text-lg' if big else 'w-full px-5 py-3' }}">
+    <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+    <span class="font-th">{{ label }}</span>
+</a>
+{% else %}
+<a href="/contact" class="inline-flex items-center justify-center rounded-xl bg-electric hover:bg-electric-600 text-white font-semibold transition {{ 'px-7 py-4 text-lg' if big else 'w-full px-5 py-3' }} font-th">{{ label }}</a>
+{% endif %}
+{% endmacro %}
+
+{% set tiers = {
+    'starter': {'label': 'ห้องเดียว', 'fits': [('เปิดห้องประชุมปุ่มเดียว', '/solutions/one-touch-meeting'), ('รวมรีโมตไว้หน้าจอเดียว', '/solutions/existing-room-upgrade')]},
+    'pro': {'label': 'หลายห้อง', 'fits': [('หน้าควบคุมตามผังห้อง', '/solutions/graphic-room-control'), ('คุมหลายห้องจากส่วนกลาง', '/solutions/multi-room-central-control')]},
+    'enterprise': {'label': 'องค์กร', 'fits': []},
+} %}
+{% set quote_words = ['', 'Contact for pricing', 'Custom quote'] %}
+
 {% block content %}
-<section class="py-20 md:py-28 relative overflow-hidden bg-white">
+<!-- HERO -->
+<section class="pt-16 md:pt-24 pb-10 relative overflow-hidden bg-white">
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-electric/5 rounded-full blur-3xl"></div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">DEPLOYMENT OPTIONS</div>
-            <h1 class="font-display text-4xl md:text-6xl font-semibold mb-6 text-navy"><em class="not-italic text-electric">Editions.</em></h1>
-            <p class="text-slate-600 text-lg font-th">Three deployment tiers. Scale from single room to enterprise.</p>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center">
+        <h1 class="font-th text-3xl md:text-5xl font-semibold mb-5 text-navy leading-tight">ราคาและ<span class="text-electric">รูปแบบการติดตั้ง</span></h1>
+        <p class="text-slate-600 text-lg font-th">แต่ละห้องมีอุปกรณ์ไม่เหมือนกัน — ราคาจึงคิดตามงานจริง<br class="hidden sm:block"> เริ่มจากประเมินอุปกรณ์เดิมของคุณ และนัดปรึกษาออกแบบระบบ <b class="text-navy">ฟรี</b></p>
+    </div>
+</section>
+
+<!-- วิธีคิดราคา 3 ส่วน -->
+<section class="pb-16 md:pb-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-th text-2xl md:text-3xl font-semibold text-navy text-center mb-2">ราคาคิดจาก <span class="text-electric">3 ส่วน</span></h2>
+        <p class="text-slate-500 text-sm font-th text-center mb-8">ใบเสนอราคาแยกให้เห็นทุกส่วน</p>
+        {# ภาพประกอบเป็น SVG ลายเส้นวาดเอง (ไม่ใช้ภาพเรนเดอร์สินค้า) · สีตามส่วน: ฟ้า / ฟ้าอมเขียว / ส้ม #}
+        {% set parts = [
+            ('1', '#3b82f6', 'ระบบควบคุม Voscene', 'ชุดควบคุม (ฮาร์ดแวร์) พร้อมซอฟต์แวร์ Voscene ตามแบบที่เลือก — ห้องเดียว หลายห้อง หรือองค์กร'),
+            ('2', '#22d3ee', 'อุปกรณ์เสริมตามหน้างาน', 'ตัวเชื่อมที่ต้องใช้กับอุปกรณ์เดิมของแต่ละห้อง จำนวนและชนิดขึ้นกับรุ่นและพอร์ตของอุปกรณ์'),
+            ('3', '#f59e0b', 'ติดตั้งและตั้งค่า', 'ติดตั้ง เชื่อมต่อ ตั้งค่าปุ่มซีน และทดสอบที่หน้างาน คิดตามจำนวนห้องและขอบเขตงาน'),
+        ] %}
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-4 md:gap-3 items-stretch">
+            {% for num, color, title, text in parts %}
+            <div class="card rounded-2xl p-5 md:p-6 relative overflow-hidden flex flex-col">
+                <div class="rounded-xl mb-5 h-36 flex items-center justify-center" style="background: {{ color }}14;">
+                    {% if num == '1' %}
+                    <svg viewBox="0 0 200 120" class="w-full h-full" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <!-- ชุดควบคุม -->
+                        <rect x="14" y="62" width="104" height="34" rx="5" stroke="{{ color }}" stroke-width="2.5" fill="{{ color }}22"/>
+                        <circle cx="28" cy="79" r="3" fill="#22c55e"/><circle cx="38" cy="79" r="3" fill="{{ color }}"/>
+                        <rect x="52" y="72" width="28" height="14" rx="2" stroke="#cbd5e1" stroke-width="1.5"/>
+                        <rect x="88" y="72" width="10" height="14" rx="2" fill="{{ color }}"/><rect x="101" y="72" width="10" height="14" rx="2" fill="{{ color }}88"/>
+                        <!-- สัญญาณ -->
+                        <path d="M124 70 q10 -14 22 -18" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="3 4"/>
+                        <!-- แท็บเล็ตหน้าจอควบคุม -->
+                        <rect x="140" y="18" width="48" height="66" rx="6" stroke="#e2e8f0" stroke-width="2.5" fill="#0b1220"/>
+                        <rect x="147" y="27" width="34" height="14" rx="3" fill="{{ color }}"/>
+                        <rect x="147" y="46" width="16" height="12" rx="3" fill="{{ color }}66"/><rect x="165" y="46" width="16" height="12" rx="3" fill="{{ color }}66"/>
+                        <rect x="147" y="62" width="16" height="12" rx="3" fill="{{ color }}66"/><rect x="165" y="62" width="16" height="12" rx="3" fill="#ef444499"/>
+                    </svg>
+                    {% elif num == '2' %}
+                    <svg viewBox="0 0 200 120" class="w-full h-full" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <!-- อุปกรณ์เดิม: จอ + โปรเจกเตอร์ -->
+                        <rect x="12" y="16" width="56" height="36" rx="3" stroke="#e2e8f0" stroke-width="2.5"/><path d="M32 58 h16 M40 52 v6" stroke="#e2e8f0" stroke-width="2.5"/>
+                        <rect x="14" y="80" width="52" height="22" rx="5" stroke="#e2e8f0" stroke-width="2.5"/><circle cx="54" cy="91" r="6" stroke="#e2e8f0" stroke-width="2"/>
+                        <!-- สายเชื่อม -->
+                        <path d="M70 34 h24 M68 91 h26" stroke="{{ color }}" stroke-width="2"/>
+                        <!-- ตัวเชื่อม / โมดูลเสริม -->
+                        <rect x="94" y="24" width="30" height="20" rx="4" fill="{{ color }}33" stroke="{{ color }}" stroke-width="2"/><path d="M101 34 h16" stroke="{{ color }}" stroke-width="2"/>
+                        <rect x="94" y="81" width="30" height="20" rx="4" fill="{{ color }}33" stroke="{{ color }}" stroke-width="2"/><circle cx="104" cy="91" r="2" fill="{{ color }}"/><circle cx="114" cy="91" r="2" fill="{{ color }}"/>
+                        <path d="M124 34 h18 v24 h14 M124 91 h18 v-26 h14" stroke="{{ color }}" stroke-width="2"/>
+                        <!-- ไปยังชุดควบคุม -->
+                        <rect x="156" y="50" width="34" height="22" rx="4" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 3"/>
+                    </svg>
+                    {% else %}
+                    <svg viewBox="0 0 200 120" class="w-full h-full" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <!-- เช็กลิสต์ตั้งค่า / ทดสอบ -->
+                        <rect x="20" y="14" width="78" height="92" rx="6" stroke="#e2e8f0" stroke-width="2.5"/>
+                        <path d="M32 34 l5 5 l9 -10" stroke="#22c55e" stroke-width="2.5"/><path d="M54 35 h32" stroke="#cbd5e1" stroke-width="2"/>
+                        <path d="M32 58 l5 5 l9 -10" stroke="#22c55e" stroke-width="2.5"/><path d="M54 59 h32" stroke="#cbd5e1" stroke-width="2"/>
+                        <path d="M32 82 l5 5 l9 -10" stroke="{{ color }}" stroke-width="2.5"/><path d="M54 83 h24" stroke="#cbd5e1" stroke-width="2"/>
+                        <!-- เครื่องมือช่าง -->
+                        <path d="M150 28 a16 16 0 0 0 -20 20 l-26 26 a6 6 0 0 0 8 8 l26 -26 a16 16 0 0 0 20 -20 l-10 10 l-8 -8 z" stroke="{{ color }}" stroke-width="2.5" fill="{{ color }}22"/>
+                        <!-- ปุ่มซีนที่ตั้งค่าแล้ว -->
+                        <rect x="136" y="84" width="46" height="18" rx="5" fill="{{ color }}"/><path d="M148 93 h22" stroke="#0b1220" stroke-width="2.5"/>
+                    </svg>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-7 h-7 rounded-full flex items-center justify-center font-display text-sm font-bold" style="background: {{ color }}26; color: {{ color }};">{{ num }}</span>
+                    <h3 class="font-th text-lg font-semibold text-navy">{{ title }}</h3>
+                </div>
+                <p class="text-slate-600 text-sm font-th leading-relaxed">{{ text }}</p>
+            </div>
+            {% if not loop.last %}<div class="hidden md:flex items-center justify-center text-3xl font-bold text-slate-500" aria-hidden="true">+</div>{% endif %}
+            {% endfor %}
         </div>
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 font-th text-sm">
+            <span class="px-4 py-2 rounded-full" style="background:#3b82f626;color:#93c5fd">1 ระบบ</span><span class="text-slate-500">+</span>
+            <span class="px-4 py-2 rounded-full" style="background:#22d3ee26;color:#67e8f9">2 อุปกรณ์เสริม</span><span class="text-slate-500">+</span>
+            <span class="px-4 py-2 rounded-full" style="background:#f59e0b26;color:#fcd34d">3 ติดตั้ง</span><span class="text-slate-500">=</span>
+            <span class="px-4 py-2 rounded-full bg-electric text-white font-semibold">ใบเสนอราคาของห้องคุณ</span>
+        </div>
+        <p class="text-center text-slate-500 text-xs font-th mt-3">ห้องที่มีอุปกรณ์ที่รองรับอยู่แล้ว ส่วนที่ 2 จะน้อยลง</p>
+    </div>
+</section>
 
-        <!-- Editions -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+<!-- เลือกตามขนาดงาน -->
+<section class="py-16 md:py-20 bg-slate-50 border-y border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-th text-2xl md:text-3xl font-semibold text-navy text-center mb-2">เลือกตามขนาดงาน</h2>
+        <p class="text-slate-500 text-sm font-th text-center mb-8">ไม่แน่ใจว่าแบบไหน — ส่งรายการอุปกรณ์มา ทีมช่วยแนะนำให้</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {% for pkg in purchase_packages %}
-            <div class="relative card rounded-2xl p-8 {% if pkg.is_featured %}!border-electric ring-2 ring-electric/30 bg-gradient-to-b from-white to-electric/5{% endif %}">
-                {% if pkg.is_featured %}
-                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-electric text-white rounded-full text-xs font-semibold tracking-wider">MOST POPULAR</div>
-                {% endif %}
-                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-2">
-                    {% if pkg.code == 'starter' %}STARTER
-                    {% elif pkg.code == 'pro' %}PRO
-                    {% else %}ENTERPRISE{% endif %}
-                </div>
-                <h3 class="font-display text-2xl font-semibold mb-2 text-navy">{{ pkg.name }}</h3>
-                <p class="text-slate-600 text-sm mb-6 font-th italic">{{ pkg.description }}</p>
-
-                <div class="mb-6">
-                    <span class="font-display text-2xl font-semibold text-navy">{{ pkg.price }}</span>
-                    {% if pkg.price_unit %}<span class="text-slate-500 text-sm ml-1 font-th">{{ pkg.price_unit }}</span>{% endif %}
-                </div>
-
-                <a href="/contact" class="block text-center py-3 rounded-xl {% if pkg.is_featured %}bg-electric hover:bg-electric-600 text-white{% else %}border border-slate-300 hover:border-electric hover:text-electric text-navy{% endif %} transition font-medium mb-6 font-th">
-                    สอบถามราคา
-                </a>
-
-                <div class="text-muted text-xs font-mono font-semibold tracking-wider mb-3">INCLUDES</div>
-                <ul class="space-y-2 text-sm font-th">
-                    {% for line in pkg.features.split('\n') %}
-                    {% if line.strip() %}
+            {% set t = tiers.get(pkg.code, {'label': pkg.name, 'fits': []}) %}
+            <div class="card rounded-2xl p-6 md:p-7 flex flex-col {% if pkg.is_featured %}!border-electric ring-1 ring-electric/30{% endif %}">
+                <div class="text-electric text-xs font-semibold tracking-wide mb-1">{{ pkg.name }}</div>
+                <h3 class="font-th text-2xl font-semibold text-navy">{{ t.label }}</h3>
+                <p class="text-slate-500 text-sm font-th mb-4">{{ pkg.description }}</p>
+                <ul class="space-y-2 text-sm font-th mb-5">
+                    {% for line in pkg.features.split('\n') if line.strip() %}
                     <li class="flex items-start gap-2">
-                        <svg class="w-4 h-4 text-electric flex-shrink-0 mt-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <svg class="w-4 h-4 text-electric flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         <span class="text-slate-700">{{ line }}</span>
                     </li>
-                    {% endif %}
                     {% endfor %}
                 </ul>
+                {% if t.fits %}
+                <div class="text-xs text-slate-500 font-th mb-1">เหมาะกับ</div>
+                <div class="flex flex-wrap gap-2 mb-5">
+                    {% for label, href in t.fits %}<a href="{{ href }}" class="text-xs font-th px-2.5 py-1 rounded-full bg-electric/10 text-electric hover:bg-electric/20">{{ label }} →</a>{% endfor %}
+                </div>
+                {% endif %}
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <div class="font-th text-navy font-semibold mb-3">{% if pkg.price in quote_words %}ประเมินราคาตามหน้างาน{% else %}{{ pkg.price }}{% if pkg.price_unit %} <span class="text-slate-500 text-sm font-normal">{{ pkg.price_unit }}</span>{% endif %}{% endif %}</div>
+                    {{ line_button('นัดปรึกษาออกแบบระบบ') }}
+                </div>
             </div>
             {% endfor %}
         </div>
-
+        <p class="text-center text-slate-500 text-xs font-th mt-6">ควบคุมได้เฉพาะอุปกรณ์ที่รองรับและผ่านการตั้งค่าระบบแล้ว · ต้องตรวจรุ่นและพอร์ตของอุปกรณ์เดิมก่อน · ดูความสามารถทั้งหมดที่ <a href="/features" class="text-electric hover:underline">ฟีเจอร์</a></p>
     </div>
 </section>
 
-<!-- Pricing Structure — 3 components that make up a quote -->
-<section class="py-20 md:py-28 bg-white border-t border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-14">
-            <div class="text-muted text-xs font-semibold tracking-[2px] mb-3">HOW PRICING WORKS</div>
-            <h2 class="font-display text-3xl md:text-5xl font-semibold mb-4 text-navy">ราคาประกอบด้วย <em class="not-italic text-electric">3 ส่วน</em></h2>
-            <p class="text-slate-600 text-lg font-th">แต่ละไซต์งานไม่เหมือนกัน — ใบเสนอราคาจึงปรับตามอุปกรณ์และขอบเขตงานจริงของแต่ละโครงการ</p>
-        </div>
+<!-- ขั้นตอนขอราคา -->
+<section class="py-16 md:py-20 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-th text-2xl md:text-3xl font-semibold text-navy text-center mb-8">ขั้นตอนขอใบเสนอราคา</h2>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {% for title, text in [
+                ('ทัก LINE', 'แจ้งจำนวนห้อง และส่งรูปหรือผังห้อง'),
+                ('ส่งรายการอุปกรณ์', 'ยี่ห้อและรุ่นของจอ โปรเจกเตอร์ ชุดเสียง ไฟ'),
+                ('ประเมิน + ปรึกษาออกแบบ', 'ทีมตรวจการเชื่อมต่อ และออกแบบปุ่มควบคุมให้ตรงการใช้งาน'),
+                ('รับใบเสนอราคา', 'แยกราคา 3 ส่วนให้เห็นชัด'),
+            ] %}
+            <li class="card rounded-2xl p-5">
+                <div class="text-electric font-display text-2xl font-bold mb-2">{{ loop.index }}</div>
+                <div class="font-th font-semibold text-navy mb-1">{{ title }}</div>
+                <div class="font-th text-sm text-slate-600">{{ text }}</div>
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+</section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            <!-- 01 · Voscene System -->
-            <div class="card rounded-2xl p-8 relative overflow-hidden">
-                <div class="absolute top-4 right-6 font-display text-6xl font-bold text-electric/[0.08] select-none pointer-events-none">01</div>
-                <div class="relative w-14 h-14 rounded-2xl bg-electric/10 text-electric flex items-center justify-center mb-5">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="7" rx="1.5"/>
-                        <rect x="3" y="13" width="18" height="7" rx="1.5"/>
-                        <circle cx="7" cy="7.5" r="0.7" fill="currentColor" stroke="none"/>
-                        <circle cx="7" cy="16.5" r="0.7" fill="currentColor" stroke="none"/>
-                    </svg>
-                </div>
-                <div class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px] mb-1">HARDWARE + SOFTWARE</div>
-                <h3 class="font-display text-xl font-semibold text-navy mb-2">Voscene System</h3>
-                <p class="text-slate-600 text-sm font-th leading-relaxed">ชุดควบคุมหลักของระบบ — ฮาร์ดแวร์คอนโทรลเลอร์ประสิทธิภาพสูง ทำงานร่วมกับซอฟต์แวร์ Voscene ครบชุด พร้อมใช้งานตาม Edition ที่เลือก</p>
-            </div>
-
-            <!-- 02 · Site-specific add-ons -->
-            <div class="card rounded-2xl p-8 relative overflow-hidden">
-                <div class="absolute top-4 right-6 font-display text-6xl font-bold text-signal/[0.08] select-none pointer-events-none">02</div>
-                <div class="relative w-14 h-14 rounded-2xl bg-signal/10 text-signal flex items-center justify-center mb-5">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="4" width="7" height="7" rx="1.5"/>
-                        <rect x="13" y="4" width="7" height="7" rx="1.5"/>
-                        <rect x="4" y="13" width="7" height="7" rx="1.5"/>
-                        <rect x="13" y="13" width="7" height="7" rx="1.5" fill="currentColor" fill-opacity="0.18"/>
-                    </svg>
-                </div>
-                <div class="text-signal text-[10px] font-mono font-semibold tracking-[1.5px] mb-1">SITE-SPECIFIC MODULES</div>
-                <h3 class="font-display text-xl font-semibold text-navy mb-2">อุปกรณ์เสริมตามหน้างาน</h3>
-                <p class="text-slate-600 text-sm font-th leading-relaxed">โมดูลและอุปกรณ์เสริมที่จำเป็นต่อการเชื่อมต่อและควบคุมอุปกรณ์เดิมในแต่ละไซต์ — จำนวนและชนิดแตกต่างกันตามลักษณะหน้างาน</p>
-            </div>
-
-            <!-- 03 · Installation & setup -->
-            <div class="card rounded-2xl p-8 relative overflow-hidden">
-                <div class="absolute top-4 right-6 font-display text-6xl font-bold text-amber-500/[0.10] select-none pointer-events-none">03</div>
-                <div class="relative w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mb-5">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/>
-                    </svg>
-                </div>
-                <div class="text-amber-600 text-[10px] font-mono font-semibold tracking-[1.5px] mb-1">INSTALLATION &amp; SETUP</div>
-                <h3 class="font-display text-xl font-semibold text-navy mb-2">ติดตั้งและปรับแต่งระบบ</h3>
-                <p class="text-slate-600 text-sm font-th leading-relaxed">บริการติดตั้ง เชื่อมต่ออุปกรณ์ ตั้งค่า Scene และทดสอบระบบหน้างานโดยทีมผู้เชี่ยวชาญ — คิดตามขอบเขตงานจริงของแต่ละโครงการ</p>
-            </div>
-        </div>
-
-        <div class="mt-10 max-w-3xl mx-auto text-center">
-            <p class="text-slate-600 text-sm font-th">ราคาสุดท้ายขึ้นอยู่กับขนาดห้อง จำนวนและชนิดอุปกรณ์ รวมถึงขอบเขตการติดตั้งของแต่ละโครงการ — <a href="/contact" class="text-electric font-semibold hover:underline">ติดต่อรับใบเสนอราคาเฉพาะโครงการ</a></p>
+<!-- คำถามที่พบบ่อย -->
+<section class="py-16 md:py-20 bg-slate-50 border-t border-slate-200">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="font-th text-2xl md:text-3xl font-semibold text-navy text-center mb-8">คำถามที่พบบ่อย</h2>
+        <div class="space-y-3">
+            {% for q, a in [
+                ('ใช้กับอุปกรณ์เดิมที่มีอยู่ได้ไหม?', 'ได้ ถ้าอุปกรณ์รองรับการสั่งงาน (เช่น ผ่านเครือข่าย, RS-232 หรือ IR) ทีมต้องตรวจรุ่นและพอร์ตก่อน — บางรุ่นอาจต้องใช้อุปกรณ์เสริม ไม่รับประกันว่าใช้ของเดิมได้ทั้งหมด'),
+                ('ต้องลงแอปหรือซื้อจอสัมผัสเฉพาะไหม?', 'ไม่ต้องลงแอป ใช้งานผ่านเบราว์เซอร์บนแท็บเล็ต มือถือ หรือคอมพิวเตอร์'),
+                ('คุมหลายห้องได้กี่ห้อง?', '20 ห้องต่อชุดควบคุม (ทุกห้องอยู่ในเครือข่ายเดียวกัน) และรองรับการขยายได้ 200 ห้อง'),
+                ('ปรึกษาเสียค่าใช้จ่ายไหม?', 'ปรึกษาและประเมินอุปกรณ์เบื้องต้นฟรี ไม่มีข้อผูกมัด'),
+            ] %}
+            <details class="group card rounded-xl p-5">
+                <summary class="font-th font-semibold text-navy cursor-pointer list-none flex justify-between gap-4">{{ q }}<span class="text-electric group-open:rotate-45 transition">+</span></summary>
+                <p class="font-th text-sm text-slate-600 mt-3 leading-relaxed">{{ a }}</p>
+            </details>
+            {% endfor %}
         </div>
     </div>
 </section>
 
+<!-- CTA -->
+<section class="py-16 md:py-20 bg-white border-t border-slate-200">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+        <h2 class="font-th text-2xl md:text-3xl font-semibold text-navy mb-3">อยากรู้ราคาสำหรับห้องของคุณ?</h2>
+        <p class="text-slate-600 font-th mb-6">ส่งรายการอุปกรณ์และรูปห้องมาทาง LINE — ทีมประเมินและออกแบบให้</p>
+        {{ line_button('นัดปรึกษาออกแบบระบบ', big=True) }}
+    </div>
+</section>
 {% endblock %}

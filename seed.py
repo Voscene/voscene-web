@@ -199,26 +199,29 @@ DEFAULT_CONTENT = [
 
 
 # Aligned with Catalog V2 (Volume 2.0) — Editions section (Contact for pricing, no fixed numbers)
+# เจ้าของ 2026-09-28: หน้าราคาภาษาไทย กระชับ เฉพาะจุดเด่นที่เข้าใจง่ายและเกี่ยวกับปัญหาลูกค้า
+# (ฟีเจอร์อื่นมีจริงแต่ยังไม่ลงหน้าราคา) · ยังไม่อ้างการรับประกัน/SLA จนกว่าเจ้าของยืนยัน
+# หลายห้อง: ถ้อยคำเดียวกับหน้าฟีเจอร์ "20 ห้องต่อชุดควบคุม · รองรับการขยายได้ 200 ห้อง" (โฆษณาไม่ใช้ตัวเลข 200)
 DEFAULT_PACKAGES = [
     {
         "code": "starter", "name": "Voscene Starter",
         "price": "Contact for pricing", "price_unit": "",
-        "description": "For single meeting rooms · Best for small offices",
-        "features": "1 control unit\nUp to 8 connected devices\n4 configurable scenes (tech-tunable)\nBrowser-based UI (no app install)\n3-level access (Engineer / Admin / User)\nIn-browser settings\nDevice health monitor\nOffline-capable\nEmail support\n1-year warranty",
+        "description": "ห้องประชุม 1 ห้อง · สำนักงาน ห้องอบรม",
+        "features": "ชุดควบคุม 1 ชุด ต่อ 1 ห้อง\nเชื่อมอุปกรณ์ได้สูงสุด 8 เครื่อง\nปุ่มซีน 4 ปุ่ม เช่น เริ่มประชุม / เลิกประชุม\nใช้ผ่านเบราว์เซอร์ ไม่ต้องลงแอป\nแยกหน้าผู้ใช้ กับหน้าช่าง",
         "category": "purchase", "sort_order": 1, "is_featured": False,
     },
     {
         "code": "pro", "name": "Voscene Pro",
         "price": "Contact for pricing", "price_unit": "",
-        "description": "For multi-room deployments · Best for hotels, universities, enterprises",
-        "features": "Everything in Starter\n1 control unit per room\nUnlimited connected devices\nAI command module (BYOL — customer brings own LLM key)\nLINE integration (send commands + alerts)\nUp to 4 PTZ camera control (VISCA over IP)\nAuto video tracking (mic-driven)\nCalendar integration (auto-trigger scenes)\nSchedule rules engine\nVideo conferencing room control\nMulti-room dashboard (20 rooms/controller · รองรับการขยายได้ 200 ห้อง · Master Controller)\nAPI Keys (X-API-Key) for integrations\nOTA software updates + auto-rollback\nEncrypted auto-backup (AES-128, 30-day)\nSecure remote support (encrypted, on-demand)\nPriority phone support\n3-year warranty\nOn-site installation",
+        "description": "หลายห้องในองค์กร · มหาวิทยาลัย โรงแรม",
+        "features": "ทุกอย่างในแบบห้องเดียว\nเชื่อมอุปกรณ์ได้ไม่จำกัดจำนวน\nหน้าควบคุมแบบกราฟิกตามผังห้อง\nดูสถานะและควบคุมหลายห้องจากจุดเดียว (20 ห้องต่อชุดควบคุม · รองรับการขยายได้ 200 ห้อง)\nตั้งเวลาเปิด–ปิดห้องอัตโนมัติ\nติดตั้งหน้างานโดยทีม Voscene",
         "category": "purchase", "sort_order": 2, "is_featured": True,
     },
     {
         "code": "enterprise", "name": "Voscene Enterprise",
         "price": "Custom quote", "price_unit": "",
-        "description": "For large-scale operations · Best for government, large enterprises",
-        "features": "Everything in Pro\nUnlimited control units\nCustom protocol integration\nAD / LDAP authentication (กำลังพัฒนา)\nWhite-label option\nOn-premises LLM (optional)\nCentral management\nSLA 24/7\nDedicated account manager\n5-year warranty\nCustom training program\nSource code escrow (opt.)",
+        "description": "หน่วยงานรัฐ · องค์กรขนาดใหญ่",
+        "features": "ทุกอย่างในแบบหลายห้อง\nจำนวนชุดควบคุมตามขนาดองค์กร\nเชื่อมโปรโตคอลเฉพาะของอุปกรณ์ในไซต์\nออกแบบและอบรมการใช้งานเฉพาะองค์กร\nทีมดูแลโครงการโดยเฉพาะ",
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 

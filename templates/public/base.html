@@ -164,10 +164,12 @@
          Tap/click toggles (.swapped, set by the script before </body>) on every device — hover was
          removed on purpose: hover + click fighting over the same fade read as flicker (owner). */
       .theme-swap { position: relative; cursor: pointer; }
-      .theme-swap > img { display: block; width: 100%; height: auto; }
-      .theme-swap > img.swap-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity .45s ease; }
-      .theme-swap.swapped > img.swap-dark { opacity: 0; }
-      @media (prefers-reduced-motion: reduce) { .theme-swap > img.swap-dark { transition: none; } }
+      /* ใช้ได้ทั้ง <img> เดิม และ <picture> จาก macro pic() (public/_img.html) */
+      .theme-swap > :is(img, picture) { display: block; width: 100%; height: auto; }
+      .theme-swap > .swap-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; transition: opacity .45s ease; }
+      .theme-swap > picture.swap-dark > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+      .theme-swap.swapped > .swap-dark { opacity: 0; }
+      @media (prefers-reduced-motion: reduce) { .theme-swap > .swap-dark { transition: none; } }
       /* Cross-fading 2-image showcase (pure CSS): slide 2 sits underneath, slide 1 fades in/out on top */
       @keyframes demo-cycle { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
       .demo-slide-top { animation: demo-cycle 16s ease-in-out infinite; }
@@ -383,9 +385,29 @@ if (window.vsConsent && !window.vsConsent.state) vsShowConsent();
 /* Dark↔light screenshot pairs: tap/click flips any of them (phones have no hover — see .theme-swap
    CSS), and the initial state alternates down the page (odd starts dark, even starts light) so a
    phone reader scrolling past sees both themes without ever tapping. */
+/* ภาพที่ยังไม่แสดง (picture[data-deferred] จาก macro pic) ไม่โหลดตอนเปิดหน้า — โหลดตอนกดครั้งแรก
+   รอถอดรหัสภาพเสร็จแล้วค่อยสลับ จะได้ไม่เห็นกรอบว่าง · กดครั้งต่อไปสลับทันที ไม่โหลดซ้ำ */
+window.vsLoadDeferred = function (root) {
+    var imgs = [];
+    root.querySelectorAll('picture[data-deferred]').forEach(function (p) {
+        p.removeAttribute('data-deferred');
+        p.querySelectorAll('source[data-srcset]').forEach(function (s) { s.srcset = s.dataset.srcset; s.removeAttribute('data-srcset'); });
+        var img = p.querySelector('img[data-src]');
+        if (img) { img.loading = 'eager'; img.src = img.dataset.src; img.removeAttribute('data-src'); imgs.push(img); }
+    });
+    return Promise.all(imgs.map(function (img) { return img.decode ? img.decode().catch(function () {}) : Promise.resolve(); }));
+};
+function vsWhenLoaded(el, fn) {
+    if (el.querySelector('picture[data-deferred]')) window.vsLoadDeferred(el).then(fn); else fn();
+}
+/* การ์ดแตะแล้วเปลี่ยนภาพ (โหมดผู้ใช้/โหมดช่าง) */
+window.vsTapSwap = function (box) {
+    vsWhenLoaded(box, function () { for (var i = 0; i < box.children.length; i++) box.children[i].classList.toggle('hidden'); });
+};
 document.querySelectorAll('.theme-swap').forEach(function (el, i) {
-    if (i % 2 === 1) el.classList.add('swapped');
-    el.addEventListener('click', function () { el.classList.toggle('swapped'); });
+    var start = el.dataset.start;  /* หน้าที่ใช้ pic() กำหนดเอง (ภาพที่เห็นก่อนถูกโหลด อีกภาพรอ) */
+    if (start ? start === 'light' : i % 2 === 1) el.classList.add('swapped');
+    el.addEventListener('click', function () { vsWhenLoaded(el, function () { el.classList.toggle('swapped'); }); });
 });
 </script>
 {% block extra_js %}{% endblock %}

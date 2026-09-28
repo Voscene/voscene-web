@@ -74,6 +74,18 @@ def _asset_version(path: str) -> str:
 templates.env.globals["VS_TRACK_V"] = _asset_version("static/js/vs-track.js")
 
 
+def _load_image_manifest() -> dict:
+    """ขนาด + รหัสเวอร์ชันของภาพ (สร้างด้วย build_images.py) — ใช้ใน macro pic() ของหน้าเว็บ"""
+    import json
+    try:
+        return json.loads(Path("static/images/manifest.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+templates.env.globals["IMG_MANIFEST"] = _load_image_manifest()
+
+
 # Contact numbers are free text from the CMS (may hold a name and several lines),
 # so linkify the number runs instead of wrapping the whole field.
 _PHONE_RE = re.compile(r"0\d[\d\s\-]{7,12}\d")

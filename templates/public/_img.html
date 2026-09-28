@@ -1,0 +1,18 @@
+{# ภาพหน้าเว็บแบบเบา — WebP (2 ขนาด) + JPG เดิมเป็นทางสำรอง · width/height กันหน้ากระตุก · URL มี ?v= (cache 1 ปี)
+   defer=True  → ยังไม่โหลด (เก็บ URL ใน data-src/data-srcset) รอ vsLoadDeferred() ตอนกดสลับครั้งแรก
+   priority=True → ภาพแรกบนหน้า: ไม่ lazy + fetchpriority=high
+   ข้อมูลขนาดมาจาก static/images/manifest.json (python build_images.py) #}
+{% macro pic(name, alt='', cls='', img_cls='w-full h-auto', defer=False, priority=False, sizes='(min-width: 768px) 560px, 100vw', aria_hidden=False) -%}
+{%- set m = IMG_MANIFEST.get(name) -%}
+{%- if m -%}
+{%- set base = '/static/images/' ~ name -%}
+{%- set webp -%}{% for w in m.sizes %}{{ base }}{{ '-' ~ w if w != m.w else '' }}.webp?v={{ m.v }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}{%- endset -%}
+{%- set jpg = base ~ m.ext ~ '?v=' ~ m.v -%}
+<picture class="{{ cls }}"{% if defer %} data-deferred{% endif %}>
+<source type="image/webp" {{ 'data-srcset' if defer else 'srcset' }}="{{ webp }}" sizes="{{ sizes }}">
+<img {% if defer %}src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ jpg }}"{% else %}src="{{ jpg }}"{% endif %} alt="{{ alt }}"{% if aria_hidden %} aria-hidden="true"{% endif %} width="{{ m.w }}" height="{{ m.h }}" style="aspect-ratio: {{ m.w }} / {{ m.h }}" class="{{ img_cls }}" decoding="async" {% if priority %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+</picture>
+{%- else -%}
+<img src="/static/images/{{ name }}.jpg" alt="{{ alt }}" class="{{ img_cls }} {{ cls }}" loading="lazy">
+{%- endif -%}
+{%- endmacro %}

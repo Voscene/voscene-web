@@ -1,0 +1,272 @@
+{
+ "feature-ai-agent": {
+  "ext": ".jpg",
+  "h": 589,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "61532e7ac9",
+  "w": 1700
+ },
+ "feature-ai-agent-light": {
+  "ext": ".jpg",
+  "h": 589,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "1e85339d6e",
+  "w": 1700
+ },
+ "feature-audio": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "653680fc38",
+  "w": 1700
+ },
+ "feature-audio-light": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "719433285c",
+  "w": 1700
+ },
+ "feature-dashboard": {
+  "ext": ".jpg",
+  "h": 1041,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "b3ffb3a5bc",
+  "w": 1700
+ },
+ "feature-dashboard-light": {
+  "ext": ".jpg",
+  "h": 1041,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "78f024530f",
+  "w": 1700
+ },
+ "feature-engineer-plan": {
+  "ext": ".jpg",
+  "h": 1112,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "f285ac66c3",
+  "w": 1600
+ },
+ "feature-engineer-scene": {
+  "ext": ".jpg",
+  "h": 1112,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "ff995b6232",
+  "w": 1600
+ },
+ "feature-lighting": {
+  "ext": ".jpg",
+  "h": 589,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "1950695952",
+  "w": 1700
+ },
+ "feature-lighting-light": {
+  "ext": ".jpg",
+  "h": 589,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "811f5bbe19",
+  "w": 1700
+ },
+ "feature-pa": {
+  "ext": ".jpg",
+  "h": 853,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "0070f41a90",
+  "w": 1700
+ },
+ "feature-pa-graphic-riser": {
+  "ext": ".jpg",
+  "h": 1134,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "1fdf391c39",
+  "w": 1700
+ },
+ "feature-pa-graphic-riser-light": {
+  "ext": ".jpg",
+  "h": 1134,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "23cb0d9d03",
+  "w": 1700
+ },
+ "feature-pa-graphic-site": {
+  "ext": ".jpg",
+  "h": 1132,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "dda8159472",
+  "w": 1700
+ },
+ "feature-pa-graphic-site-light": {
+  "ext": ".jpg",
+  "h": 1132,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "3569c50351",
+  "w": 1700
+ },
+ "feature-pa-light": {
+  "ext": ".jpg",
+  "h": 853,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "4bbbd477fa",
+  "w": 1700
+ },
+ "feature-projector": {
+  "ext": ".jpg",
+  "h": 1470,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "7a215af1a6",
+  "w": 1700
+ },
+ "feature-projector-light": {
+  "ext": ".jpg",
+  "h": 1477,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "3c2cb0b896",
+  "w": 1700
+ },
+ "feature-scene": {
+  "ext": ".jpg",
+  "h": 827,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "314da71037",
+  "w": 1700
+ },
+ "feature-scene-light": {
+  "ext": ".jpg",
+  "h": 827,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "f872f252e3",
+  "w": 1700
+ },
+ "feature-simple-mode": {
+  "ext": ".png",
+  "h": 1700,
+  "sizes": [
+   900,
+   2380
+  ],
+  "v": "c5c7fee3bf",
+  "w": 2380
+ },
+ "feature-smart-tv": {
+  "ext": ".jpg",
+  "h": 1470,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "a643686b84",
+  "w": 1700
+ },
+ "feature-smart-tv-light": {
+  "ext": ".jpg",
+  "h": 1477,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "00de7b70a4",
+  "w": 1700
+ },
+ "feature-user-control": {
+  "ext": ".jpg",
+  "h": 1112,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "9221f7487d",
+  "w": 1600
+ },
+ "feature-user-welcome": {
+  "ext": ".jpg",
+  "h": 1112,
+  "sizes": [
+   900,
+   1600
+  ],
+  "v": "5e42d46dd2",
+  "w": 1600
+ },
+ "feature-video-matrix": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "f237c2bca6",
+  "w": 1700
+ },
+ "feature-video-matrix-light": {
+  "ext": ".jpg",
+  "h": 980,
+  "sizes": [
+   900,
+   1700
+  ],
+  "v": "c45674da4e",
+  "w": 1700
+ }
+}

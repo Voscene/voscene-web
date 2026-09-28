@@ -194,7 +194,7 @@ DEFAULT_CONTENT = [
 
     # ===== SEO / Meta =====
     ("seo_title", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กร · Enterprise AV Control Software", "Title สำหรับ Search Engine", "seo", "text"),
-    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ · 18 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง), PTZ, Auto Tracking, IR, Conference, Calendar, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), Video Conferencing, PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
+    ("seo_description", "Voscene — ซอฟต์แวร์ควบคุม AV สำหรับองค์กรและงานราชการ · เปิดเบราว์เซอร์ใช้งานได้ทันที ไม่ต้องติดตั้งแอป ไม่ต้องใช้ Touch Panel ราคาแพง · ตั้งค่าผ่านเบราว์เซอร์ · ราคาประหยัดกว่าระบบควบคุม AV ต่างประเทศ · 16 โมดูลควบคุม: Scene, Video Matrix, Audio, Projector, Smart TV, DMX Lighting, Multi-Room (20 ห้อง/controller · รองรับการขยายได้ 200 ห้อง), PTZ, Auto Tracking, IR, Conference, Schedule, Booking (Coming soon · ปฏิทิน พ.ศ.), PA + Graphic Paging (กำลังพัฒนา) + AI Assist สั่งงานภาษาไทย/อังกฤษ (นำร่อง) · OAuth + LINE + OTA · รองรับอุปกรณ์ 48 ยี่ห้อ 1,000+ รุ่น · เหมาะกับงานราชการ (ขายขาด · ผ่านเกณฑ์จัดซื้อ)", "Meta Description", "seo", "textarea"),
 ]
 
 

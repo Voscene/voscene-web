@@ -236,6 +236,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         headers.setdefault(
             "Permissions-Policy", "geolocation=(), microphone=(), camera=(), payment=()"
         )
+        # ไฟล์ static: มี ?v=<hash> ต่อท้าย = เนื้อหาไม่เปลี่ยนตลอดอายุ URL → เก็บได้ 1 ปี
+        # ไม่มีเวอร์ชัน = เก็บสั้น ๆ 1 ชม. (เปลี่ยนภาพชื่อเดิมแล้วผู้เข้าชมเห็นของใหม่ไม่เกิน 1 ชม.)
+        if request.url.path.startswith("/static/") and response.status_code in (200, 304):
+            if "v=" in request.url.query:
+                headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            else:
+                headers.setdefault("Cache-Control", "public, max-age=3600")
         forwarded_proto = request.headers.get("x-forwarded-proto", request.url.scheme)
         if forwarded_proto == "https":
             headers.setdefault("Strict-Transport-Security", "max-age=31536000")

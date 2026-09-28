@@ -1096,3 +1096,11 @@ def test_public_pages_hide_partner_commercial_terms():
         html = c.get(url).text.lower()
         for word in ("margin ดี", "มาร์จิ้น", "ขายต่อได้", "ส่วนแบ่ง", "คอมมิชชั่น", "commission"):
             assert word not in html, (url, word)
+
+
+def test_unproven_modules_not_on_features():
+    """เจ้าของ 2026-09-28: Calendar + Video Conf ทำงานได้แต่ยังไม่ผ่านการใช้งานจริงระยะยาว → ไม่ลงเว็บ"""
+    body = TestClient(main.app).get("/features").text.split("<main", 1)[1]
+    body = body.split("<!--")[0] + "".join(part.split("-->", 1)[-1] for part in body.split("<!--")[1:])
+    for word in ("Calendar Integration", "Video Conf Room Control", "ระบบประชุมทางไกล"):
+        assert word not in body, word

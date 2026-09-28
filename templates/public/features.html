@@ -342,7 +342,7 @@
         <div class="text-center max-w-3xl mx-auto mb-12">
             <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-semibold tracking-wider mb-3">V2 · VOLUME 2.0</div>
             <h2 class="text-3xl md:text-4xl font-bold mb-3 font-th text-navy">More <span class="text-electric">Control Modules</span></h2>
-            <p class="text-slate-600 font-th">ฟีเจอร์เพิ่มเติม 8 ตัวที่อยู่ใน Catalog V2 — Conference + Calendar + Schedule + Booking + Multi-Room + VC Room</p>
+            <p class="text-slate-600 font-th">ฟีเจอร์เพิ่มเติม — กล้อง PTZ · กล้องตามคนพูด · IR · ชุดไมค์ประชุม · ตั้งเวลา · ระบบจองห้อง</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
@@ -399,20 +399,6 @@
                 </ul>
             </div>
 
-            <!-- Calendar -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">CALENDAR</span>
-                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                </div>
-                <h3 class="font-display font-semibold mb-2 text-navy">Calendar Integration</h3>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• OAuth Device Flow pairing</li>
-                    <li>• Auto-trigger scenes</li>
-                    <li>• Cloud calendar access</li>
-                </ul>
-            </div>
-
             <!-- Schedule -->
             <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
                 <div class="flex items-center justify-between mb-2">
@@ -441,24 +427,12 @@
                 </ul>
             </div>
 
-            <!-- Video Conferencing Room -->
-            <div class="card rounded-xl p-5 border-l-4 border-l-electric relative">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-electric text-[10px] font-mono font-semibold tracking-[1.5px]">VC ROOM</span>
-                    <span class="px-2 py-0.5 rounded bg-electric text-white text-[10px] font-semibold">NEW V2</span>
-                </div>
-                <h3 class="font-display font-semibold mb-2 text-navy">Video Conf Room Control</h3>
-                <ul class="text-sm text-slate-600 space-y-1 font-th">
-                    <li>• TCP protocol VC integration</li>
-                    <li>• Join / leave / mute / layout</li>
-                    <li>• Scene-triggered or AI <span class="text-slate-400">(เฉพาะรุ่นที่รองรับ)</span></li>
-                </ul>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- Protocol Support — เจ้าของ 2026-09-28: เล่าแบบ "คุมอุปกรณ์อะไรได้" ภาษาไทย กระชับ · ชื่อโปรโตคอลเป็นป้ายเล็กสำหรับช่าง
+<!-- (เจ้าของ 2026-09-28: ตัด Calendar Integration + Video Conf Room Control — ทำงานได้แต่ยังไม่ผ่านการใช้งานจริงระยะยาว ใส่กลับเมื่อพร้อม)
+     Protocol Support — เจ้าของ 2026-09-28: เล่าแบบ "คุมอุปกรณ์อะไรได้" ภาษาไทย กระชับ · ชื่อโปรโตคอลเป็นป้ายเล็กสำหรับช่าง
      ตัดรายละเอียดภายใน (พอร์ต UDP, MD5, token, sensor bus) และป้าย NEW V2 · คงป้าย อุปกรณ์เสริม / กำลังพัฒนา -->
 <section class="py-20 bg-cloud border-y border-slate-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -476,7 +450,6 @@
             ('rose', 'อุปกรณ์รุ่นเก่า (รีโมต)', 'IR', ['เรียนรู้คำสั่งจากรีโมตเดิม', 'สั่งผ่านตัวส่ง IR บนเครือข่าย ไม่ต้องเดินสาย'], 'addon'),
             ('emerald', 'กล้อง PTZ', 'VISCA over IP · RS-485', ['หมุน ซูม เรียกตำแหน่งที่ตั้งไว้', 'ได้สูงสุด 4 ตัวต่อชุดควบคุม'], ''),
             ('emerald', 'ชุดไมค์ประชุม', 'LAN · RS-232', ['เปิด–ปิดไมค์', 'กล้องหันตามคนพูดอัตโนมัติ'], ''),
-            ('emerald', 'ระบบประชุมทางไกล', 'LAN', ['เข้า–ออกห้องประชุม ปิดเสียง', 'สั่งพร้อมซีนในปุ่มเดียว'], ''),
             ('cyan', 'ระบบประกาศหลายโซน', 'Multicast', ['ประกาศพร้อมกันหลายห้อง', 'ประกาศเหตุฉุกเฉิน'], 'dev'),
             ('electric', 'ระบบอื่น ๆ ที่รองรับพอร์ตควบคุม', 'LAN · RS-232 · RS-485 · IR · รีเลย์', ['อุปกรณ์ที่มีพอร์ตสั่งงาน ต่อเข้าระบบได้', 'ทีมตรวจรุ่นและเชื่อมต่อให้ตามหน้างาน'], ''),
         ] %}

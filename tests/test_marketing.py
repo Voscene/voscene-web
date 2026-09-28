@@ -970,6 +970,8 @@ def test_claim_rewrites_before_ads():
     assert "Emergency PA" not in why and "รองรับการเชื่อมต่อระบบประกาศเหตุฉุกเฉิน" in why
     assert "AI-powered commands" not in why and "รองรับการเชื่อมต่อ AI เพื่อช่วยและควบคุมการสั่งการอุปกรณ์" in why
     assert "24 hours" not in why and "Setup Time" not in why          # ไม่สัญญาระยะเวลาติดตั้ง
+    for leak in ("build เดียว", "Git pull", "container rebuild", "SSH", "ticket", "SLA 24/7"):  # ภาษาภายในทีม / ยังไม่ยืนยัน
+        assert leak not in why, leak
     features = TestClient(main.app).get("/features").text
     assert "Thai NLP" not in features and "LLM Powered" not in features  # การ์ด AI ใช้ถ้อยคำเจ้าของ
     assert "สั่งงานด้วยเสียง" not in features  # AI ENGINE ไม่อ้างสั่งด้วยเสียง

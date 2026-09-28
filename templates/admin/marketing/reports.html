@@ -60,7 +60,7 @@
         <tbody class="divide-y divide-slate-100">
         {% for x in r.by_channel %}
         <tr>
-            <td class="px-3 py-2 font-medium whitespace-nowrap">{{ x.label }} <div class="text-[11px] font-normal text-slate-400">{{ x.connection }}{% if x.spend_sources %} · {{ x.spend_sources | join(', ') }}{% endif %}</div></td>
+            <td class="px-3 py-2 font-medium whitespace-nowrap {% if not x.in_use %}text-slate-400{% endif %}">{{ x.label }}{% if not x.in_use %} {{ ui.badge('ยังไม่เปิดใช้', 'slate') }}{% endif %}{% if x.spend_sources %} <div class="text-[11px] font-normal text-slate-400">{{ x.spend_sources | join(', ') }}</div>{% endif %}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{% if x.spend_applicable %}{{ ui.money(x.spend) }}{% else %}<span class="text-xs text-slate-400">ไม่มีค่าโฆษณา</span>{% endif %}</td>
             <td class="px-3 py-2 text-right font-semibold">{{ x.line_clicks }}</td>
             <td class="px-3 py-2 text-right whitespace-nowrap">{{ ui.money(x.cost_per_line_click, 'ต้องมีทั้งค่าโฆษณาและคลิก LINE') }}</td>

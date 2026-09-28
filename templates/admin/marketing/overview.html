@@ -85,7 +85,7 @@
         <tbody class="divide-y divide-slate-100">
         {% for row in r.by_channel %}
             <tr>
-                <td class="px-4 py-2 font-medium whitespace-nowrap">{{ row.label }}</td>
+                <td class="px-4 py-2 font-medium whitespace-nowrap {% if not row.in_use %}text-slate-400{% endif %}">{{ row.label }}{% if not row.in_use %} {{ ui.badge('ยังไม่เปิดใช้', 'slate') }}{% endif %}</td>
                 <td class="px-4 py-2 text-right whitespace-nowrap">
                     {% if not row.spend_applicable %}<span class="text-slate-400 text-xs">ไม่มีค่าโฆษณา</span>
                     {% else %}{{ ui.money(row.spend, 'ยังไม่มีการบันทึกค่าโฆษณาของช่องทางนี้ในช่วงนี้') }}{% endif %}

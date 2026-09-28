@@ -48,9 +48,9 @@
     <div>
         <label class="block text-sm font-medium mb-1">ช่องทาง</label>
         <div class="flex flex-wrap gap-2">
-            {% for ch in mk.CHANNELS %}
-            <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm cursor-pointer hover:bg-slate-50">
-                <input type="checkbox" name="channels" value="{{ ch.key }}" {% if ch.key in sel_channels %}checked{% endif %}> {{ ch.label }}
+            {% for ch in mk.ALL_CHANNELS if ch.key in mk.ACTIVE or ch.key in sel_channels %}
+            <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-sm cursor-pointer hover:bg-slate-50 {% if ch.key not in mk.ACTIVE %}text-slate-400{% endif %}">
+                <input type="checkbox" name="channels" value="{{ ch.key }}" {% if ch.key in sel_channels %}checked{% endif %}> {{ ch.label }}{% if ch.key not in mk.ACTIVE %} (ยังไม่เปิดใช้){% endif %}
             </label>
             {% endfor %}
         </div>

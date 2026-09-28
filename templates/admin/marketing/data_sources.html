@@ -7,7 +7,22 @@
 {% endblock %}
 
 {% block content %}
-{# แยกออกจากหน้าภาพรวม (เจ้าของ 2026-09-28): ภาพรวม = ผลลัพธ์ · หน้านี้ = ตัวเลขมาจากไหน อัปเดตเมื่อไร เชื่อมอะไรแล้วบ้าง #}
+{# แยกออกจากหน้าภาพรวม (เจ้าของ 2026-09-28): ภาพรวม = ผลลัพธ์ · หน้านี้ = เปิดใช้ช่องทางไหนจริง ตัวเลขมาจากไหน อัปเดตเมื่อไร #}
+{% if saved %}{{ ui.alert('บันทึกช่องทางที่เปิดใช้แล้ว', 'green') }}{% endif %}
+<form method="post" action="/admin/marketing/data-sources/channels" class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
+    <h2 class="font-semibold text-sm">ช่องทางที่เปิดใช้งานจริง</h2>
+    <p class="text-xs text-slate-500 mt-1 mb-3">ติ๊กเฉพาะช่องทางที่ทำจริงแล้ว — หลังบ้านจะแสดงเฉพาะช่องทางเหล่านี้ในรายงาน ตัวเลือกลิงก์ติดตาม และเนื้อหา · ช่องทางที่ไม่ได้ติ๊กจะไม่หาย แค่ซ่อนไว้ (ถ้ามีข้อมูลเข้ามาจะขึ้นว่า "ยังไม่เปิดใช้")</p>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        {% for ch in mk.ALL_CHANNELS %}
+        {% set on = ch.key in mk.ACTIVE %}
+        <label class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border {% if on %}border-emerald-300 bg-emerald-50/60{% else %}border-slate-200{% endif %} text-sm cursor-pointer">
+            <span class="flex items-center gap-2"><input type="checkbox" name="active" value="{{ ch.key }}" {% if on %}checked{% endif %}> {{ ch.label }}</span>
+            {% if on %}{{ ui.badge('ใช้งานอยู่', 'green') }}{% else %}{{ ui.badge('ยังไม่เปิดใช้', 'slate') }}{% endif %}
+        </label>
+        {% endfor %}
+    </div>
+    <div class="mt-3 flex justify-end"><button class="{{ ui.btn_cls }}">บันทึก</button></div>
+</form>
 <div class="grid lg:grid-cols-2 gap-4">
     <div class="bg-white rounded-xl border border-slate-200 p-4">
         <h2 class="font-semibold text-sm mb-3">แหล่งข้อมูล</h2>
@@ -23,10 +38,10 @@
     <div class="bg-white rounded-xl border border-slate-200 p-4">
         <h2 class="font-semibold text-sm mb-3">การเชื่อมต่อแพลตฟอร์ม</h2>
         <ul class="text-sm space-y-2">
-            {% for c, code, label in r.connectors %}
+            {% for c, code, label in r.connectors if not c.channels or (c.channels | select('in', mk.ACTIVE) | list) %}
             <li class="flex justify-between gap-3">
                 <div><div class="font-medium">{{ c.label }}</div><div class="text-xs text-slate-500">{{ c.provides }}</div></div>
-                <div class="flex-shrink-0">{{ ui.conn_badge(code, label) }}</div>
+                <div class="flex-shrink-0">{% if code == 'not_connected' and c.channels %}{{ ui.badge('กรอกเอง (ยังไม่ดึงอัตโนมัติ)', 'slate') }}{% else %}{{ ui.conn_badge(code, label) }}{% endif %}</div>
             </li>
             {% endfor %}
         </ul>

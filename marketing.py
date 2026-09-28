@@ -27,8 +27,8 @@ import marketing_core as mc
 from auth import require_admin
 from config import get_settings
 from database import (
-    AdSpend, AuditLog, Campaign, ContentItem, FbGroup, FbGroupPost, ImportBatch, Lead,
-    TrackingLink, User, WebEvent, get_db,
+    AdSpend, AuditLog, Campaign, Content, ContentItem, FbGroup, FbGroupPost, ImportBatch, Lead,
+    SessionLocal, TrackingLink, User, WebEvent, get_db,
 )
 from marketing_integrations import CONNECTORS, connector_for_channel
 from security import client_ip, rate_limited
@@ -76,9 +76,30 @@ def _catalog() -> dict:
     }
 
 
+# ============ ช่องทางที่เปิดใช้งานจริง ============
+# เจ้าของ 2026-09-28: หลังบ้านต้องไม่ทำเหมือนพร้อมทุกช่องทาง — แสดงเฉพาะช่องทางที่เปิดใช้จริง
+# เก็บใน Content (key/value เดียวกับข้อมูลติดต่อ) ไม่ต้องมี migration · ยังไม่เคยตั้ง = ค่าเริ่มต้นด้านล่าง
+ACTIVE_CHANNELS_KEY = "mk_active_channels"
+DEFAULT_ACTIVE_CHANNELS = ("google_ads", "facebook_ads", "facebook_page")
+
+
+def active_channels(db: Session) -> list:
+    row = db.query(Content).filter_by(key=ACTIVE_CHANNELS_KEY).first()
+    if row is None:
+        return list(DEFAULT_ACTIVE_CHANNELS)
+    picked = set((row.value or "").split(","))
+    return [c["key"] for c in mc.CHANNELS if c["key"] in picked]
+
+
 def _render(request: Request, name: str, user: User, **ctx) -> HTMLResponse:
+    mk = _catalog()
+    with SessionLocal() as s:
+        active = active_channels(s)
+    # mk.CHANNELS = เฉพาะที่เปิดใช้ (ตัวเลือกในฟอร์ม/ตัวกรอง) · ALL_CHANNELS ใช้ในหน้าตั้งค่าช่องทาง
+    mk.update(ALL_CHANNELS=mc.CHANNELS, ACTIVE=active,
+              CHANNELS=[c for c in mc.CHANNELS if c["key"] in active])
     return _templates.TemplateResponse(f"admin/marketing/{name}", {
-        "request": request, "user": user, "settings": settings, "mk": _catalog(), **ctx,
+        "request": request, "user": user, "settings": settings, "mk": mk, **ctx,
     })
 
 
@@ -374,6 +395,7 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
                 "cost_per_line_click": mc.cost_per(spend, line)}
 
     by_channel = []
+    active = set(active_channels(db))
     keys = [channel] if channel else mc.REPORT_CHANNELS
     for key in keys:
         cl = [l for l in leads if (l.channel or "unknown") == key]
@@ -382,13 +404,16 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
         st = _lead_stats(cl)
         conn = connector_for_channel(key)
         conn_code, conn_label = conn.status() if conn else ("manual", "ไม่มีการเชื่อมต่อ (กรอกเอง)")
-        always = key in ("google_ads", "facebook_ads", "facebook_page", "facebook_group",
-                         "tiktok", "other", "unknown")
-        if not always and not cl and not cs and not ce:
+        # แสดงช่องทางที่เปิดใช้เสมอ (แม้ยังเป็น 0) · ช่องทางอื่นแสดงเมื่อมีข้อมูลจริงเท่านั้น
+        # (เช่น คลิกทดสอบ) พร้อมป้าย "ยังไม่เปิดใช้" — ไม่ทำเหมือนทุกช่องทางพร้อม
+        derived = key not in {c["key"] for c in mc.CHANNELS}
+        in_use = key in active
+        if not (in_use or cl or cs or ce or channel == key):
             continue
         spend = _sum_spend(cs)
         by_channel.append({
             "key": key, "label": mc.channel_label(key),
+            "in_use": in_use or derived,
             "spend": spend, "spend_applicable": key in mc.SPEND_CHANNELS,
             "spend_sources": sorted({SOURCE_LABELS.get(r.source, r.source) for r in cs}),
             "last_update": mc.utc_to_bkk(last_spend.get(key)),
@@ -517,7 +542,25 @@ async def overview(request: Request, db: Session = Depends(get_db),
 @router.get("/data-sources", response_class=HTMLResponse)
 async def data_sources(request: Request, db: Session = Depends(get_db),
                        user: User = Depends(require_admin)):
-    return _render(request, "data_sources.html", user, tab="data", **_report_ctx(request, db))
+    return _render(request, "data_sources.html", user, tab="data",
+                   saved=request.query_params.get("saved") == "1", **_report_ctx(request, db))
+
+
+@router.post("/data-sources/channels")
+async def data_sources_channels(request: Request, db: Session = Depends(get_db),
+                                user: User = Depends(require_admin)):
+    form = await request.form()
+    valid = {c["key"] for c in mc.CHANNELS}
+    picked = [k for k in form.getlist("active") if k in valid]
+    row = db.query(Content).filter_by(key=ACTIVE_CHANNELS_KEY).first()
+    if row is None:
+        row = Content(key=ACTIVE_CHANNELS_KEY, label="ช่องทางการตลาดที่เปิดใช้", section="marketing")
+        db.add(row)
+    before = row.value
+    row.value = ",".join(picked)
+    _audit(db, user, "active_channels", "", 0, f"{before} → {row.value}")
+    db.commit()
+    return RedirectResponse("/admin/marketing/data-sources?saved=1", status_code=303)
 
 
 # ============ หน้า: แคมเปญ ============

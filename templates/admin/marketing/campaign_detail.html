@@ -24,7 +24,7 @@
             <div><dt class="text-xs text-slate-500">บริการ</dt><dd>{{ svc.label if svc else '—' }}</dd></div>
             <div><dt class="text-xs text-slate-500">เป้าหมาย</dt><dd>{{ mk.CAMPAIGN_GOAL_LABELS.get(c.goal, '—') }}</dd></div>
             <div><dt class="text-xs text-slate-500">ช่วงเวลา</dt><dd>{{ c.start_date.strftime('%d/%m/%Y') if c.start_date else '?' }} – {{ c.end_date.strftime('%d/%m/%Y') if c.end_date else '?' }}</dd></div>
-            <div><dt class="text-xs text-slate-500">ช่องทาง</dt><dd>{% for ch in (c.channels or '').split(',') if ch %}{{ mk.channel_label(ch) }}{% if not loop.last %} · {% endif %}{% else %}—{% endfor %}</dd></div>
+            <div><dt class="text-xs text-slate-500">ช่องทาง</dt><dd>{% for ch in (c.channels or '').split(',') if ch %}{% if ch in mk.ACTIVE %}{{ mk.channel_label(ch) }}{% else %}<span class="text-slate-400" title="ยังไม่เปิดใช้ช่องทางนี้">{{ mk.channel_label(ch) }} (ยังไม่เปิดใช้)</span>{% endif %}{% if not loop.last %} · {% endif %}{% else %}—{% endfor %}</dd></div>
             <div class="sm:col-span-2"><dt class="text-xs text-slate-500">หน้าปลายทาง</dt><dd class="break-all"><a href="{{ c.landing_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">{{ c.landing_url }}</a></dd></div>
             {% if c.audience %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">กลุ่มเป้าหมาย</dt><dd class="whitespace-pre-line">{{ c.audience }}</dd></div>{% endif %}
             {% if c.notes %}<div class="sm:col-span-2"><dt class="text-xs text-slate-500">หมายเหตุ</dt><dd class="whitespace-pre-line">{{ c.notes }}</dd></div>{% endif %}
@@ -88,12 +88,22 @@
     {# ลิงก์ของแคมเปญที่ไม่ได้ชี้หน้าปลายทางปัจจุบัน (เช่น ก่อนย้ายหน้าปลายทาง) — ยังนับผลได้ แต่พับเก็บไว้ ไม่ให้คัดลอกผิดตัว
        ลิงก์ของโพสต์/เนื้อหา/กลุ่ม Facebook ปลายทางต่างได้ตามตั้งใจ จึงแสดงปกติ #}
     {% set old_links = links | selectattr('content_item_id', 'none') | selectattr('group_post_id', 'none') | rejectattr('destination', 'equalto', c.landing_url) | list %}
-    {% set cur_links = links | reject('in', old_links) | list %}
+    {# ลิงก์ของช่องทางที่ยังไม่เปิดใช้ (เจ้าของ 2026-09-28: อย่าทำเหมือนพร้อมทุกช่องทาง) — เก็บไว้ ยังนับผลได้ แต่พับซ่อน #}
+    {% set idle_links = links | rejectattr('channel', 'in', mk.ACTIVE) | reject('in', old_links) | list %}
+    {% set cur_links = links | reject('in', old_links) | reject('in', idle_links) | list %}
     {% if cur_links %}
     <ul class="divide-y divide-slate-100">
         {% for l in cur_links %}{{ link_row(l) }}{% endfor %}
     </ul>
-    {% elif not old_links %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีลิงก์ติดตาม</div>{% endif %}
+    {% elif not old_links and not idle_links %}<div class="p-6 text-center text-sm text-slate-400">ยังไม่มีลิงก์ติดตาม</div>{% endif %}
+    {% if idle_links %}
+    <details class="border-t border-slate-200 bg-slate-50/60">
+        <summary class="px-4 py-2 text-xs text-slate-500 cursor-pointer">ลิงก์ของช่องทางที่ยังไม่เปิดใช้ ({{ idle_links | length }}) — สร้างไว้ล่วงหน้า ยังไม่ได้ใช้จริง</summary>
+        <ul class="divide-y divide-slate-100 opacity-75">
+            {% for l in idle_links %}{{ link_row(l) }}{% endfor %}
+        </ul>
+    </details>
+    {% endif %}
     {% if old_links %}
     <details class="border-t border-slate-200 bg-slate-50/60">
         <summary class="px-4 py-2 text-xs text-slate-500 cursor-pointer">ลิงก์ที่ชี้หน้าปลายทางเดิม ({{ old_links | length }}) — ยังนับผลได้ ไม่ควรใช้กับโฆษณา/โพสต์ใหม่</summary>

@@ -31,7 +31,7 @@
             <label class="block text-sm font-medium mb-1">ช่องทาง</label>
             <select name="channel" class="{{ ui.input_cls }}">
                 <option value="">— เลือก —</option>
-                {% for ch in mk.CHANNELS %}<option value="{{ ch.key }}" {% if v('channel') == ch.key %}selected{% endif %}>{{ ch.label }}</option>{% endfor %}
+                {% for ch in mk.ALL_CHANNELS if ch.key in mk.ACTIVE or v('channel') == ch.key %}<option value="{{ ch.key }}" {% if v('channel') == ch.key %}selected{% endif %}>{{ ch.label }}{% if ch.key not in mk.ACTIVE %} (ยังไม่เปิดใช้){% endif %}</option>{% endfor %}
             </select>
         </div>
         <div>

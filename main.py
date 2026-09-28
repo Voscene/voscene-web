@@ -654,10 +654,11 @@ async def admin_content(request: Request, db: Session = Depends(get_db)):
         return RedirectResponse("/admin/login", status_code=303)
 
     # tracking มีหน้าของตัวเองที่ /admin/tracking (มีตัวตรวจรูปแบบ ID ให้)
-    # จึงกันออกจากหน้านี้ ไม่งั้นจะมีสองที่แก้ค่าเดียวกัน
+    # จึงกันออกจากหน้านี้ ไม่งั้นจะมีสองที่แก้ค่าเดียวกัน · "marketing" (ช่องทางที่เปิดใช้)
+    # แก้ที่ การตลาด → ที่มาของข้อมูล เช่นกัน
     rows = (
         db.query(Content)
-        .filter(Content.section != "tracking")
+        .filter(Content.section.notin_(("tracking", "marketing")))
         .order_by(Content.section, Content.id)
         .all()
     )

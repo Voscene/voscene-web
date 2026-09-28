@@ -1044,3 +1044,30 @@ def test_overview_is_results_only(admin, client):
         assert todo not in html, todo
     src = admin.get("/admin/marketing/data-sources").text
     assert "การเชื่อมต่อแพลตฟอร์ม" in src and "แหล่งข้อมูล" in src
+
+
+def test_only_active_channels_shown(admin, client):
+    """หลังบ้านแสดงเฉพาะช่องทางที่เปิดใช้จริง (เจ้าของ 2026-09-28) · ช่องที่ปิดไม่หาย แค่ติดป้าย"""
+    import marketing
+    html = admin.get("/admin/marketing").text
+    table = html.split("เปรียบเทียบตามช่องทาง", 1)[1].split("</table>", 1)[0]
+    assert "Google Ads" in table and "Facebook Page" in table
+    assert "YouTube" not in table and "อีเมล" not in table   # ยังไม่เปิดใช้ + ไม่มีข้อมูล → ไม่โชว์
+    # ช่องที่ปิดแต่มีข้อมูลเข้ามาจริง (เช่นคลิกทดสอบ) → ยังเห็น พร้อมป้าย
+    assert client.post("/api/event", json={"event": "line_click", "sid": "yt-test-1", "path": "/",
+                                           "utm_source": "youtube", "utm_medium": "video"}).status_code == 204
+    table = admin.get("/admin/marketing").text.split("เปรียบเทียบตามช่องทาง", 1)[1].split("</table>", 1)[0]
+    assert "ยังไม่เปิดใช้" in table.split("YouTube", 1)[1].split("</tr>", 1)[0]
+    # เปิด TikTok จากหน้า "ที่มาของข้อมูล" → เป็นตัวเลือกในฟอร์มเนื้อหา
+    assert "TikTok</option>" not in admin.get("/admin/marketing/content/new").text
+    r = admin.post("/admin/marketing/data-sources/channels", follow_redirects=False,
+                   data={"active": ["google_ads", "facebook_ads", "facebook_page", "tiktok", "bogus"]})
+    assert r.status_code == 303
+    s = db()
+    assert marketing.active_channels(s) == ["google_ads", "facebook_ads", "facebook_page", "tiktok"]
+    s.close()
+    assert "TikTok</option>" in admin.get("/admin/marketing/content/new").text
+    assert "ช่องทางที่เปิดใช้งานจริง" in admin.get("/admin/marketing/data-sources").text
+    assert "mk_active_channels" not in admin.get("/admin/content").text  # ไม่โผล่ในหน้าแก้เนื้อหาเว็บ
+    admin.post("/admin/marketing/data-sources/channels",
+               data={"active": list(marketing.DEFAULT_ACTIVE_CHANNELS)})

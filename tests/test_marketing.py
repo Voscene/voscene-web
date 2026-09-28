@@ -1085,3 +1085,14 @@ def test_pricing_page_thai_three_parts():
         assert word in html, word
     for word in ("MOST POPULAR", "Contact for pricing", "INCLUDES", "Source code escrow", "warranty"):
         assert word not in html, word
+
+
+def test_public_pages_hide_partner_commercial_terms():
+    """เว็บสาธารณะ ลูกค้าตรงและผู้รับเหมาเห็นเหมือนกัน — ห้ามพูดเรื่องกำไร/ส่วนแบ่งพันธมิตร (เจ้าของ 2026-09-28)"""
+    c = TestClient(main.app)
+    for url in ["/", "/why", "/features", "/pricing", "/contact", "/solutions/one-touch-meeting",
+                "/solutions/existing-room-upgrade", "/solutions/graphic-room-control",
+                "/solutions/multi-room-central-control"]:
+        html = c.get(url).text.lower()
+        for word in ("margin ดี", "มาร์จิ้น", "ขายต่อได้", "ส่วนแบ่ง", "คอมมิชชั่น", "commission"):
+            assert word not in html, (url, word)

@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% import "admin/marketing/_ui.html" as ui %}
+{% block title %}การตลาด — ที่มาของข้อมูล{% endblock %}
+{% block page_title %}การตลาด · ที่มาของข้อมูล{% endblock %}
+{% block header_actions %}
+<a href="/admin/marketing" class="{{ ui.btn2_cls }}">← ภาพรวม</a>
+{% endblock %}
+
+{% block content %}
+{# แยกออกจากหน้าภาพรวม (เจ้าของ 2026-09-28): ภาพรวม = ผลลัพธ์ · หน้านี้ = ตัวเลขมาจากไหน อัปเดตเมื่อไร เชื่อมอะไรแล้วบ้าง #}
+<div class="grid lg:grid-cols-2 gap-4">
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-3">แหล่งข้อมูล</h2>
+        <ul class="text-sm space-y-2">
+            {% for src in r.sources %}
+            <li class="flex justify-between gap-3">
+                <div><div class="font-medium">{{ src.label }}</div><div class="text-xs text-slate-500">{{ src.how }}</div></div>
+                <div class="text-xs text-slate-500 text-right whitespace-nowrap">{% if src.last %}ล่าสุด {{ src.last.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+        <h2 class="font-semibold text-sm mb-3">การเชื่อมต่อแพลตฟอร์ม</h2>
+        <ul class="text-sm space-y-2">
+            {% for c, code, label in r.connectors %}
+            <li class="flex justify-between gap-3">
+                <div><div class="font-medium">{{ c.label }}</div><div class="text-xs text-slate-500">{{ c.provides }}</div></div>
+                <div class="flex-shrink-0">{{ ui.conn_badge(code, label) }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+        <p class="text-[11px] text-slate-400 mt-3">รุ่นนี้ยังไม่ดึงข้อมูลจากแพลตฟอร์ม — ค่าโฆษณากรอกเองหรือนำเข้า CSV ที่หน้า <a href="/admin/marketing/spend" class="text-blue-600 hover:underline">ค่าโฆษณา</a></p>
+    </div>
+</div>
+{% endblock %}

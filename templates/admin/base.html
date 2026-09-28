@@ -73,7 +73,7 @@
             </a>
             {% if mk_path.startswith('/admin/marketing') %}
             <div class="pb-1">
-                {% for href, label in [('/admin/marketing', 'ภาพรวม'), ('/admin/marketing/campaigns', 'แคมเปญ'), ('/admin/marketing/content', 'เนื้อหาและปฏิทิน'), ('/admin/marketing/groups', 'กลุ่ม Facebook'), ('/admin/marketing/reports', 'รายงานผล')] %}
+                {% for href, label in [('/admin/marketing', 'ภาพรวม'), ('/admin/marketing/campaigns', 'แคมเปญ'), ('/admin/marketing/content', 'เนื้อหาและปฏิทิน'), ('/admin/marketing/groups', 'กลุ่ม Facebook'), ('/admin/marketing/reports', 'รายงานผล'), ('/admin/marketing/data-sources', 'ที่มาของข้อมูล')] %}
                 {% set on = (mk_path == href) if href == '/admin/marketing' else (mk_path.startswith(href) or (href.endswith('/reports') and mk_path.startswith('/admin/marketing/spend'))) %}
                 <a href="{{ href }}" class="block pl-14 pr-6 py-1.5 text-xs {% if on %}text-white font-semibold{% else %}text-sky/70 hover:text-white{% endif %}">{{ label }}</a>
                 {% endfor %}

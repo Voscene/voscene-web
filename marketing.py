@@ -19,7 +19,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -450,6 +450,25 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
                            "channel": "facebook_group", **st})
     by_content.sort(key=lambda r: (-r["fit"], -r["unique"]))
 
+    # ---- ผลของโพสต์ที่เผยแพร่แล้ว: คลิก LINE/โทรจากลิงก์ติดตามของโพสต์ (utm_content = ci<id>-…) ----
+    def _post_id(e):
+        m = re.match(r"ci(\d+)(?:-|$)", (e.utm_content or "").strip().lower())
+        return int(m.group(1)) if m else None
+    ev_post = {}
+    for e in events:
+        pid = _post_id(e)
+        if pid:
+            ev_post.setdefault(pid, []).append(e)
+    q = db.query(ContentItem).filter(or_(ContentItem.status == "published",
+                                         ContentItem.id.in_(set(ev_post) or {0})))
+    if channel:
+        q = q.filter(ContentItem.channel == channel)
+    by_post = [{"id": it.id, "label": it.title, "channel": it.channel,
+                "published_url": it.published_url, "published_at": it.published_at,
+                **_clicks(ev_post.get(it.id, []), None)} for it in q.all()]
+    by_post.sort(key=lambda r: (-r["line_clicks"], -r["phone_clicks"],
+                                -(r["published_at"].timestamp() if r["published_at"] else 0)))
+
     last_lead = db.query(func.max(Lead.created_at)).filter(Lead.status != "anonymous").scalar()
     last_event = db.query(func.max(WebEvent.created_at)).scalar()
     last_any_spend = db.query(func.max(AdSpend.created_at)).scalar()
@@ -462,6 +481,7 @@ def compute_report(db: Session, start: date, end: date, channel: str = "") -> di
         "cpl_unique": mc.cost_per(total_spend, stats["unique"]),
         **_clicks(events, total_spend),
         "by_channel": by_channel, "by_campaign": by_campaign, "by_content": by_content,
+        "by_post": by_post,
         "sources": [
             {"label": "Lead", "how": "ทีมงานบันทึกจาก LINE / โทร (+ ฟอร์มเว็บรุ่นเก่า)",
              "last": mc.utc_to_bkk(last_lead)},
@@ -489,18 +509,15 @@ def _report_ctx(request: Request, db: Session) -> dict:
 @router.get("", response_class=HTMLResponse)
 async def overview(request: Request, db: Session = Depends(get_db),
                    user: User = Depends(require_admin)):
-    today = mc.bkk_today()
-    upcoming = (db.query(ContentItem)
-                .filter(ContentItem.status != "published", ContentItem.planned_at.isnot(None),
-                        ContentItem.planned_at >= datetime(today.year, today.month, today.day))
-                .order_by(ContentItem.planned_at).limit(5).all())
-    followups = (db.query(Lead)
-                 .filter(Lead.next_follow_up.isnot(None), Lead.next_follow_up <= today + timedelta(days=7),
-                         Lead.sales_stage.notin_(("won", "lost")), Lead.status != "anonymous")
-                 .order_by(Lead.next_follow_up).limit(8).all())
-    return _render(request, "overview.html", user, tab="overview",
-                   upcoming=upcoming, followups=followups, today=today,
-                   **_report_ctx(request, db))
+    # หน้านี้ = สรุปผลของสื่อที่ทำไปแล้วเท่านั้น (เจ้าของ 2026-09-28) — งานที่ต้องทำอยู่ที่
+    # "เนื้อหาและปฏิทิน" ส่วนสถานะแหล่งข้อมูล/การเชื่อมต่ออยู่ที่ /admin/marketing/data-sources
+    return _render(request, "overview.html", user, tab="overview", **_report_ctx(request, db))
+
+
+@router.get("/data-sources", response_class=HTMLResponse)
+async def data_sources(request: Request, db: Session = Depends(get_db),
+                       user: User = Depends(require_admin)):
+    return _render(request, "data_sources.html", user, tab="data", **_report_ctx(request, db))
 
 
 # ============ หน้า: แคมเปญ ============

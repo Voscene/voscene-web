@@ -161,6 +161,7 @@ PROTECTED_GET = [
     "/admin/marketing", "/admin/marketing/campaigns", "/admin/marketing/campaigns/new",
     "/admin/marketing/content", "/admin/marketing/content/new", "/admin/marketing/groups",
     "/admin/marketing/reports", "/admin/marketing/spend", "/admin/marketing/spend/sample.csv",
+    "/admin/marketing/data-sources",
     "/admin/marketing/reports/export.csv?kind=leads", "/admin/marketing/media/" + "a" * 32 + ".png",
 ]
 PROTECTED_POST = [
@@ -1021,3 +1022,25 @@ def test_content_tags_and_templates(admin):
         assert "Demo" not in tpl["title"] + tpl["outline"] + tpl["cta"]
     assert "เพิ่มระบบควบคุมในงานของผู้ติดตั้ง" in admin.get("/admin/marketing/content/new").text
     assert mc.classify_channel("youtube", "video") == "youtube"
+
+
+def test_overview_is_results_only(admin, client):
+    """ภาพรวม = สรุปผลสื่อ ไม่ใช่หน้างานที่ต้องทำ (เจ้าของ 2026-09-28) · ผลแยกตามโพสต์จาก utm_content ci<id>"""
+    admin.post("/admin/marketing/content/save", data={"title": "โพสต์วัดผลทดสอบ", "channel": "facebook_page"})
+    s = db()
+    item = s.query(ContentItem).filter_by(title="โพสต์วัดผลทดสอบ").one()
+    s.close()
+    admin.post(f"/admin/marketing/content/{item.id}/publish",
+               data={"published_url": "https://www.facebook.com/reel/123"})
+    assert client.post("/api/event", json={
+        "event": "line_click", "sid": "post-result-1", "path": "/solutions/one-touch-meeting",
+        "utm_source": "facebook", "utm_medium": "social",
+        "utm_content": mc.content_utm(item.id, item.title)}).status_code == 204
+    html = admin.get("/admin/marketing").text
+    assert "ผลตามโพสต์ที่เผยแพร่แล้ว" in html and "ผลตามแคมเปญ" in html
+    row = html.split("โพสต์วัดผลทดสอบ", 1)[1].split("</tr>", 1)[0]
+    assert ">1</td>" in row  # คลิก LINE 1 ครั้งจากลิงก์ของโพสต์นี้
+    for todo in ("โพสต์ที่วางแผนไว้", "นัดติดตาม Lead", "การเชื่อมต่อแพลตฟอร์ม", "การเชื่อมต่อ / ที่มาข้อมูล"):
+        assert todo not in html, todo
+    src = admin.get("/admin/marketing/data-sources").text
+    assert "การเชื่อมต่อแพลตฟอร์ม" in src and "แหล่งข้อมูล" in src

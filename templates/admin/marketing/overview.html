@@ -69,7 +69,6 @@
         <thead class="bg-slate-50 text-xs text-slate-500">
             <tr>
                 <th class="px-4 py-2 text-left">ช่องทาง</th>
-                <th class="px-4 py-2 text-left">การเชื่อมต่อ / ที่มาข้อมูล</th>
                 <th class="px-4 py-2 text-right">ค่าโฆษณา</th>
                 <th class="px-4 py-2 text-right bg-emerald-50/60">คลิก LINE</th>
                 <th class="px-4 py-2 text-right bg-emerald-50/60">ค่าโฆษณา/คลิก LINE</th>
@@ -87,13 +86,6 @@
         {% for row in r.by_channel %}
             <tr>
                 <td class="px-4 py-2 font-medium whitespace-nowrap">{{ row.label }}</td>
-                <td class="px-4 py-2">
-                    <div class="flex flex-wrap items-center gap-1">
-                        {{ ui.conn_badge(row.connection_code, row.connection) }}
-                        {% for src in row.spend_sources %}{{ ui.badge(src, 'blue') }}{% endfor %}
-                    </div>
-                    {% if row.last_update %}<div class="text-[11px] text-slate-400 mt-0.5">ค่าโฆษณาอัปเดตล่าสุด {{ row.last_update.strftime('%d/%m/%y %H:%M') }}</div>{% endif %}
-                </td>
                 <td class="px-4 py-2 text-right whitespace-nowrap">
                     {% if not row.spend_applicable %}<span class="text-slate-400 text-xs">ไม่มีค่าโฆษณา</span>
                     {% else %}{{ ui.money(row.spend, 'ยังไม่มีการบันทึกค่าโฆษณาของช่องทางนี้ในช่วงนี้') }}{% endif %}
@@ -119,63 +111,52 @@
 <div class="grid lg:grid-cols-2 gap-4 mb-6">
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
-            <h2 class="font-semibold text-sm">โพสต์ที่วางแผนไว้</h2>
-            <a href="/admin/marketing/content?view=calendar" class="text-xs text-blue-600 hover:underline">ปฏิทิน →</a>
+            <h2 class="font-semibold text-sm">ผลตามแคมเปญ</h2>
+            <a href="/admin/marketing/reports?start={{ filters.start }}&end={{ filters.end }}&channel={{ filters.channel }}" class="text-xs text-blue-600 hover:underline">รายงานละเอียด →</a>
         </div>
-        {% if upcoming %}
-        <ul class="divide-y divide-slate-100 text-sm">
-            {% for it in upcoming %}
-            <li class="px-4 py-2 flex items-center justify-between gap-2">
-                <a href="/admin/marketing/content/{{ it.id }}" class="truncate hover:underline">{{ it.title }}</a>
-                <span class="flex items-center gap-2 flex-shrink-0 text-xs text-slate-500">{{ ui.badge(mk.CONTENT_STATUS_LABELS[it.status]) }} {{ it.planned_at.strftime('%d/%m %H:%M') }}</span>
-            </li>
+        {% if r.by_campaign %}
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500">
+                <tr><th class="px-4 py-2 text-left">แคมเปญ</th><th class="px-4 py-2 text-right">ค่าโฆษณา</th><th class="px-4 py-2 text-right">คลิก LINE</th><th class="px-4 py-2 text-right">คลิกโทร</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            {% for x in r.by_campaign %}
+                <tr>
+                    <td class="px-4 py-2">{% if x.id %}<a href="/admin/marketing/campaigns/{{ x.id }}" class="hover:underline">{{ x.label }}</a>{% else %}<span class="text-slate-500">{{ x.label }}</span>{% endif %}</td>
+                    <td class="px-4 py-2 text-right whitespace-nowrap">{{ ui.money(x.spend, 'ยังไม่มีการบันทึกค่าโฆษณาของแคมเปญนี้ในช่วงนี้') }}</td>
+                    <td class="px-4 py-2 text-right font-semibold">{{ x.line_clicks }}</td>
+                    <td class="px-4 py-2 text-right">{{ x.phone_clicks }}</td>
+                </tr>
             {% endfor %}
-        </ul>
-        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ยังไม่มีโพสต์ที่วางแผนไว้</div>{% endif %}
+            </tbody>
+        </table>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ยังไม่มีผลของแคมเปญในช่วงนี้</div>{% endif %}
     </div>
-    {% if sales %}
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
-            <h2 class="font-semibold text-sm">นัดติดตาม Lead (ภายใน 7 วัน / เลยกำหนด)</h2>
-            <a href="/admin/leads?filter=followup" class="text-xs text-blue-600 hover:underline">ทั้งหมด →</a>
+        <div class="px-4 py-3 border-b border-slate-200">
+            <h2 class="font-semibold text-sm">ผลตามโพสต์ที่เผยแพร่แล้ว <span class="font-normal text-slate-400">(คลิกจากลิงก์ติดตามของโพสต์)</span></h2>
         </div>
-        {% if followups %}
-        <ul class="divide-y divide-slate-100 text-sm">
-            {% for l in followups %}
-            <li class="px-4 py-2 flex items-center justify-between gap-2">
-                <a href="/admin/leads/{{ l.id }}" class="truncate hover:underline">{{ l.name }} <span class="text-slate-400">{{ l.company }}</span></a>
-                <span class="text-xs flex-shrink-0 {% if l.next_follow_up < today %}text-red-600 font-semibold{% else %}text-slate-500{% endif %}">{{ l.next_follow_up.strftime('%d/%m/%y') }}</span>
-            </li>
+        {% if r.by_post %}
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 text-xs text-slate-500">
+                <tr><th class="px-4 py-2 text-left">โพสต์</th><th class="px-4 py-2 text-right">คลิก LINE</th><th class="px-4 py-2 text-right">คลิกโทร</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            {% for x in r.by_post %}
+                <tr>
+                    <td class="px-4 py-2">
+                        <a href="/admin/marketing/content/{{ x.id }}" class="hover:underline">{{ x.label }}</a>
+                        <div class="text-[11px] text-slate-400">{{ mk.channel_label(x.channel) if x.channel else '—' }}{% if x.published_at %} · ลง {{ x.published_at.strftime('%d/%m/%y') }}{% endif %}{% if x.published_url %} · <a href="{{ x.published_url }}" target="_blank" rel="noopener" class="text-blue-600 hover:underline">ดูโพสต์ ↗</a>{% endif %}</div>
+                    </td>
+                    <td class="px-4 py-2 text-right font-semibold">{{ x.line_clicks }}</td>
+                    <td class="px-4 py-2 text-right">{{ x.phone_clicks }}</td>
+                </tr>
             {% endfor %}
-        </ul>
-        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ไม่มีนัดติดตาม</div>{% endif %}
+            </tbody>
+        </table>
+        {% else %}<div class="px-4 py-6 text-sm text-slate-400 text-center">ยังไม่มีโพสต์ที่เผยแพร่</div>{% endif %}
     </div>
-    {% endif %}
 </div>
 
-<div class="grid lg:grid-cols-2 gap-4">
-    <div class="bg-white rounded-xl border border-slate-200 p-4">
-        <h2 class="font-semibold text-sm mb-3">แหล่งข้อมูล</h2>
-        <ul class="text-sm space-y-2">
-            {% for src in r.sources %}
-            <li class="flex justify-between gap-3">
-                <div><div class="font-medium">{{ src.label }}</div><div class="text-xs text-slate-500">{{ src.how }}</div></div>
-                <div class="text-xs text-slate-500 text-right whitespace-nowrap">{% if src.last %}ล่าสุด {{ src.last.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="bg-white rounded-xl border border-slate-200 p-4">
-        <h2 class="font-semibold text-sm mb-3">การเชื่อมต่อแพลตฟอร์ม</h2>
-        <ul class="text-sm space-y-2">
-            {% for c, code, label in r.connectors %}
-            <li class="flex justify-between gap-3">
-                <div><div class="font-medium">{{ c.label }}</div><div class="text-xs text-slate-500">{{ c.provides }}</div></div>
-                <div class="flex-shrink-0">{{ ui.conn_badge(code, label) }}</div>
-            </li>
-            {% endfor %}
-        </ul>
-        <p class="text-[11px] text-slate-400 mt-3">รุ่นนี้ยังไม่ดึงข้อมูลจากแพลตฟอร์ม — ค่าโฆษณากรอกเองหรือนำเข้า CSV ที่หน้า <a href="/admin/marketing/spend" class="text-blue-600 hover:underline">ค่าโฆษณา</a></p>
-    </div>
-</div>
+<p class="text-[11px] text-slate-400">หน้านี้สรุปผลของสื่อที่ทำไปแล้ว · งานที่วางแผนไว้ดูที่ <a href="/admin/marketing/content?view=calendar" class="text-blue-600 hover:underline">เนื้อหาและปฏิทิน</a> · ข้อมูลมาจากไหน / อัปเดตล่าสุดเมื่อไร ดูที่ <a href="/admin/marketing/data-sources" class="text-blue-600 hover:underline">ที่มาของข้อมูล</a></p>
 {% endblock %}

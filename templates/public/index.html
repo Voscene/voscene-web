@@ -479,23 +479,14 @@
                 </div>
 
                 <div class="p-6">
-                    <!-- Alerts mockup (V2 — 5 alert types) on light chat bg -->
+                    <!-- Alerts mockup (5 alert types ที่ซอฟต์แวร์ส่งจริง: schedule_fire · proj_offline · sys_online · OTA · remote_on — ตรวจโค้ด voscene-core 12 ต.ค.) on light chat bg -->
                     <div class="bg-emerald-50/70 rounded-xl p-4 space-y-2.5 mb-5">
                         <div class="bg-white border border-slate-200 border-l-4 border-l-amber-500 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
                             <div class="flex items-start gap-2">
-                                <span class="text-amber-500"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/rooms.svg');mask-image:url('/static/images/voscene-icons/rooms.svg')"></span></span>
+                                <span class="text-amber-500"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/clock.svg');mask-image:url('/static/images/voscene-icons/clock.svg')"></span></span>
                                 <div>
-                                    <div class="text-navy font-semibold text-sm font-th">ห้อง B ยังเปิดอยู่หลังเลิกงาน</div>
-                                    <div class="text-slate-500 text-xs font-th">จอและแสงไฟยังทำงาน · 18:05 น.</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white border border-slate-200 border-l-4 border-l-red-500 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
-                            <div class="flex items-start gap-2">
-                                <span class="text-red-500"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/tv.svg');mask-image:url('/static/images/voscene-icons/tv.svg')"></span></span>
-                                <div>
-                                    <div class="text-navy font-semibold text-sm font-th">ทีวีห้อง C ไม่ตอบสนอง</div>
-                                    <div class="text-slate-500 text-xs font-th">ตรวจสอบสายเครือข่าย / ไฟเลี้ยง</div>
+                                    <div class="text-navy font-semibold text-sm font-th">ปิดห้องตามเวลาที่ตั้งไว้</div>
+                                    <div class="text-slate-500 text-xs font-th">ห้องอบรม 1 · 18:00 น.</div>
                                 </div>
                             </div>
                         </div>
@@ -503,8 +494,17 @@
                             <div class="flex items-start gap-2">
                                 <span class="text-red-500 font-bold">!</span>
                                 <div>
-                                    <div class="text-navy font-semibold text-sm font-th">โปรเจคเตอร์ Offline</div>
+                                    <div class="text-navy font-semibold text-sm font-th">โปรเจกเตอร์ Offline</div>
                                     <div class="text-slate-500 text-xs font-th">ห้อง A · 5 นาทีที่แล้ว</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-[#06C755] rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                            <div class="flex items-start gap-2">
+                                <span class="text-[#06C755]"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/refresh.svg');mask-image:url('/static/images/voscene-icons/refresh.svg')"></span></span>
+                                <div>
+                                    <div class="text-navy font-semibold text-sm font-th">ระบบกลับมาทำงาน</div>
+                                    <div class="text-slate-500 text-xs font-th">เริ่มทำงานใหม่อัตโนมัติ พร้อมใช้งาน</div>
                                 </div>
                             </div>
                         </div>
@@ -513,16 +513,16 @@
                                 <span class="text-electric"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/box.svg');mask-image:url('/static/images/voscene-icons/box.svg')"></span></span>
                                 <div>
                                     <div class="text-navy font-semibold text-sm font-th">มีซอฟต์แวร์เวอร์ชันใหม่</div>
-                                    <div class="text-slate-500 text-xs font-th">v40.2 · พร้อมอัปเดต OTA</div>
+                                    <div class="text-slate-500 text-xs font-th">พร้อมอัปเดต OTA</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-white border border-slate-200 border-l-4 border-l-[#06C755] rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-slate-400 rounded-r-lg rounded-l px-4 py-2.5 shadow-sm">
                             <div class="flex items-start gap-2">
-                                <span class="text-[#06C755]">✓</span>
+                                <span class="text-slate-500"><span class="vico w-4 h-4" style="-webkit-mask-image:url('/static/images/voscene-icons/key.svg');mask-image:url('/static/images/voscene-icons/key.svg')"></span></span>
                                 <div>
-                                    <div class="text-navy font-semibold text-sm font-th">สำรองข้อมูลสำเร็จ</div>
-                                    <div class="text-slate-500 text-xs font-th">สำรองอัตโนมัติ (เข้ารหัส) · 02:00 น.</div>
+                                    <div class="text-navy font-semibold text-sm font-th">เปิดให้ช่างเข้าดูแลระยะไกล</div>
+                                    <div class="text-slate-500 text-xs font-th">เปิดโดยผู้ดูแลห้อง · ปิดได้ทุกเมื่อ</div>
                                 </div>
                             </div>
                         </div>
@@ -530,7 +530,7 @@
 
                     <ul class="space-y-2 text-sm text-slate-600 font-th">
                         <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> แจ้งเตือนสถานะอุปกรณ์</li>
-                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> เตือนห้องที่ยังเปิดค้าง และอุปกรณ์ที่ไม่ตอบสนอง</li>
+                        <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> แจ้งเมื่อทำงานตามเวลาที่ตั้งไว้ และเมื่อเปิดให้ช่างเข้าดูแล</li>
                         <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> บันทึก Events ระบบ + แจ้งเตือน OTA</li>
                         <li class="flex gap-2"><span class="text-[#06C755] font-bold">✓</span> ปรับแต่งได้ตามแต่ละช่อง</li>
                     </ul>

@@ -163,16 +163,27 @@
             <div class="grid md:grid-cols-2 gap-10 items-center">
                 <div class="md:order-2">
                     <div class="inline-block px-3 py-1 rounded-full bg-electric/10 text-electric text-xs font-medium mb-3">FEATURE 06 · LIGHTING</div>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Lighting Control (DMX512)</h2>
-                    <p class="text-slate-600 mb-4 font-th">ควบคุมระบบแสงสว่างตาม Scene อัตโนมัติ Fade in/out ราบรื่น</p>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-th text-navy">Lighting Control</h2>
+                    <p class="text-slate-600 mb-4 font-th">คุมไฟเวทีและไฟ LED สีตามซีน — หรี่ไฟ เรียกซีนแสง และไล่ fade ให้อัตโนมัติ</p>
                     <ul class="space-y-2 text-slate-700 font-th">
-                        <li class="flex gap-2"><span class="text-electric">✓</span> รองรับ 512 Channel</li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Dimmer, RGB และอุปกรณ์แสงทุกชนิดที่ใช้ <strong>DMX512</strong></li>
-                        <li class="flex gap-2"><span class="text-electric">✓</span> Scene + Fade smooth</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ไฟเวทีและไฟ LED สี ผ่าน <strong>DMX512</strong> — 512 ช่อง · Dimmer · RGB/RGBW</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ต่อผ่านเครือข่ายด้วย <strong>Art-Net</strong> หรือ <strong>sACN (E1.31)</strong> — ตั้งค่าทีละช่อง หรือสั่งมืด–สว่างทั้งหมดในปุ่มเดียว</li>
+                        <li class="flex gap-2"><span class="text-electric">✓</span> ซีนแสง + fade เข้า–ออกนุ่ม · สั่งพร้อมซีนภาพและเสียงได้ในปุ่มเดียว</li>
                     </ul>
+
+                    {# ไฟอาคารยังไม่พร้อม — ต้องจางกว่ากลุ่มบน มีป้าย และอยู่ทีหลัง ไม่งั้นคนอ่านรวบว่ารองรับหมดแล้ว
+                       หมายเหตุ: ธีมมืดดึง text-slate-500/600/700 ให้สว่างหมด จึงต้องใช้ text-slate-400 ถึงจะจางจริง #}
+                    <div class="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            <span class="text-sm font-semibold text-slate-400 font-th">ไฟอาคาร — ระบบไฟเดิมของอาคาร</span>
+                            <span class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-semibold">กำลังพัฒนา</span>
+                        </div>
+                        <p class="text-slate-400 text-sm font-th">กำลังพัฒนาการเชื่อมต่อระบบไฟอาคารเดิมที่ใช้ <strong class="font-semibold">KNX</strong> · <strong class="font-semibold">DyNet</strong> · <strong class="font-semibold">C-Bus</strong> — เรียกซีนไฟ หรี่ไฟทั้งโซน และอ่านระดับไฟกลับมาแสดง · ตอนนี้ไดรเวอร์เสร็จแล้ว อยู่ระหว่างทดสอบกับอุปกรณ์จริง</p>
+                        <p class="text-slate-400 text-xs font-th mt-2 opacity-80">ต้องขอข้อมูลระบบไฟเดิมจากผู้ติดตั้ง · ระบบ KNX ที่เปิด KNX Secure ยังไม่รองรับ</p>
+                    </div>
                 </div>
                 <div class="md:order-1 rounded-2xl overflow-hidden border border-slate-200 shadow-lg">
-                    <div class="theme-swap" data-start="light">{{ im.pic('feature-lighting-light', 'Lighting Control DMX512 — scene + fade', defer=False) }}{{ im.pic('feature-lighting', cls='swap-dark', img_cls='w-full h-full', aria_hidden=True, defer=True) }}</div>
+                    <div class="theme-swap" data-start="light">{{ im.pic('feature-lighting-light', 'Lighting Control — ซีนแสงและ fade สำหรับไฟอาคารและไฟเวที', defer=False) }}{{ im.pic('feature-lighting', cls='swap-dark', img_cls='w-full h-full', aria_hidden=True, defer=True) }}</div>
                 </div>
             </div>
 
@@ -447,7 +458,8 @@
             ('electric', 'โปรเจกเตอร์', 'PJLink · LAN · RS-232', ['เปิด–ปิด และเลือกช่องภาพ', 'ดูสถานะและชั่วโมงหลอดภาพ'], ''),
             ('signal', 'Smart TV / จอแสดงผล / จอ LED', 'LAN · Wake-on-LAN', ['เปิดเครื่องผ่านเครือข่าย', 'เลือกช่องภาพ'], ''),
             ('purple', 'สวิตช์ภาพ · มิกเซอร์ · แอมป์', 'RS-232 · Telnet · LAN', ['สลับภาพไปยังจอต่าง ๆ', 'ปรับและปิดเสียงรายช่อง'], ''),
-            ('amber', 'ไฟส่องสว่าง / Dimmer', 'DMX512 · รีเลย์', ['หรี่ไฟ และไฟ LED สี', 'ตั้งฉากแสงตามซีน'], 'addon'),
+            ('amber', 'ไฟส่องสว่าง / Dimmer', 'DMX512 · Art-Net / sACN · รีเลย์', ['หรี่ไฟ และไฟ LED สี', 'ตั้งฉากแสงตามซีน'], 'addon'),
+            ('amber', 'ไฟอาคาร (ระบบไฟเดิมของอาคาร)', 'KNX · DyNet · C-Bus', ['เรียกซีนไฟ และหรี่ไฟทั้งโซน', 'อ่านระดับไฟกลับมาแสดง'], 'dev'),
             ('pink', 'จอม้วนไฟฟ้า · ม่านไฟฟ้า · ปลั๊กไฟ', 'รีเลย์ · RS-232', ['ขึ้น–ลงจอ เปิด–ปิดม่าน', 'เปิด–ปิดไฟและอุปกรณ์ทั้งห้อง'], 'addon'),
             ('rose', 'อุปกรณ์รุ่นเก่า (รีโมต)', 'IR', ['เรียนรู้คำสั่งจากรีโมตเดิม', 'สั่งผ่านตัวส่ง IR บนเครือข่าย ไม่ต้องเดินสาย'], 'addon'),
             ('emerald', 'กล้อง PTZ', 'VISCA over IP · RS-485', ['หมุน ซูม', 'เรียกตำแหน่งที่ตั้งไว้'], ''),

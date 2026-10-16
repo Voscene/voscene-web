@@ -19,9 +19,9 @@
 {% endmacro %}
 
 {% set tiers = {
-    'starter': {'label': 'ห้องเดียว', 'fits': [('เปิดห้องประชุมปุ่มเดียว', '/solutions/one-touch-meeting'), ('รวมรีโมตไว้หน้าจอเดียว', '/solutions/existing-room-upgrade')]},
-    'pro': {'label': 'หลายห้อง', 'fits': [('หน้าควบคุมตามผังห้อง', '/solutions/graphic-room-control'), ('คุมหลายห้องจากส่วนกลาง', '/solutions/multi-room-central-control')]},
-    'enterprise': {'label': 'องค์กร', 'fits': []},
+    'starter': {'label': 'ห้องประชุมกลาง', 'fits': [('เปิดห้องประชุมปุ่มเดียว', '/solutions/one-touch-meeting'), ('รวมรีโมตไว้หน้าจอเดียว', '/solutions/existing-room-upgrade')]},
+    'pro': {'label': 'ห้องประชุมใหญ่', 'fits': [('หน้าควบคุมตามผังห้อง', '/solutions/graphic-room-control'), ('คุมหลายห้องจากส่วนกลาง', '/solutions/multi-room-central-control')]},
+    'enterprise': {'label': 'Premium', 'fits': []},
 } %}
 {% set quote_words = ['', 'Contact for pricing', 'Custom quote'] %}
 
@@ -144,6 +144,11 @@
                 </div>
             </div>
             {% endfor %}
+        </div>
+        {# VS-PN-E = ห้องเพิ่ม (Catalog V4 · เจ้าของ 2026-10-16) — ไม่ขายเดี่ยว จึงเป็นแถบใต้การ์ด ไม่ใช่การ์ดที่ 4 #}
+        <div class="card rounded-2xl px-6 py-4 mt-4 md:mt-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 font-th">
+            <div class="flex items-center gap-2 shrink-0"><span class="text-electric text-xs font-semibold tracking-wide">VS-PN-E</span><span class="text-navy font-semibold">Extend</span><span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:#F5B524;color:#3A2600">ห้องเพิ่ม</span></div>
+            <p class="text-slate-600 text-sm">เหมาะกับห้องขนาดเล็ก ควบคุมอุปกรณ์น้อยชิ้น · เพิ่มห้องในโครงการ ใช้คู่กับรุ่น M / L / P หรือตั้งแต่ 2 ห้องขึ้นไป</p>
         </div>
         <p class="text-center text-slate-500 text-xs font-th mt-6">ควบคุมได้เฉพาะอุปกรณ์ที่รองรับและผ่านการตั้งค่าระบบแล้ว · ต้องตรวจรุ่นและพอร์ตของอุปกรณ์เดิมก่อน · ดูความสามารถทั้งหมดที่ <a href="/features" class="text-electric hover:underline">ฟีเจอร์</a></p>
     </div>

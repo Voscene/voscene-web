@@ -1083,7 +1083,9 @@ def test_pricing_page_thai_three_parts():
     html = TestClient(main.app).get("/pricing").text
     body = html[html.index("<main"):]
     assert body.index("ราคาคิดจาก") < body.index("เลือกตามขนาดงาน")
-    for word in ("ห้องเดียว", "หลายห้อง", "องค์กร", "ใบเสนอราคาของห้องคุณ", "นัดปรึกษาออกแบบระบบ",
+    # ชื่อรุ่นตาม Catalog V4 (เจ้าของ 2026-10-16) — เดิม Starter/Pro/Enterprise
+    for word in ("VS-PN-M", "VS-PN-L", "VS-PN-P", "VS-PN-E", "ห้องประชุมกลาง", "ห้องประชุมใหญ่", "Premium",
+                 "ใบเสนอราคาของห้องคุณ", "นัดปรึกษาออกแบบระบบ",
                  "/solutions/one-touch-meeting", "/solutions/multi-room-central-control"):
         assert word in html, word
     for word in ("MOST POPULAR", "Contact for pricing", "INCLUDES", "Source code escrow", "warranty"):

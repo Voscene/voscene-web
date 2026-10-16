@@ -202,26 +202,28 @@ DEFAULT_CONTENT = [
 # เจ้าของ 2026-09-28: หน้าราคาภาษาไทย กระชับ เฉพาะจุดเด่นที่เข้าใจง่ายและเกี่ยวกับปัญหาลูกค้า
 # (ฟีเจอร์อื่นมีจริงแต่ยังไม่ลงหน้าราคา) · ห้องเดียวไม่ระบุเพดานจำนวนอุปกรณ์/ซีน (ห้องจริงมีมากกว่า 8 เครื่อง — อย่าตัดโอกาส) · ยังไม่อ้างการรับประกัน/SLA จนกว่าเจ้าของยืนยัน
 # หลายห้อง: ถ้อยคำเดียวกับหน้าฟีเจอร์ "20 ห้องต่อชุดควบคุม · รองรับการขยายได้ 200 ห้อง" (โฆษณาไม่ใช้ตัวเลข 200)
+# เจ้าของ 2026-10-16: ชื่อรุ่นตาม Product Catalog V4 — VS-PN-M / VS-PN-L / VS-PN-P (+ VS-PN-E Extend = ห้องเพิ่ม
+# อยู่ใต้การ์ดใน pricing.html) · code เดิม starter/pro/enterprise คงไว้ (เป็นคีย์ในฐานข้อมูล) · name ถูกซิงก์ทุก deploy
 DEFAULT_PACKAGES = [
     {
-        "code": "starter", "name": "Voscene Starter",
+        "code": "starter", "name": "VS-PN-M",
         "price": "Contact for pricing", "price_unit": "",
-        "description": "ห้องประชุม 1 ห้อง · สำนักงาน ห้องอบรม",
-        "features": "ชุดควบคุม 1 ชุด ต่อ 1 ห้อง\nเชื่อมอุปกรณ์ในห้องตามจริง — ทีมประเมินจำนวนและชนิดให้\nปุ่มซีนตามการใช้งาน เช่น เริ่มประชุม / เลิกประชุม\nใช้ผ่านเบราว์เซอร์ ไม่ต้องลงแอป\nแยกหน้าผู้ใช้ กับหน้าช่าง",
-        "category": "purchase", "sort_order": 1, "is_featured": False,
+        "description": "เหมาะกับห้องประชุมทั่วไปในองค์กร",
+        "features": "ชุดควบคุม 1 ชุด ต่อ 1 ห้อง\nเชื่อมอุปกรณ์ในห้องตามจริง — ทีมประเมินให้\nปุ่มซีน เช่น เริ่มประชุม · นำเสนอ · พักเบรก · เลิกประชุม\nใช้ผ่านเบราว์เซอร์ ไม่ต้องลงแอป\nแยกหน้าผู้ใช้ กับหน้าช่าง",
+        "category": "purchase", "sort_order": 1, "is_featured": True,
     },
     {
-        "code": "pro", "name": "Voscene Pro",
+        "code": "pro", "name": "VS-PN-L",
         "price": "Contact for pricing", "price_unit": "",
-        "description": "หลายห้องในองค์กร · มหาวิทยาลัย โรงแรม",
-        "features": "ทุกอย่างในแบบห้องเดียว\nเชื่อมอุปกรณ์ได้ไม่จำกัดจำนวน\nหน้าควบคุมแบบกราฟิกตามผังห้อง\nดูสถานะและควบคุมหลายห้องจากจุดเดียว (20 ห้องต่อชุดควบคุม · รองรับการขยายได้ 200 ห้อง)\nตั้งเวลาเปิด–ปิดห้องอัตโนมัติ\nติดตั้งหน้างานโดยทีม Voscene",
-        "category": "purchase", "sort_order": 2, "is_featured": True,
+        "description": "สำหรับห้องที่มีอุปกรณ์ภาพและเสียงหลายชุด",
+        "features": "ทุกอย่างในรุ่น M\nรองรับอุปกรณ์ภาพและเสียงหลายชุดในห้องเดียว\nเหมาะกับหอประชุม ห้องอบรม ห้องสัมมนา\nออกแบบซีนให้ตรงการใช้งานของห้อง",
+        "category": "purchase", "sort_order": 2, "is_featured": False,
     },
     {
-        "code": "enterprise", "name": "Voscene Enterprise",
+        "code": "enterprise", "name": "VS-PN-P",
         "price": "Custom quote", "price_unit": "",
-        "description": "หน่วยงานรัฐ · องค์กรขนาดใหญ่",
-        "features": "ทุกอย่างในแบบหลายห้อง\nจำนวนชุดควบคุมตามขนาดองค์กร\nเชื่อมโปรโตคอลเฉพาะของอุปกรณ์ในไซต์\nออกแบบและอบรมการใช้งานเฉพาะองค์กร\nทีมดูแลโครงการโดยเฉพาะ",
+        "description": "ออกแบบตามความต้องการเฉพาะงาน",
+        "features": "ออกแบบระบบตามความต้องการเฉพาะงาน\nเชื่อมโปรโตคอลเฉพาะของอุปกรณ์ในไซต์\nออกแบบและอบรมการใช้งานเฉพาะองค์กร\nทีมดูแลโครงการโดยเฉพาะ",
         "category": "purchase", "sort_order": 3, "is_featured": False,
     },
 
@@ -412,6 +414,11 @@ def run_seed():
             elif pkg_data["code"] in CORE_EDITIONS:
                 # Migrate features + description for core editions if they differ from defaults
                 changed = False
+                # ชื่อรุ่น + การ์ดเด่น ซิงก์ด้วย (2026-10-16 เปลี่ยนเป็นชื่อรุ่นตาม Catalog V4)
+                for fld in ("name", "is_featured"):
+                    if getattr(existing, fld) != pkg_data[fld]:
+                        setattr(existing, fld, pkg_data[fld])
+                        changed = True
                 if existing.features != pkg_data["features"]:
                     existing.features = pkg_data["features"]
                     changed = True
